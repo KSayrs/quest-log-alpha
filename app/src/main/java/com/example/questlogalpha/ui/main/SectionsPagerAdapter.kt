@@ -6,10 +6,11 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.example.questlogalpha.R
 
+
 private val TAB_TITLES = arrayOf(
+    R.string.timeline,
     R.string.quests,
-    R.string.skills,
-    R.string.timeline
+    R.string.skills
 )
 
 /**
@@ -19,12 +20,16 @@ private val TAB_TITLES = arrayOf(
 class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a PlaceholderFragment (defined as a static inner class below).
-        return PlaceholderFragment.newInstance(position + 1)
+        when (position) {
+            1 -> return PlaceholderFragment.newInstance(position + 1 )
+            2 -> return QuestsFragment()
+            else -> { return PlaceholderFragment.newInstance(position + 1 )}
+        }
     }
 
+    // todo get from activity_main.xml layout file? Or hanle in activity?
     override fun getPageTitle(position: Int): CharSequence? {
+
         return context.resources.getString(TAB_TITLES[position])
     }
 
