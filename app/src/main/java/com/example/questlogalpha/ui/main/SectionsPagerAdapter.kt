@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.example.questlogalpha.R
+import com.example.questlogalpha.quests.QuestsFragment
 
 
 private val TAB_TITLES = arrayOf(

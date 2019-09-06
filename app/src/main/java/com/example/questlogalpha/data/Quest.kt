@@ -16,34 +16,67 @@ package com.example.questlogalpha.data
  * limitations under the License.
  */
 
+import android.app.Notification //todo will we need this
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.UUID
+import com.example.questlogalpha.quests.Difficulty
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Immutable model class for a Task. In order to compile with Room, we can't use @JvmOverloads to
  * generate multiple constructors.
  *
- * @param title       title of the task
- * @param description description of the task
- * @param isCompleted whether or not this task is completed
- * @param id          id of the task
+ * @param title       title of the quest
+ * TODO all the rest of the docs
  */
-@Entity(tableName = "tasks")
-data class Task @JvmOverloads constructor(
-    @ColumnInfo(name = "title") var title: String = "",
-    @ColumnInfo(name = "description") var description: String = "",
-    @ColumnInfo(name = "completed") var isCompleted: Boolean = false,
-    @PrimaryKey @ColumnInfo(name = "entryid") var id: String = UUID.randomUUID().toString()
+@Entity(tableName = "quest_table")
+data class Quest(
+    @PrimaryKey
+    val id: String = UUID.randomUUID().toString(),
+
+    @ColumnInfo
+    var title: String,
+
+    @ColumnInfo
+    var description: String = "",
+    // todo maybe only one reward, and rewards have a type?
+    // todo can column be a whole array of things?
+
+  //  @ColumnInfo(name = "skill_rewards")
+  //  var skillRewards: ArrayList<Skill> = arrayListOf(),
+//
+  //  @ColumnInfo(name = "item_rewards")
+  //  var itemRewards: ArrayList<Item> = arrayListOf(),
+
+    @ColumnInfo
+    var notifications: ArrayList<Notification> = arrayListOf(), // todo probably will be custom notification type
+
+    @ColumnInfo
+    var completed: Boolean = false,
+
+    @ColumnInfo(name = "due_date")
+    var dueDate: Date? = null,
+
+    @ColumnInfo(name = "date_available")
+    var dateAvailable: Date? = null,
+
+    @ColumnInfo
+    var difficulty: Difficulty = Difficulty.MEDIUM,
+
+  // @ColumnInfo
+  // var objectives: ArrayList<Objective> = arrayListOf(),
+
+    @ColumnInfo
+    var questLine: Long = 0L
 ) {
 
     val titleForList: String
         get() = if (title.isNotEmpty()) title else description
 
-
     val isActive
-        get() = !isCompleted
+        get() = !completed
 
     val isEmpty
         get() = title.isEmpty() || description.isEmpty()

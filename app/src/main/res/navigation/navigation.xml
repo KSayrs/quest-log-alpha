@@ -3,6 +3,6 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/navigation" app:startDestination="@id/questsFragment">
 
-    <fragment android:id="@+id/questsFragment" android:name="com.example.questlogalpha.ui.main.QuestsFragment"
+    <fragment android:id="@+id/questsFragment" android:name="com.example.questlogalpha.quests.QuestsFragment"
               android:label="QuestsFragment"/>
 </navigation>
