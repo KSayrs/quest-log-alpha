@@ -21,6 +21,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.questlogalpha.quests.Difficulty
+import java.time.ZonedDateTime
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -56,11 +57,16 @@ data class Quest(
     @ColumnInfo
     var completed: Boolean = false,
 
+    //- Quests that aren't available until a future date are hidden.
+    //- When a quest becomes available, a notification is sent, silently.
+    @ColumnInfo
+    var visible: Boolean = true,
+
     @ColumnInfo(name = "due_date")
-    var dueDate: Date? = null,
+    var dueDate: ZonedDateTime? = null,
 
     @ColumnInfo(name = "date_available")
-    var dateAvailable: Date? = null,
+    var dateAvailable: ZonedDateTime? = null,
 
     @ColumnInfo
     var difficulty: Difficulty = Difficulty.MEDIUM,
@@ -69,13 +75,28 @@ data class Quest(
   // var objectives: ArrayList<Objective> = arrayListOf(),
 
     @ColumnInfo
-    var questLine: Long = 0L
+    var questLine: Long = 0L,
+
+    // BI for stats
+    @ColumnInfo(name="times_completed")
+    var timesCompleted: Int = 0,
+
+    @ColumnInfo(name = "date_created")
+    val dateCreated: ZonedDateTime = ZonedDateTime.now(),
+
+    // Takes the latest date completed
+    @ColumnInfo(name = "date_completed")
+    var dateCompleted: ZonedDateTime? = null
 ) {
 
     val titleForList: String
         get() = if (title.isNotEmpty()) title else description
 
+    // todo change to whether or not it is available
     val isActive
+        get() = !completed
+
+    val isAvailable
         get() = !completed
 
     val isEmpty
