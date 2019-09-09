@@ -1,12 +1,16 @@
 package com.example.questlogalpha.data
 
 import android.content.Context
+import androidx.databinding.adapters.Converters
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.questlogalpha.quests.DifficultyConverter
 import com.example.questlogalpha.quests.QuestsDao
 
 @Database(entities = [Quest::class], version = 1, exportSchema = false)
+@TypeConverters(DifficultyConverter::class)
 abstract class QuestLogDatabase : RoomDatabase() {
 
     abstract val questLogDatabaseDao: QuestsDao

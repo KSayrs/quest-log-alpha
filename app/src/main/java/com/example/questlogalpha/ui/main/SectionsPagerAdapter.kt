@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.example.questlogalpha.R
 import com.example.questlogalpha.quests.QuestsFragment
 
-
 private val TAB_TITLES = arrayOf(
     R.string.timeline,
     R.string.quests,
@@ -18,17 +17,17 @@ private val TAB_TITLES = arrayOf(
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) : FragmentPagerAdapter(fm) {
+class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) : FragmentPagerAdapter(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {
         when (position) {
-            1 -> return PlaceholderFragment.newInstance(position + 1 )
-            2 -> return QuestsFragment()
+            0 -> return PlaceholderFragment.newInstance(position + 1 )
+            1 -> return QuestsFragment()
             else -> { return PlaceholderFragment.newInstance(position + 1 )}
         }
     }
 
-    // todo get from activity_main.xml layout file? Or hanle in activity?
+    // todo get from activity_main.xml layout file? Or handle in activity?
     override fun getPageTitle(position: Int): CharSequence? {
 
         return context.resources.getString(TAB_TITLES[position])

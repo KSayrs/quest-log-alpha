@@ -51,8 +51,8 @@ data class Quest(
   //  @ColumnInfo(name = "item_rewards")
   //  var itemRewards: ArrayList<Item> = arrayListOf(),
 
-    @ColumnInfo
-    var notifications: ArrayList<Notification> = arrayListOf(), // todo probably will be custom notification type
+  //  @ColumnInfo
+  //  var notifications: ArrayList<Notification> = arrayListOf(), // todo probably will be custom notification type
 
     @ColumnInfo
     var completed: Boolean = false,
@@ -62,11 +62,11 @@ data class Quest(
     @ColumnInfo
     var visible: Boolean = true,
 
-    @ColumnInfo(name = "due_date")
-    var dueDate: ZonedDateTime? = null,
-
-    @ColumnInfo(name = "date_available")
-    var dateAvailable: ZonedDateTime? = null,
+ //   @ColumnInfo(name = "due_date")
+ //   var dueDate: ZonedDateTime? = null,
+//
+ //   @ColumnInfo(name = "date_available")
+ //   var dateAvailable: ZonedDateTime? = null,
 
     @ColumnInfo
     var difficulty: Difficulty = Difficulty.MEDIUM,
@@ -79,14 +79,14 @@ data class Quest(
 
     // BI for stats
     @ColumnInfo(name="times_completed")
-    var timesCompleted: Int = 0,
+    var timesCompleted: Int = 0
 
-    @ColumnInfo(name = "date_created")
-    val dateCreated: ZonedDateTime = ZonedDateTime.now(),
+ // @ColumnInfo(name = "date_created")
+ // val dateCreated: ZonedDateTime = ZonedDateTime.now(),
 
-    // Takes the latest date completed
-    @ColumnInfo(name = "date_completed")
-    var dateCompleted: ZonedDateTime? = null
+ // // Takes the latest date completed
+ // @ColumnInfo(name = "date_completed")
+ // var dateCompleted: ZonedDateTime? = null
 ) {
 
     val titleForList: String

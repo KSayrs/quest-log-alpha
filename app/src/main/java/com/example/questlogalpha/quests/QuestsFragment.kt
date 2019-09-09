@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 
 import com.example.questlogalpha.R
+import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentQuestsBinding
 
 // TODO: Rename parameter arguments, choose names that match
@@ -37,13 +38,12 @@ class QuestsFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
 
         val binding: FragmentQuestsBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_quests, container, false)
 
+        val application = requireNotNull(this.activity).application
+        val dataSource = QuestLogDatabase.getInstance(application).questLogDatabaseDao
 
         return binding.root
     }
