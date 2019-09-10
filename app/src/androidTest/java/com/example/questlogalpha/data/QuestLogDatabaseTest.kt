@@ -51,7 +51,7 @@ class QuestLogDatabaseTest {
     fun addAndGetQuest(){
         val quest = Quest("test","Test")
         questsDao.insertQuest(quest)
-        val justMade = questsDao.getQuestById("test")
+        val justMade = questsDao.getQuestById(quest.id)
         assertEquals(quest, justMade)
     }
 
@@ -63,8 +63,8 @@ class QuestLogDatabaseTest {
         quest.completed = true
         questsDao.updateQuest(quest)
 
-        val retrievedQuest = questsDao.getQuestById(testQuest.id)
-        assertEquals(retrievedQuest, quest)
+        val retrievedQuest = questsDao.getQuestById(quest.id)
+        assertEquals(quest, retrievedQuest)
         assertEquals(true, retrievedQuest?.completed)
     }
 

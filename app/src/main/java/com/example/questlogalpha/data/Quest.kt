@@ -34,9 +34,6 @@ import kotlin.collections.ArrayList
  */
 @Entity(tableName = "quest_table")
 data class Quest(
-    @PrimaryKey
-    val id: String = UUID.randomUUID().toString(),
-
     @ColumnInfo
     var title: String,
 
@@ -79,7 +76,11 @@ data class Quest(
 
     // BI for stats
     @ColumnInfo(name="times_completed")
-    var timesCompleted: Int = 0
+    var timesCompleted: Int = 0,
+
+    // for an unknown reason the primary key simply WILL NOT WORK with testing if it is an int. String it is.
+    @PrimaryKey @ColumnInfo
+    val id: String = UUID.randomUUID().toString()
 
  // @ColumnInfo(name = "date_created")
  // val dateCreated: ZonedDateTime = ZonedDateTime.now(),
