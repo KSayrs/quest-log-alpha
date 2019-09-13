@@ -104,7 +104,7 @@ class QuestLogDatabaseTest {
     fun insertAndDeleteTestQuest (){
         questsDao.insertQuest(testQuest)
         questsDao.deleteQuestById(testQuest.id)
-        val retrieved = getValue(questsDao.getQuests())
+        val retrieved = getValue(questsDao.getAllQuests())
         assertEquals(0, retrieved.size)
     }
 }

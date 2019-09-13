@@ -3,20 +3,48 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools" >
 
+    <data>
+        <variable
+                name="questsViewModel"
+                type="com.example.questlogalpha.quests.QuestsViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/questsConstraint"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
 
-        <Button
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/questRecyclerView"
+                android:scrollbars="vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layoutManager = "androidx.recyclerview.widget.LinearLayoutManager"/>
+       <!-- <Button
                 android:text="Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/test_button"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" /> -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/fab_margin"
+                android:tint="#00ECDCDC"
+                android:tintMode="screen"
+                app:backgroundTint="#00BCD4"
                 app:layout_constraintBottom_toBottomOf="parent"
-        />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/questRecyclerView"
+                app:layout_constraintVertical_bias="0.96"
+                app:srcCompat="@android:drawable/ic_input_add" />
 
 
 

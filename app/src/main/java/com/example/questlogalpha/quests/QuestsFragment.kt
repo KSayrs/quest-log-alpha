@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 
 import com.example.questlogalpha.R
+import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentQuestsBinding
 
@@ -41,9 +44,13 @@ class QuestsFragment : Fragment() {
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
 
         val binding: FragmentQuestsBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_quests, container, false)
-
         val application = requireNotNull(this.activity).application
         val dataSource = QuestLogDatabase.getInstance(application).questLogDatabaseDao
+        val viewModelFactory = ViewModelFactory(dataSource, application)
+        val questsViewModel = ViewModelProviders.of(this, viewModelFactory).get(QuestsViewModel::class.java)
+
+        binding.questsViewModel = questsViewModel
+        binding.lifecycleOwner = this
 
         return binding.root
     }

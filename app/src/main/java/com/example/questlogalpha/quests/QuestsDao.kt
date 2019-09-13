@@ -20,7 +20,7 @@ interface QuestsDao {
      * @return all quests.
      */
     @Query("SELECT * FROM quest_table")
-    fun getQuests(): LiveData<List<Quest>>
+    fun getAllQuests(): LiveData<List<Quest>>
 
     /**
      * Select a quest by id.
