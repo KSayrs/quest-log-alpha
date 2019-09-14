@@ -1,6 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent" android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools" >
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <data>
+        <variable
+                name="viewEditQuestViewModel"
+                type="com.example.questlogalpha.vieweditquest.ViewEditQuestViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <EditText
+                android:id="@+id/view_edit_quest_title_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:autofillHints=""
+                android:background="@null"
+                android:fontFamily="@font/roboto"
+                android:hint="@string/title_hint"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="text"
+                android:maxLines="1"
+                android:text="@={viewmodel.title}"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+                android:id="@+id/view_edit_quest_description_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:autofillHints=""
+                android:background="@null"
+                android:fontFamily="@font/roboto"
+                android:hint="@string/description_hint"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="text"
+                android:text="@={viewmodel.description}"
+                app:layout_constraintTop_toBottomOf="@id/view_edit_quest_title_edit_text"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteX="16dp" />
+
+        <!-- TODO put recyclerView for objectives here -->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/rewards_header_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/view_edit_quest_description_edit_text"
+                app:layout_constraintStart_toStartOf="parent">
+
+            <ImageButton
+                    android:id="@+id/add_rewards_button"
+                    app:srcCompat="@drawable/ic_add"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/rewards_header_text_view"
+                    app:layout_constraintTop_toTopOf="@id/rewards_header_text_view"
+                    style="@style/quest_element_header_button"
+                    />
+
+            <TextView
+                    android:id="@+id/rewards_header_text_view"
+                    android:text="@string/rewards"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:layout_editor_absoluteX="16dp"
+                    style="@style/quest_element_header_text" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+                android:id="@+id/difficulty_text_view"
+                style="@style/quest_element_text"
+                android:text="@string/difficulty"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rewards_header_layout" />
+        <Spinner
+                android:id="@+id/difficulty_spinner"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/familiar_notifications_header_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/difficulty_text_view"
+                app:layout_constraintStart_toEndOf="@id/difficulty_text_view"
+                app:layout_constraintTop_toTopOf="@id/difficulty_text_view" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/familiar_notifications_header_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/difficulty_text_view"
+                app:layout_constraintStart_toStartOf="parent">
+
+            <ImageButton
+                    android:id="@+id/add_familiar_notification_button"
+                    app:srcCompat="@drawable/ic_add"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/familiar_notifications_header_text_view"
+                    app:layout_constraintTop_toTopOf="@id/familiar_notifications_header_text_view"
+                    style="@style/quest_element_header_button"
+                    />
+
+            <TextView
+                    android:id="@+id/familiar_notifications_header_text_view"
+                    android:text="@string/familiar_notifications"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:layout_editor_absoluteX="16dp"
+                    style="@style/quest_element_header_text" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

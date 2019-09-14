@@ -72,7 +72,7 @@ data class Quest(
   // var objectives: ArrayList<Objective> = arrayListOf(),
 
     @ColumnInfo
-    var questLine: Long = 0L,
+    var questLine: String = "",
 
     // BI for stats
     @ColumnInfo(name="times_completed")

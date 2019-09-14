@@ -3,6 +3,7 @@ package com.example.questlogalpha.quests
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.example.questlogalpha.data.Quest
 import kotlinx.coroutines.*
 
@@ -21,13 +22,24 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
     private var newQuest = MutableLiveData<Quest?>()
     private val allQuests = database.getAllQuests()
 
+//   val questsString = Transformations.map(allQuests) {quests ->
+//     //  formatQuests(quests,application.resources)
+//   }
+
     init {
-    //    initializeQuest()
+        initializeQuest()
     }
 
-    private fun initializeQuest(questId: String) {
+    private fun initializeQuest() {
         uiScope.launch {
-            newQuest.value = getQuestFromDatabase(questId)
+            val x = getAllQuests()
+            newQuest.value = x?.get(0)
+        }
+    }
+
+    private suspend fun getAllQuests(): List<Quest>? {
+        return withContext(Dispatchers.IO){
+            database.getAllQuests().value
         }
     }
 
@@ -39,7 +51,7 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
 
     fun onQuestCreateFinished() {
         uiScope.launch {
-            val quest = Quest("")
+            val quest = Quest("New Quest", "test description")
             insert(quest)
             newQuest.value = getQuestFromDatabase(quest.id)
         }
@@ -61,21 +73,21 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
     
     private suspend fun update(quest: Quest) {
         withContext(Dispatchers.IO) {
-            database.update(quest)
+            database.updateQuest(quest)
         }
     }
     
-    //todo this one proably isn't needed
-    fun onClear() {
+    // --------------- delete quest -------------------
+    fun onDeleteQuest(questId: String) {
         uiScope.launch {
-            clear()
+            deleteQuest(questId)
             newQuest.value = null
         }
     }
 
-    suspend fun clear() {
+    private suspend fun deleteQuest(questId: String) {
          withContext(Dispatchers.IO) {
-             database.clear()
+             database.deleteQuestById(questId)
          }
     }
     

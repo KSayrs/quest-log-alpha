@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.quests.QuestsDao
 import com.example.questlogalpha.quests.QuestsViewModel
+import com.example.questlogalpha.vieweditquest.ViewEditQuestViewModel
 import java.lang.Appendable
 
 /**
@@ -38,8 +39,8 @@ class ViewModelFactory constructor(
             when {
                 isAssignableFrom(QuestsViewModel::class.java) ->
                     QuestsViewModel(questsDataSource, application)
-            //   isAssignableFrom(TaskDetailViewModel::class.java) ->
-            //       TaskDetailViewModel(tasksRepository)
+                isAssignableFrom(ViewEditQuestViewModel::class.java) ->
+                    ViewEditQuestViewModel(questsDataSource, application)
             //   isAssignableFrom(AddEditTaskViewModel::class.java) ->
             //       AddEditTaskViewModel(tasksRepository)
             //   isAssignableFrom(TasksViewModel::class.java) ->
