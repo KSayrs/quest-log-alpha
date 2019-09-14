@@ -51,6 +51,35 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
             database.insertQuest(quest)
         }
     }
+    
+        
+    fun onQuestUpdateFinished(quest: Quest) {
+        uiScope.launch {
+            update(quest)
+        }
+    }
+    
+    private suspend fun update(quest: Quest) {
+        withContext(Dispatchers.IO) {
+            database.update(quest)
+        }
+    }
+    
+    //todo this one proably isn't needed
+    fun onClear() {
+        uiScope.launch {
+            clear()
+            newQuest.value = null
+        }
+    }
+
+    suspend fun clear() {
+         withContext(Dispatchers.IO) {
+             database.clear()
+         }
+    }
+    
+    
  //  private val _items = MutableLiveData<List<Quest>>().apply { value = emptyList() }
  //  val items: LiveData<List<Quest>> = _items
 }
