@@ -10,6 +10,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/viewEditQuestConstraint"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -25,7 +26,7 @@
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="text"
                 android:maxLines="1"
-                android:text="@={viewmodel.title}"
+                android:text="@={viewEditQuestViewModel.title}"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textStyle="bold"
@@ -43,13 +44,14 @@
                 android:hint="@string/description_hint"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="text"
-                android:text="@={viewmodel.description}"
+                android:text="@={viewEditQuestViewModel.description}"
                 app:layout_constraintTop_toBottomOf="@id/view_edit_quest_title_edit_text"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:layout_editor_absoluteX="16dp" />
 
         <!-- TODO put recyclerView for objectives here -->
 
+        <!-- =================== Rewards =================== -->
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/rewards_header_layout"
                 android:layout_width="match_parent"
@@ -75,6 +77,7 @@
                     style="@style/quest_element_header_text" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- =================== Difficulty =================== -->
         <TextView
                 android:id="@+id/difficulty_text_view"
                 style="@style/quest_element_text"
@@ -91,6 +94,8 @@
                 app:layout_constraintStart_toEndOf="@id/difficulty_text_view"
                 app:layout_constraintTop_toTopOf="@id/difficulty_text_view" />
 
+        <!-- =================== Familiar Alerts =================== -->
+
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/familiar_notifications_header_layout"
                 android:layout_width="match_parent"
@@ -104,8 +109,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="@id/familiar_notifications_header_text_view"
                     app:layout_constraintTop_toTopOf="@id/familiar_notifications_header_text_view"
-                    style="@style/quest_element_header_button"
-                    />
+                    style="@style/quest_element_header_button" />
 
             <TextView
                     android:id="@+id/familiar_notifications_header_text_view"

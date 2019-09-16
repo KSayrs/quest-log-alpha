@@ -1,8 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/navigation" app:startDestination="@id/questsFragment">
+            android:id="@+id/navigation" app:startDestination="@id/mainViewFragment">
 
     <fragment android:id="@+id/questsFragment" android:name="com.example.questlogalpha.quests.QuestsFragment"
               android:label="QuestsFragment"/>
+    <fragment
+            android:id="@+id/viewEditQuestFragment"
+            android:name="com.example.questlogalpha.vieweditquest.ViewEditQuestFragment"
+            android:label="ViewEditQuestFragment" >
+        <action
+                android:id="@+id/action_viewEditQuestFragment_to_mainViewFragment"
+                app:destination="@id/mainViewFragment" />
+        <argument
+                android:name="questId"
+                app:argType="string" />
+    </fragment>
+    <fragment
+            android:id="@+id/mainViewFragment"
+            android:name="com.example.questlogalpha.ui.main.MainViewFragment"
+            android:label="MainViewFragment" >
+        <action
+                android:id="@+id/action_mainViewFragment_to_viewEditQuestFragment"
+                app:destination="@id/viewEditQuestFragment" />
+    </fragment>
 </navigation>

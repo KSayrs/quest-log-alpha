@@ -20,10 +20,12 @@ private val TAB_TITLES = arrayOf(
 class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) : FragmentPagerAdapter(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {
-        when (position) {
-            0 -> return PlaceholderFragment.newInstance(position + 1 )
-            1 -> return QuestsFragment()
-            else -> { return PlaceholderFragment.newInstance(position + 1 )}
+        return when (position) {
+            0 -> PlaceholderFragment.newInstance(position + 1 )
+            1 -> QuestsFragment()
+            else -> {
+                PlaceholderFragment.newInstance(position + 1 )
+            }
         }
     }
 

@@ -30,6 +30,7 @@ import java.lang.Appendable
  */
 @Suppress("UNCHECKED_CAST")
 class ViewModelFactory constructor(
+    private val questId: String,
     private val questsDataSource: QuestsDao,
     private val application: Application
 ) : ViewModelProvider.NewInstanceFactory() {
@@ -40,7 +41,7 @@ class ViewModelFactory constructor(
                 isAssignableFrom(QuestsViewModel::class.java) ->
                     QuestsViewModel(questsDataSource, application)
                 isAssignableFrom(ViewEditQuestViewModel::class.java) ->
-                    ViewEditQuestViewModel(questsDataSource, application)
+                    ViewEditQuestViewModel(questId, questsDataSource, application)
             //   isAssignableFrom(AddEditTaskViewModel::class.java) ->
             //       AddEditTaskViewModel(tasksRepository)
             //   isAssignableFrom(TasksViewModel::class.java) ->

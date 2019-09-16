@@ -1,9 +1,10 @@
 package com.example.questlogalpha.quests
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import com.example.questlogalpha.data.Quest
 import kotlinx.coroutines.*
 
@@ -26,8 +27,24 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
 //     //  formatQuests(quests,application.resources)
 //   }
 
+    private val _navigateToViewEditQuest = MutableLiveData<Quest>()
+
+    /**
+     * If this is non-null, immediately navigate to [ViewEditQuestViewModel] and call [doneNavigating]
+     */
+    val navigateToViewEditQuest: LiveData<Quest>
+        get() = _navigateToViewEditQuest
+
+    /**
+     * Call this immediately after navigating to [ViewEditQuestFragment]
+     */
+    fun doneNavigating() {
+        _navigateToViewEditQuest.value = null
+    }
+
     init {
-        initializeQuest()
+        Log.d("QusetsVM","QuestsViewModel initiated")
+       // initializeQuest()
     }
 
     private fun initializeQuest() {
@@ -49,11 +66,12 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
         }
     }
 
-    fun onQuestCreateFinished() {
+    fun onQuestCreate() {
         uiScope.launch {
-            val quest = Quest("New Quest", "test description")
-            insert(quest)
-            newQuest.value = getQuestFromDatabase(quest.id)
+            val n = Quest("Test", "description")
+            insert(n)
+            Log.d("onQuestCreate", "Logging")
+            _navigateToViewEditQuest.value = n
         }
     }
 
@@ -76,7 +94,7 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
             database.updateQuest(quest)
         }
     }
-    
+
     // --------------- delete quest -------------------
     fun onDeleteQuest(questId: String) {
         uiScope.launch {

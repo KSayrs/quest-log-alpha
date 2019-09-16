@@ -29,7 +29,7 @@ class QuestsAdapter: RecyclerView.Adapter<TextItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextItemViewHolder {
         var layoutInflater = LayoutInflater.from(parent.context)
-        var view = layoutInflater.inflate(R.layout.text_item_view, parent, false) as TextView
+        var view = layoutInflater.inflate(R.layout.fragment_view_edit_quest, parent, false) as TextView
         return TextItemViewHolder(view)
     }
 

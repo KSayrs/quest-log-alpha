@@ -6,7 +6,7 @@ import androidx.room.TypeConverter
  * To be used with the filter by. Enums may cause performance issues, but that's an investigation for another time.
  */
 enum class Difficulty {
-    TRIVIAL,
+    TRIVIAL(),
     EASY,
     MEDIUM,
     HARD,
