@@ -19,8 +19,9 @@ class MainViewFragment : Fragment() {
         binding.lifecycleOwner = this
 
         // left/right scrolling. This activity probably won't actually need anything else.
-        val sectionsPagerAdapter = SectionsPagerAdapter(activity!!.applicationContext, activity!!.supportFragmentManager) //todo is this right?
-        binding.viewPager.adapter = sectionsPagerAdapter
+     //   val sectionsPagerAdapter = SectionsPagerAdapter(activity!!.applicationContext, activity!!.supportFragmentManager)
+        // binding.viewPager.adapter = sectionsPagerAdapter
+        binding.viewPager.adapter = SectionsPagerAdapter(activity!!.applicationContext, childFragmentManager) // so far this one doesn't have the blank back problem
         binding.tabs.setupWithViewPager(binding.viewPager)
 
         // other things in the main activity
