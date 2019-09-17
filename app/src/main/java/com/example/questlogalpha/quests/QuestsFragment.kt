@@ -44,14 +44,24 @@ class QuestsFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
 
-        var ab = (activity as AppCompatActivity).supportActionBar
-        if(ab == null){
+        var supportActionBar = (activity as AppCompatActivity).supportActionBar
+        if(supportActionBar == null){
             Log.e("QuestsFragment.kt: onCreate: ", "supportActionBar is null.")
         }
         else {
-            ab.hide()
+            supportActionBar.hide()
         }
       //  (activity as AppCompatActivity).supportActionBar!!.hide()
+    }
+
+    // Hide the navigation bar when we're on this activity
+    override fun onResume() {
+        super.onResume()
+        Log.d("QuestsFragment.kt: onResume", " called")
+
+        val supportActionBar = (activity as AppCompatActivity).supportActionBar
+        if(supportActionBar == null) Log.e("MainActivity.kt: onResume: ", "supportActionBar is null.")
+        else if(supportActionBar.isShowing) supportActionBar.hide()
     }
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
