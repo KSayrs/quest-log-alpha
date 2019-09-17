@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 
 
-// todo change toolbar styling in xml file
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,5 +22,25 @@ class MainActivity : AppCompatActivity() {
         else {
             supportActionBar?.hide()
         }
+    }
+    
+    // Hide the navigation bar when we're on this activity
+    override fun onResume() {
+        super.onResume()
+        Log.d("MainActivity.kt: onResume", " called")
+
+        if(supportActionBar == null){
+            Log.e("MainActivity.kt: onResume: ", "supportActionBar is null.")
+        }
+        else {
+            if(supportActionBar!!.isShowing) supportActionBar!!.hide()
+        }
+    }
+
+    // This method is called when the up button is pressed. Just mimic the back button for now.
+    // The back button takes you back to this activity instead of a fragment, which doesn't have a navController.
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 }
