@@ -35,7 +35,10 @@ class ViewEditQuestFragment : Fragment() {
         spinner.adapter = ArrayAdapter<Difficulty>(application, android.R.layout.simple_spinner_item, Difficulty.values())
         spinner.onItemSelectedListener = viewEditQuestViewModel
 
-        (activity as AppCompatActivity).supportActionBar!!.show()
+        // show the action bar on this page
+        val actionbar = (activity as AppCompatActivity).supportActionBar
+        actionbar!!.setDisplayHomeAsUpEnabled(true)
+        actionbar.show()
 
         return binding.root
     }
