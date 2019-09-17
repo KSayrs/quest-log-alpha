@@ -12,4 +12,6 @@
     <string name="add">Add</string>
     <string name="familiar_notifications">Familiar Alerts</string>
     <string name="difficulty">Difficulty</string>
+    <string name="done">Done</string>
+    <string name="abandon">Abandon</string>
 </resources>
