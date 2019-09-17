@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -13,7 +14,6 @@ import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
-import kotlinx.android.synthetic.main.fragment_view_edit_quest.*
 import com.example.questlogalpha.quests.Difficulty
 
 
@@ -34,6 +34,8 @@ class ViewEditQuestFragment : Fragment() {
         val spinner: Spinner = binding.difficultySpinner
         spinner.adapter = ArrayAdapter<Difficulty>(application, android.R.layout.simple_spinner_item, Difficulty.values())
         spinner.onItemSelectedListener = viewEditQuestViewModel
+
+        (activity as AppCompatActivity).supportActionBar!!.show()
 
         return binding.root
     }
