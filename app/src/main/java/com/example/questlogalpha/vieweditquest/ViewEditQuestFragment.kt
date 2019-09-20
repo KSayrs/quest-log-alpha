@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.navArgs
 import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
@@ -19,18 +20,26 @@ import com.example.questlogalpha.quests.Difficulty
 
 class ViewEditQuestFragment : Fragment() {
 
+    private var viewModel : ViewEditQuestViewModel ?= null
+
+ //   private val args = ViewEditQuestFragmentArgs.fromBundle(arguments!!)
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
 
         val binding: FragmentViewEditQuestBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_view_edit_quest, container, false)
         val application = requireNotNull(this.activity).application
         val dataSource = QuestLogDatabase.getInstance(application).questLogDatabaseDao
         val arguments =  ViewEditQuestFragmentArgs.fromBundle(arguments)
+
         val viewModelFactory = ViewModelFactory(arguments.questId, dataSource, application)
         val viewEditQuestViewModel = ViewModelProviders.of(this, viewModelFactory).get(ViewEditQuestViewModel::class.java)
+
+        viewModel = viewEditQuestViewModel
 
         binding.viewEditQuestViewModel = viewEditQuestViewModel
         binding.lifecycleOwner = this
 
+        // set up spinner
         val spinner: Spinner = binding.difficultySpinner
         spinner.adapter = ArrayAdapter<Difficulty>(application, android.R.layout.simple_spinner_item, Difficulty.values())
         spinner.onItemSelectedListener = viewEditQuestViewModel
@@ -47,17 +56,31 @@ class ViewEditQuestFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        Log.d("KSLOG", "onCreateOptionsMenu()")
+        Log.d(TAG, "onCreateOptionsMenu()")
         activity!!.menuInflater.inflate(R.menu.menu_actionbar, menu)
     }
 
     // handle button activities
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(viewModel == null){
+            Toast.makeText(this.context, "Please try again.", Toast.LENGTH_SHORT).show()
+            Log.e("ViewEditQuestFragment: onOptionsItemSelected", "viewModel is null!!")
+            return false
+        }
+
         val id = item.itemId
-        Log.d("KSLOG", "onOptionsItemSelected()")
+
+        // save quest
         if (id == R.id.action_done_editing) {
-            Toast.makeText(this.context, "toast", Toast.LENGTH_SHORT).show()
+            viewModel!!.onSaveQuest()
+            Toast.makeText(this.context, "quest saved", Toast.LENGTH_SHORT).show()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    // -------------------------- log tag ------------------------------ //
+
+    companion object {
+        const val TAG: String = "KSLOG: ViewEditQuestFragment"
     }
 }

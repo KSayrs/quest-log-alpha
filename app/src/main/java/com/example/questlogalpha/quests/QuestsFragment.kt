@@ -91,7 +91,7 @@ class QuestsFragment : Fragment() {
                         MainViewFragmentDirections.actionMainViewFragmentToViewEditQuestFragment(quest.id))
                 }
                 else {
-                    Log.e("QuestsFragment: ","Current destination is " + this.findNavController().currentDestination?.label + " instead of R.id.mainViewFragment: " + R.id.mainViewFragment)
+                    Log.e(TAG,"Current destination is " + this.findNavController().currentDestination?.label + " instead of R.id.mainViewFragment!")
                 }
                 // Reset state to make sure we only navigate once, even if the device
                 // has a configuration change.
@@ -100,5 +100,11 @@ class QuestsFragment : Fragment() {
         })
 
         return binding.root
+    }
+
+    // -------------------------- log tag ------------------------------ //
+
+    companion object {
+        const val TAG: String = "KSLOG: QuestsFragment"
     }
 }

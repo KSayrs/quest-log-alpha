@@ -20,19 +20,19 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
     }
 
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private var newQuest = MutableLiveData<Quest?>()
+    private var selectedQuest = MutableLiveData<Quest?>()
     private val allQuests = database.getAllQuests()
 
 //   val questsString = Transformations.map(allQuests) {quests ->
 //     //  formatQuests(quests,application.resources)
 //   }
 
-    private val _navigateToViewEditQuest = MutableLiveData<Quest>()
+    private val _navigateToViewEditQuest = MutableLiveData<Quest?>()
 
     /**
-     * If this is non-null, immediately navigate to [ViewEditQuestViewModel] and call [doneNavigating]
+     * When true immediately navigate back to the [ViewEditQuestFragment]
      */
-    val navigateToViewEditQuest: LiveData<Quest>
+    val navigateToViewEditQuest: LiveData<Quest?>
         get() = _navigateToViewEditQuest
 
     /**
@@ -43,14 +43,14 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
     }
 
     init {
-        Log.d("QusetsVM","QuestsViewModel initiated")
+        Log.d("$TAG QusetsVM","QuestsViewModel initiated")
        // initializeQuest()
     }
 
     private fun initializeQuest() {
         uiScope.launch {
             val x = getAllQuests()
-            newQuest.value = x?.get(0)
+         //   newQuest.value = x?.get(0)
         }
     }
 
@@ -68,10 +68,19 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
 
     fun onQuestCreate() {
         uiScope.launch {
-            val n = Quest("Test", "description")
-            insert(n)
-            Log.d("onQuestCreate", "Logging")
-            _navigateToViewEditQuest.value = n
+           // val n = Quest("Test", "description")
+           // insert(n)
+            Log.d("$TAG onQuestCreate", "Logging")
+            _navigateToViewEditQuest.value = Quest("Test", "description") // todo ???? can we change this to bool
+        }
+    }
+
+    fun onQuestEdit(questId: String) {
+        uiScope.launch {
+            // val n = Quest("Test", "description")
+            // insert(n)
+            Log.d("$TAG onQuestEdit", "Logging")
+            _navigateToViewEditQuest.value = Quest("Test", "description")
         }
     }
 
@@ -81,14 +90,13 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
             database.insertQuest(quest)
         }
     }
-    
-        
+
     fun onQuestUpdateFinished(quest: Quest) {
         uiScope.launch {
             update(quest)
         }
     }
-    
+
     private suspend fun update(quest: Quest) {
         withContext(Dispatchers.IO) {
             database.updateQuest(quest)
@@ -99,7 +107,6 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
     fun onDeleteQuest(questId: String) {
         uiScope.launch {
             deleteQuest(questId)
-            newQuest.value = null
         }
     }
 
@@ -112,4 +119,10 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
     
  //  private val _items = MutableLiveData<List<Quest>>().apply { value = emptyList() }
  //  val items: LiveData<List<Quest>> = _items
+    // -------------------------- log tag ------------------------------ //
+
+    companion object {
+        const val TAG: String = "KSLOG: QuestsViewModel"
+    }
+
 }
