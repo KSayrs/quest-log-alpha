@@ -3,17 +3,13 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- "Done", should appear as action button if possible. Icon will ve a check mark. -->
-    <item
-            android:id="@+id/action_done_editing"
+    <item android:id="@+id/action_done_editing"
             android:icon="@drawable/ic_add"
-            android:iconTint="#00FFFFFF"
             android:title="@string/done"
-            app:showAsAction="ifRoom"
-            app:theme="@style/white_icon_style" />
+            app:showAsAction="ifRoom" />
 
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/action_abandon_quest"
-            app:theme="@style/white_icon_style"
             android:title="@string/abandon"
             app:showAsAction="never" />
 </menu>
