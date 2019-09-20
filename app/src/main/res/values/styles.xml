@@ -57,4 +57,9 @@
         <item name="colorControlNormal">@color/colorWhite</item>
     </style>
 
+    <style name="white_icon_style">
+        <item name="android:tint">@color/colorWhite</item>
+        <item name="android:drawableTop">@color/colorWhite</item>
+    </style>
+
 </resources>

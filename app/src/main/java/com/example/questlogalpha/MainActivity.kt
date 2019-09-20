@@ -2,8 +2,11 @@ package com.example.questlogalpha
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,7 +26,7 @@ class MainActivity : AppCompatActivity() {
             supportActionBar?.hide()
         }
     }
-    
+
     // Hide the navigation bar when we're on this activity
     override fun onResume() {
         super.onResume()

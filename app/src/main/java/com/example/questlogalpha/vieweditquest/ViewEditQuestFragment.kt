@@ -1,11 +1,11 @@
 package com.example.questlogalpha.vieweditquest
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -40,6 +40,24 @@ class ViewEditQuestFragment : Fragment() {
         actionbar!!.setDisplayHomeAsUpEnabled(true)
         actionbar.show()
 
+        setHasOptionsMenu(true)
+
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        Log.d("KSLOG", "onCreateOptionsMenu()")
+        activity!!.menuInflater.inflate(R.menu.menu_actionbar, menu)
+    }
+
+    // handle button activities
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        Log.d("KSLOG", "onOptionsItemSelected()")
+        if (id == R.id.action_done_editing) {
+            Toast.makeText(this.context, "toast", Toast.LENGTH_SHORT).show()
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

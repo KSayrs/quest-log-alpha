@@ -40,7 +40,7 @@
                 android:layout_margin="@dimen/fab_margin"
                 android:drawableTop="@color/colorWhite"
                 android:onClick="@{() -> questsViewModel.onQuestCreate()}"
-                android:tint="#D7FFFFFF"
+                android:tint="@color/colorWhite"
                 app:backgroundTint="#00BCD4"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
