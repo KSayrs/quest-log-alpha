@@ -79,7 +79,7 @@ class QuestsFragment : Fragment() {
         binding.questsViewModel = questsViewModel
         binding.lifecycleOwner = this
 
-        // Add an Observer on the state variable for Navigating when STOP button is pressed.
+        // Add an Observer on the state variable for Navigating when add quest button is pressed.
         questsViewModel.navigateToViewEditQuest.observe(this, Observer { quest ->
             quest?.let {
                 // We need to get the navController from this, because button is not ready, and it

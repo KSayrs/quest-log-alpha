@@ -9,13 +9,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.navArgs
+import androidx.navigation.fragment.findNavController
 import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
 import com.example.questlogalpha.quests.Difficulty
+import com.example.questlogalpha.quests.QuestsFragment
 
 
 class ViewEditQuestFragment : Fragment() {
@@ -51,6 +53,20 @@ class ViewEditQuestFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
+        viewEditQuestViewModel.navigateToQuestsViewModel.observe(this, Observer {
+                if (this.findNavController().currentDestination?.id == R.id.viewEditQuestFragment) {
+                    this.findNavController().navigate(
+                        ViewEditQuestFragmentDirections.actionViewEditQuestFragmentToMainViewFragment())
+                }
+                else {
+                    Log.e(QuestsFragment.TAG,"Current destination is " + this.findNavController().currentDestination?.label + " instead of R.id.viewEditQUestFragment!")
+                    return@Observer // this is a hack, otherwisethis becomes an infinite loop
+                }
+
+                viewEditQuestViewModel.doneNavigating()
+        })
+
+        Log.d(TAG,"Current destination is " + this.findNavController().currentDestination?.label)
         return binding.root
     }
 

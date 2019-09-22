@@ -63,10 +63,10 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         viewModelScope.launch {
             if(isNewQuest) insert()
             else update()
-        }
 
-        // todo this doesn't work
-        _navigateToQuestsViewModel.value = true // navigate back to the quests screen
+            // todo this doesn't work
+            _navigateToQuestsViewModel.value = true // navigate back to the quests screen
+        }
     }
 
     private suspend fun update() {
@@ -121,11 +121,12 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
     // ------------------ navigation -----------------
 
-    private val _navigateToQuestsViewModel = MutableLiveData<Boolean?>()
-    val navigateToQuestsViewModel: LiveData<Boolean?> get() = _navigateToQuestsViewModel
+    private val _navigateToQuestsViewModel = MutableLiveData<Boolean>()
+    val navigateToQuestsViewModel: LiveData<Boolean> get() = _navigateToQuestsViewModel
 
     fun doneNavigating() {
-        _navigateToQuestsViewModel.value = null
+        Log.d(TAG,"doneNavigating() called")
+        _navigateToQuestsViewModel.value = false
     }
 
 
