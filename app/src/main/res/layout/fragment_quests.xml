@@ -15,15 +15,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
 
-       <!-- <android.support.v7.widget.RecyclerView
-                android:id="@+id/questRecyclerView"
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/quest_list"
                 android:scrollbars="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layoutManager = "androidx.recyclerview.widget.LinearLayoutManager"
-                /> -->
+                />
        <!-- <Button
                 android:text="Button"
                 android:layout_width="wrap_content"

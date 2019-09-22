@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import com.example.questlogalpha.QuestsAdapter
 
 import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
@@ -71,6 +72,9 @@ class QuestsFragment : Fragment() {
         val dataSource = QuestLogDatabase.getInstance(application).questLogDatabaseDao
         val viewModelFactory = ViewModelFactory("", dataSource, application)
         val questsViewModel = ViewModelProviders.of(this, viewModelFactory).get(QuestsViewModel::class.java)
+        val adapter = QuestsAdapter()
+        binding.questList.adapter = adapter
+
 
         binding.questsViewModel = questsViewModel
         binding.lifecycleOwner = this
