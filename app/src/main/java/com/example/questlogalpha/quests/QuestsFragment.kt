@@ -75,7 +75,6 @@ class QuestsFragment : Fragment() {
         val adapter = QuestsAdapter()
         binding.questList.adapter = adapter
 
-
         binding.questsViewModel = questsViewModel
         binding.lifecycleOwner = this
 
@@ -100,6 +99,13 @@ class QuestsFragment : Fragment() {
                 // Reset state to make sure we only navigate once, even if the device
                 // has a configuration change.
                 questsViewModel.doneNavigating()
+            }
+        })
+
+        // assign the quests to the adapter stuff
+        questsViewModel.quests.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                adapter.data = it
             }
         })
 

@@ -23,7 +23,6 @@ import androidx.room.PrimaryKey
 import com.example.questlogalpha.quests.Difficulty
 import java.time.ZonedDateTime
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Immutable model class for a Task. In order to compile with Room, we can't use @JvmOverloads to

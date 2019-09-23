@@ -64,7 +64,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             if(isNewQuest) insert()
             else update()
 
-            // todo this doesn't work
             _navigateToQuestsViewModel.value = true // navigate back to the quests screen
         }
     }
