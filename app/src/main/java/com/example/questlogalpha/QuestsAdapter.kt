@@ -6,6 +6,12 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.questlogalpha.data.Quest
 import kotlinx.android.synthetic.main.quest_item_view.view.*
+import android.util.Log
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModel
+import com.example.questlogalpha.databinding.QuestItemViewBinding
+import com.example.questlogalpha.quests.QuestsViewModel
 
 /**
  * ViewHolder that holds a single [ConstraintLayout].
@@ -14,8 +20,9 @@ import kotlinx.android.synthetic.main.quest_item_view.view.*
  * to the RecyclerView such as where on the screen it was last drawn during scrolling.
  *
  * // todo move this class elsewhere
+ * // todo implement this a different way, maybe with an interface and/or a separate handler for the on-click so that the adapter doesn't require a reference to the viewModel.
  */
-class QuestItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.ViewHolder(constraintLayout){}
+class QuestItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.ViewHolder(constraintLayout)
 
 class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
     var data = listOf<Quest>()
@@ -24,8 +31,11 @@ class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
             notifyDataSetChanged()
         }
 
+    var viewModel: QuestsViewModel? = null
+
     override fun getItemCount() = data.size
 
+    // in theory this happens after onCreate
     override fun onBindViewHolder(holder: QuestItemViewHolder, position: Int) {
         val item = data[position]
         holder.constraintLayout.quest_title.text = item.title
@@ -34,7 +44,33 @@ class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestItemViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val view = layoutInflater.inflate(R.layout.quest_item_view, parent, false) as ConstraintLayout
-        return QuestItemViewHolder(view)
+        val binding: QuestItemViewBinding = DataBindingUtil.inflate(layoutInflater, R.layout.quest_item_view, parent, false)
+        val holder = QuestItemViewHolder(binding.root.quest_item_view_layout)
+
+        binding.position = holder.adapterPosition
+
+        binding.deleteQuestIcon.setOnClickListener {
+            val pos = holder.adapterPosition
+
+            Toast.makeText(parent.context, "Adapter position: $pos", Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "onCreateViewHolder: position: $pos")
+            if(viewModel != null){
+                viewModel!!.onDeleteQuest(data[pos].id)
+            }
+            else Log.e(TAG, "binding.questsViewModel is null!")
+        }
+
+        return holder
+    }
+
+    fun remove(position: Int) {
+     //   data.removeAt(position) // removing can happen in the database itself
+        notifyItemChanged(position)
+        notifyItemRangeRemoved(position, 1)
+    }
+
+    // -------------------------- log tag ------------------------------ //
+    companion object {
+        const val TAG: String = "KSLOG: QuestsAdapter"
     }
 }

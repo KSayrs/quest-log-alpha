@@ -1,65 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/quest_item_view-layout"
-        android:layout_width="match_parent" android:layout_height="80dp">
+        >
 
-    <!-- TODO set this up with a default value like LifeRPG (or find a good way to GONE it when there is no image) -->
-    <ImageView
-            android:id="@+id/quest_icon"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            android:tint="@color/colorAccent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="?attr/actionModeSelectAllDrawable" />
+    <data>
+        <variable
+                name="position"
+                type="int" />
+    </data>
 
-    <TextView
-            android:id="@+id/quest_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/roboto"
-            android:text="Quest Title"
-            android:textSize="24sp"
-            app:layout_constraintStart_toEndOf="@+id/quest_icon"
-            app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/quest_item_view-layout"
+            android:layout_width="match_parent" android:layout_height="80dp">
 
-    <!-- TODO Make this GONE when there is no description -->
-    <TextView
-            android:id="@+id/quest_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/roboto"
-            android:text="Quest Description"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/quest_icon"
-            app:layout_constraintTop_toBottomOf="@id/quest_title" />
+        <!-- TODO set this up with a default value like LifeRPG (or find a good way to GONE it when there is no image) -->
+        <ImageView
+                android:id="@+id/quest_icon"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:tint="@color/colorAccent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="?attr/actionModeSelectAllDrawable" />
 
-    <ImageView
-            android:id="@+id/edit_quest_icon"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="16dp"
-            android:tint="@color/colorPrimary"
-            app:layout_constraintEnd_toStartOf="@+id/delete_quest_icon"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_menu_edit" />
+        <TextView
+                android:id="@+id/quest_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/roboto"
+                android:text="Quest Title"
+                android:textSize="24sp"
+                app:layout_constraintStart_toEndOf="@+id/quest_icon"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-            android:id="@+id/delete_quest_icon"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="12dp"
-            android:tint="@color/colorAccent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_delete" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- TODO Make this GONE when there is no description -->
+        <TextView
+                android:id="@+id/quest_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/roboto"
+                android:text="Quest Description"
+                android:textSize="14sp"
+                app:layout_constraintStart_toEndOf="@+id/quest_icon"
+                app:layout_constraintTop_toBottomOf="@id/quest_title" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/edit_quest_icon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="16dp"
+                android:backgroundTint="#00FFFFFF"
+                android:tint="@color/colorPrimary"
+                app:layout_constraintEnd_toStartOf="@+id/delete_quest_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/ic_menu_edit" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/delete_quest_icon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="12dp"
+                android:backgroundTint="@color/colorWhite"
+                android:tint="@color/colorAccent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/ic_delete" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

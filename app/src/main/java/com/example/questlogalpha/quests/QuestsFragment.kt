@@ -15,6 +15,7 @@ import com.example.questlogalpha.QuestsAdapter
 
 import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
+import com.example.questlogalpha.data.Quest
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentQuestsBinding
 import com.example.questlogalpha.ui.main.MainViewFragmentDirections
@@ -106,8 +107,13 @@ class QuestsFragment : Fragment() {
         questsViewModel.quests.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.data = it
+                adapter.viewModel = binding.questsViewModel
             }
         })
+
+     //   binding.questList.
+
+        // set listener for button
 
         return binding.root
     }

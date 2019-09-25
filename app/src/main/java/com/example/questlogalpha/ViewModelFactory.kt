@@ -39,7 +39,7 @@ class ViewModelFactory constructor(
         with(modelClass) {
             when {
                 isAssignableFrom(QuestsViewModel::class.java) ->
-                    QuestsViewModel(questsDataSource, application)
+                    QuestsViewModel(questsDataSource)
                 isAssignableFrom(ViewEditQuestViewModel::class.java) ->
                     ViewEditQuestViewModel(questId, questsDataSource, application)
             //   isAssignableFrom(AddEditTaskViewModel::class.java) ->

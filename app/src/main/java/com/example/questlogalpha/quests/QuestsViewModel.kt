@@ -1,16 +1,14 @@
 package com.example.questlogalpha.quests
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.questlogalpha.data.Quest
 import kotlinx.coroutines.*
 
-// AndroidViewModel offers application stuff like toasts and cameras. IF this class doesn't need those things, change
-// this to ViewModel.
-class QuestsViewModel (val database: QuestsDao, application: Application) : AndroidViewModel(application) {
+// if you'll need application stuff, change this to AndroidViewModel
+class QuestsViewModel (val database: QuestsDao) : ViewModel() {
 
     private var viewModelJob = Job()
 
@@ -20,15 +18,11 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
     }
 
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private var selectedQuest = MutableLiveData<Quest?>()
-    private val allQuests = database.getAllQuests()
-
-//   val questsString = Transformations.map(allQuests) {quests ->
-//     //  formatQuests(quests,application.resources)
-//   }
+//    private var selectedQuest = MutableLiveData<Quest?>()
 
     private val _navigateToViewEditQuest = MutableLiveData<Quest?>()
 
+    // todo should this be called in a coroutine?
     val quests = database.getAllQuests()
 
     /**
@@ -49,13 +43,6 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
        // initializeQuest()
     }
 
-    private fun initializeQuest() {
-        uiScope.launch {
-            val x = getAllQuests()
-         //   newQuest.value = x?.get(0)
-        }
-    }
-
     private suspend fun getAllQuests(): List<Quest>? {
         return withContext(Dispatchers.IO){
             database.getAllQuests().value
@@ -70,8 +57,6 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
 
     fun onQuestCreate() {
         uiScope.launch {
-           // val n = Quest("Test", "description")
-           // insert(n)
             Log.d("$TAG onQuestCreate", "Logging")
             _navigateToViewEditQuest.value = Quest("Test", "description") // todo ???? can we change this to bool
         }
@@ -79,8 +64,6 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
 
     fun onQuestEdit(questId: String) {
         uiScope.launch {
-            // val n = Quest("Test", "description")
-            // insert(n)
             Log.d("$TAG onQuestEdit", "Logging")
             _navigateToViewEditQuest.value = Quest("Test", "description")
         }
@@ -105,7 +88,7 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
         }
     }
 
-    // --------------- delete quest -------------------
+    // ----------------------- delete quest ---------------------------- //
     fun onDeleteQuest(questId: String) {
         uiScope.launch {
             deleteQuest(questId)
@@ -117,14 +100,9 @@ class QuestsViewModel (val database: QuestsDao, application: Application) : Andr
              database.deleteQuestById(questId)
          }
     }
-    
-    
- //  private val _items = MutableLiveData<List<Quest>>().apply { value = emptyList() }
- //  val items: LiveData<List<Quest>> = _items
-    // -------------------------- log tag ------------------------------ //
 
+    // -------------------------- log tag ------------------------------ //
     companion object {
         const val TAG: String = "KSLOG: QuestsViewModel"
     }
-
 }
