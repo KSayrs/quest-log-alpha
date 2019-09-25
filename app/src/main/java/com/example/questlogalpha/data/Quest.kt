@@ -16,12 +16,10 @@ package com.example.questlogalpha.data
  * limitations under the License.
  */
 
-import android.app.Notification //todo will we need this
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.questlogalpha.quests.Difficulty
-import java.time.ZonedDateTime
 import java.util.*
 
 /**
@@ -88,17 +86,6 @@ data class Quest(
  // @ColumnInfo(name = "date_completed")
  // var dateCompleted: ZonedDateTime? = null
 ) {
-
-    val titleForList: String
-        get() = if (title.isNotEmpty()) title else description
-
-    // todo change to whether or not it is available
-    val isActive
-        get() = !completed
-
     val isAvailable
         get() = !completed
-
-    val isEmpty
-        get() = title.isEmpty() || description.isEmpty()
 }

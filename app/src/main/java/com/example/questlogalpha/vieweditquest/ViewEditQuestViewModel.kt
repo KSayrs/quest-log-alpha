@@ -36,24 +36,23 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     // todo is init correct to use?
-    // todo invert bool
     init {
-        if (!isNewQuest) {
-            // todo apparently this can replace the whole job stuff
+        if (isNewQuest) {
+            title.value = ""
+            description.value = ""
+            difficulty.value = Difficulty.MEDIUM
+        }
+        else
+        {
+            // apparently this can replace the whole job stuff
             viewModelScope.launch {
                 withContext(Dispatchers.IO) {
                     val q: Quest? = database.getQuestById(questId) ?: return@withContext
                     title.value = q!!.title
-                    description.value = q!!.description
-                    difficulty.value = q!!.difficulty
+                    description.value = q.description
+                    difficulty.value = q.difficulty
                 }
             }
-        }
-        else
-        {
-            title.value = ""
-            description.value = "..."
-            difficulty.value = Difficulty.MEDIUM
         }
     }
 
@@ -130,7 +129,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
 
     // -------------------------- log util ------------------------------ //
-
     companion object {
         const val TAG: String = "KSLOG: ViewEditQuestViewModel"
     }

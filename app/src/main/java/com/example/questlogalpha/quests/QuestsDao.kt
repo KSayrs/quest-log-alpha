@@ -11,7 +11,6 @@ import java.time.ZonedDateTime
  * Data Access Object for the quests table.
  */
 
-// todo why is the fun suspended?
 @Dao
 interface QuestsDao {
     /**
