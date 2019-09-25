@@ -60,10 +60,16 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     fun onSaveQuest()
     {
         viewModelScope.launch {
-            if(isNewQuest) insert()
-            else update()
+            if(title.value != "") {
+                if (isNewQuest) insert()
+                else update()
 
-            _navigateToQuestsViewModel.value = true // navigate back to the quests screen
+                _navigateToQuestsViewModel.value = true // navigate back to the quests screen
+            }
+            else
+            {
+                Toast.makeText(getApplication(), "Title is empty!", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

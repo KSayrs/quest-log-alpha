@@ -89,7 +89,6 @@ class ViewEditQuestFragment : Fragment() {
         // save quest
         if (id == R.id.action_done_editing) {
             viewModel!!.onSaveQuest()
-            Toast.makeText(this.context, "quest saved", Toast.LENGTH_SHORT).show()
         }
         return super.onOptionsItemSelected(item)
     }
