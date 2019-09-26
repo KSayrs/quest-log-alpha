@@ -80,8 +80,8 @@ class QuestsFragment : Fragment() {
         binding.lifecycleOwner = this
 
         // Add an Observer on the state variable for Navigating when add quest button is pressed.
-        questsViewModel.navigateToViewEditQuest.observe(this, Observer { quest ->
-            quest?.let {
+        questsViewModel.navigateToViewEditQuest.observe(this, Observer { questId ->
+            questId?.let {
                 // We need to get the navController from this, because button is not ready, and it
                 // just has to be a view. For some reason, this only matters if we hit stop again
                 // after using the back button, not if we hit stop and choose a quality.
@@ -92,7 +92,7 @@ class QuestsFragment : Fragment() {
 
                 if (this.findNavController().currentDestination?.id == R.id.mainViewFragment) {
                     this.findNavController().navigate(
-                        MainViewFragmentDirections.actionMainViewFragmentToViewEditQuestFragment(quest.id))
+                        MainViewFragmentDirections.actionMainViewFragmentToViewEditQuestFragment(questId))
                 }
                 else {
                     Log.e(TAG,"Current destination is " + this.findNavController().currentDestination?.label + " instead of R.id.mainViewFragment!")

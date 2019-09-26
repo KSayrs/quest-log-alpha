@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.questlogalpha.data.Quest
 import kotlinx.coroutines.*
 
@@ -20,7 +21,7 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 //    private var selectedQuest = MutableLiveData<Quest?>()
 
-    private val _navigateToViewEditQuest = MutableLiveData<Quest?>()
+    private val _navigateToViewEditQuest = MutableLiveData<String?>()
 
     // todo should this be called in a coroutine?
     val quests = database.getAllQuests()
@@ -28,7 +29,7 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
     /**
      * When true immediately navigate back to the [ViewEditQuestFragment]
      */
-    val navigateToViewEditQuest: LiveData<Quest?>
+    val navigateToViewEditQuest: LiveData<String?>
         get() = _navigateToViewEditQuest
 
     /**
@@ -58,14 +59,14 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
     fun onQuestCreate() {
         uiScope.launch {
             Log.d("$TAG onQuestCreate", "Logging")
-            _navigateToViewEditQuest.value = Quest("Test", "description") // todo ???? can we change this to bool
+            _navigateToViewEditQuest.value = "" // todo change this to something more comprehensive, like null. Or make it a string instead ofa quest.
         }
     }
 
-    fun onQuestEdit(questId: String) {
+    fun onQuestEdit(quest: Quest) {
         uiScope.launch {
             Log.d("$TAG onQuestEdit", "Logging")
-            _navigateToViewEditQuest.value = Quest("Test", "description")
+            _navigateToViewEditQuest.value = quest.id
         }
     }
 
