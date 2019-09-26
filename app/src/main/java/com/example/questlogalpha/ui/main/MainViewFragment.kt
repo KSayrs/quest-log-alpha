@@ -30,6 +30,8 @@ class MainViewFragment : Fragment() {
                 .setAction("Action", null).show()
         }
 
+        binding.viewPager.currentItem = 1 // todo don't use a hard value
+
         return binding.root
     }
 }
