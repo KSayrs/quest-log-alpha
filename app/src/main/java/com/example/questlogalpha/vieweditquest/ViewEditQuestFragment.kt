@@ -17,7 +17,6 @@ import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
 import com.example.questlogalpha.quests.Difficulty
-import com.example.questlogalpha.quests.QuestsFragment
 
 
 class ViewEditQuestFragment : Fragment() {
@@ -59,7 +58,7 @@ class ViewEditQuestFragment : Fragment() {
                         ViewEditQuestFragmentDirections.actionViewEditQuestFragmentToMainViewFragment())
                 }
                 else {
-                    Log.e(QuestsFragment.TAG,"Current destination is " + this.findNavController().currentDestination?.label + " instead of R.id.viewEditQUestFragment!")
+                    Log.e(TAG,"Current destination is " + this.findNavController().currentDestination?.label + " instead of R.id.viewEditQUestFragment!")
                     return@Observer // this is a hack, otherwisethis becomes an infinite loop
                 }
 
