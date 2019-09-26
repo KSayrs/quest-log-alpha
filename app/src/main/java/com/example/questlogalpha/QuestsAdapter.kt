@@ -60,11 +60,22 @@ class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
             else Log.e(TAG, "binding.questsViewModel is null!")
         }
 
+        binding.editQuestIcon.setOnClickListener {
+            val pos = holder.adapterPosition
+
+            Toast.makeText(parent.context, "Adapter position: $pos", Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "onCreateViewHolder: position: $pos")
+            if(viewModel != null){
+                viewModel!!.onQuestEdit(data[pos])
+            }
+            else Log.e(TAG, "binding.questsViewModel is null!")
+        }
+
         return holder
     }
 
+    // todo shouldn't this be used? It seems to be updating without it though...
     fun remove(position: Int) {
-     //   data.removeAt(position) // removing can happen in the database itself
         notifyItemChanged(position)
         notifyItemRangeRemoved(position, 1)
     }

@@ -16,13 +16,16 @@ import kotlinx.coroutines.*
 
 class ViewEditQuestViewModel (private val questId: String, val database: QuestsDao, application: Application) : AndroidViewModel(application), AdapterView.OnItemSelectedListener {
 
+    val currentQuest : Quest? get() = _currentQuest
+    private var _currentQuest : Quest ?= null
+
     // Two-way databinding, exposing MutableLiveData
     val title = MutableLiveData<String>()
     val description = MutableLiveData<String>()
 
     private val difficulty = MutableLiveData<Difficulty>()
 
-    private var isNewQuest: Boolean = (questId != "")
+    private var isNewQuest: Boolean = true
 
     var toast = Toast.makeText(getApplication(), "Item Selected", Toast.LENGTH_SHORT)
 
@@ -37,10 +40,16 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
     // todo is init correct to use?
     init {
+
+        isNewQuest = (questId == "")
+        Log.d(TAG, "init: isNewQuest: $isNewQuest")
+        Log.d(TAG, "init: questId: $questId")
+
         if (isNewQuest) {
             title.value = ""
             description.value = ""
-            difficulty.value = Difficulty.MEDIUM
+            difficulty.value = Difficulty.MEDIUM // todo change spinner to reflect this
+            Log.d(TAG, "init: creating new quest")
         }
         else
         {
@@ -48,10 +57,15 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             viewModelScope.launch {
                 withContext(Dispatchers.IO) {
                     val q: Quest? = database.getQuestById(questId) ?: return@withContext
-                    title.value = q!!.title
-                    description.value = q.description
-                    difficulty.value = q.difficulty
+
+                    if(q == null) Log.e(TAG, "init: existing quest: quest is null!")
+                    _currentQuest = q
                 }
+
+                // todo figure out a way to fudge data loaded
+                title.value = currentQuest?.title
+                description.value = currentQuest?.description
+                difficulty.value = currentQuest?.difficulty
             }
         }
     }
@@ -75,6 +89,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
     private suspend fun update() {
         withContext(Dispatchers.IO) {
+            // todo shorten this down, now that we have a local currentquest
             val currentQuest:Quest? = database.getQuestById(questId) ?: return@withContext //todo learn what this means
             if(currentQuest == null) {
                 Log.e(TAG,"update called when quest is null!")
