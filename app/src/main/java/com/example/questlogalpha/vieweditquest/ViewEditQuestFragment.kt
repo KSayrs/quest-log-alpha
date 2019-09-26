@@ -18,7 +18,6 @@ import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
 import com.example.questlogalpha.quests.Difficulty
 
-
 class ViewEditQuestFragment : Fragment() {
 
     private var viewModel : ViewEditQuestViewModel ?= null
