@@ -20,14 +20,21 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.questlogalpha.quests.Difficulty
+import java.time.ZonedDateTime
 import java.util.*
 
 /**
- * Immutable model class for a Task. In order to compile with Room, we can't use @JvmOverloads to
+ * Immutable model class for a Quest. In order to compile with Room, we can't use @JvmOverloads to
  * generate multiple constructors.
  *
- * @param title       title of the quest
- * TODO all the rest of the docs
+ * @param title           title of the quest
+ * @param description     description for the quest
+ * @param completed       is the quest complete
+ * @param visible         is the quest visible by default in the recyclerView
+ * @param difficulty      difficulty of the quest
+ * @param questLine       id of the questLine this quest belongs to
+ * @param timesCompleted  how many times has the quest been completed
+ * @param dateCreated     date the quest was created
  */
 @Entity(tableName = "quest_table")
 data class Quest(
@@ -37,16 +44,16 @@ data class Quest(
     @ColumnInfo
     var description: String = "",
     // todo maybe only one reward, and rewards have a type?
-    // todo can column be a whole array of things?
+    // can a column be a whole array of things?
 
-  //  @ColumnInfo(name = "skill_rewards")
-  //  var skillRewards: ArrayList<Skill> = arrayListOf(),
-//
-  //  @ColumnInfo(name = "item_rewards")
-  //  var itemRewards: ArrayList<Item> = arrayListOf(),
+    // todo skill rewards
+  //  @ColumnInfo(name = "skill_rewards") var skillRewards: ArrayList<Skill> = arrayListOf(),
 
-  //  @ColumnInfo
-  //  var notifications: ArrayList<Notification> = arrayListOf(), // todo probably will be custom notification type
+    // todo item rewards
+  //  @ColumnInfo(name = "item_rewards") var itemRewards: ArrayList<Item> = arrayListOf(),
+
+    // todo notifications
+  //  @ColumnInfo var notifications: ArrayList<Notification> = arrayListOf(),
 
     @ColumnInfo
     var completed: Boolean = false,
@@ -56,35 +63,40 @@ data class Quest(
     @ColumnInfo
     var visible: Boolean = true,
 
+    // todo due date/complete by
+    // todo come put with a better name for due date
  //   @ColumnInfo(name = "due_date")
  //   var dueDate: ZonedDateTime? = null,
-//
+
+    // todo date available
  //   @ColumnInfo(name = "date_available")
  //   var dateAvailable: ZonedDateTime? = null,
 
     @ColumnInfo
     var difficulty: Difficulty = Difficulty.MEDIUM,
 
+    // todo objectives
   // @ColumnInfo
   // var objectives: ArrayList<Objective> = arrayListOf(),
 
     @ColumnInfo
     var questLine: String = "",
 
-    // BI for stats
+    // ------------------- BI for stats ---------------------- //
     @ColumnInfo(name="times_completed")
     var timesCompleted: Int = 0,
 
+    // todo date created
+    @ColumnInfo(name = "date_created") val dateCreated: ZonedDateTime = ZonedDateTime.now(),
+
+    // Takes the latest date completed
+    // todo date completed
+    // @ColumnInfo(name = "date_completed") var dateCompleted: ZonedDateTime? = null
+
+    // -------------------- primary key ------------------ //
     // for an unknown reason the primary key simply WILL NOT WORK with testing if it is an int. String it is.
     @PrimaryKey @ColumnInfo
     val id: String = UUID.randomUUID().toString()
-
- // @ColumnInfo(name = "date_created")
- // val dateCreated: ZonedDateTime = ZonedDateTime.now(),
-
- // // Takes the latest date completed
- // @ColumnInfo(name = "date_completed")
- // var dateCompleted: ZonedDateTime? = null
 ) {
     val isAvailable
         get() = !completed
