@@ -9,7 +9,7 @@ import com.example.questlogalpha.quests.DifficultyConverter
 import com.example.questlogalpha.quests.QuestsDao
 
 @Database(entities = [Quest::class], version = 1, exportSchema = false)
-@TypeConverters(DifficultyConverter::class)
+@TypeConverters(DifficultyConverter::class, ZonedDateTimeConverter::class)
 abstract class QuestLogDatabase : RoomDatabase() {
 
     abstract val questLogDatabaseDao: QuestsDao

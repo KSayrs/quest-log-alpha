@@ -83,10 +83,8 @@ data class Quest(
     var questLine: String = "",
 
     // ------------------- BI for stats ---------------------- //
-    @ColumnInfo(name="times_completed")
-    var timesCompleted: Int = 0,
+    @ColumnInfo(name="times_completed") var timesCompleted: Int = 0,
 
-    // todo date created
     @ColumnInfo(name = "date_created") val dateCreated: ZonedDateTime = ZonedDateTime.now(),
 
     // Takes the latest date completed

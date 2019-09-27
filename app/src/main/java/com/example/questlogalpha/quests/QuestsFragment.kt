@@ -11,11 +11,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import com.example.questlogalpha.QuestsAdapter
 
 import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
-import com.example.questlogalpha.data.Quest
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentQuestsBinding
 import com.example.questlogalpha.ui.main.MainViewFragmentDirections

@@ -114,6 +114,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             Log.d(TAG, "Newly made quest description: " + newQuest.description)
             Log.d(TAG, "Newly made quest difficulty: " + newQuest.difficulty)
             Log.d(TAG, "Newly made quest id: " + newQuest.id)
+            Log.d(TAG, "Quest made on: " + newQuest.dateCreated)
         }
     }
 

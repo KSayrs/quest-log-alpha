@@ -1,4 +1,4 @@
-package com.example.questlogalpha
+package com.example.questlogalpha.quests
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,9 +9,8 @@ import kotlinx.android.synthetic.main.quest_item_view.view.*
 import android.util.Log
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModel
+import com.example.questlogalpha.R
 import com.example.questlogalpha.databinding.QuestItemViewBinding
-import com.example.questlogalpha.quests.QuestsViewModel
 
 /**
  * ViewHolder that holds a single [ConstraintLayout].
@@ -44,8 +43,10 @@ class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestItemViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding: QuestItemViewBinding = DataBindingUtil.inflate(layoutInflater, R.layout.quest_item_view, parent, false)
-        val holder = QuestItemViewHolder(binding.root.quest_item_view_layout)
+        val binding: QuestItemViewBinding = DataBindingUtil.inflate(layoutInflater,
+            R.layout.quest_item_view, parent, false)
+        val holder =
+            QuestItemViewHolder(binding.root.quest_item_view_layout)
 
         binding.position = holder.adapterPosition
 
