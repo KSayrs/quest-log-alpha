@@ -47,7 +47,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         if (isNewQuest) {
             title.value = ""
             description.value = ""
-            difficulty.value = Difficulty.MEDIUM // todo change spinner to reflect this
+            difficulty.value = Difficulty.MEDIUM
             Log.d(TAG, "init: creating new quest")
         }
         else

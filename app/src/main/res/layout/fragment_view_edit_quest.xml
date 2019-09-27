@@ -50,7 +50,7 @@
                 app:layout_constraintTop_toBottomOf="@id/view_edit_quest_title_edit_text"
                 tools:layout_editor_absoluteX="16dp" />
 
-        <!-- TODO put recyclerView for objectives here -->
+        <!-- TODO put checkList for objectives here -->
 
         <!-- =================== Rewards =================== -->
         <androidx.constraintlayout.widget.ConstraintLayout

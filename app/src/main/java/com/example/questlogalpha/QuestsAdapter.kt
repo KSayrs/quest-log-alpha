@@ -74,7 +74,7 @@ class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
         return holder
     }
 
-    // todo shouldn't this be used? It seems to be updating without it though...
+    // shouldn't this be used? It seems to be updating without it though...
     fun remove(position: Int) {
         notifyItemChanged(position)
         notifyItemRangeRemoved(position, 1)

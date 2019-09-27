@@ -63,6 +63,7 @@ class ViewEditQuestFragment : Fragment() {
         })
 
         viewEditQuestViewModel.navigateToQuestsViewModel.observe(this, Observer {
+            // todo test with activity!!.onBackPressed()
                 if (this.findNavController().currentDestination?.id == R.id.viewEditQuestFragment) {
                     this.findNavController().navigate(
                         ViewEditQuestFragmentDirections.actionViewEditQuestFragmentToMainViewFragment())
