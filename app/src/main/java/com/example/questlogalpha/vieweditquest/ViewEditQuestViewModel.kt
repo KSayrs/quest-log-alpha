@@ -22,8 +22,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     // Two-way databinding, exposing MutableLiveData
     val title = MutableLiveData<String>()
     val description = MutableLiveData<String>()
-
-    private val difficulty = MutableLiveData<Difficulty>()
+    val difficulty = MutableLiveData<Difficulty>()
 
     private var isNewQuest: Boolean = true
 
@@ -38,7 +37,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    // todo is init correct to use?
+    // init happens after the fragment's onCreateView
     init {
 
         isNewQuest = (questId == "")
@@ -62,7 +61,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
                     _currentQuest = q
                 }
 
-                // todo figure out a way to fudge data loaded
+                // todo figure out a way to wait until data is loaded
                 title.value = currentQuest?.title
                 description.value = currentQuest?.description
                 difficulty.value = currentQuest?.difficulty
@@ -89,19 +88,20 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
     private suspend fun update() {
         withContext(Dispatchers.IO) {
-            // todo shorten this down, now that we have a local currentquest
-            val currentQuest:Quest? = database.getQuestById(questId) ?: return@withContext //todo learn what this means
-            if(currentQuest == null) {
+            if(_currentQuest == null) {
                 Log.e(TAG,"update called when quest is null!")
+                Toast.makeText(getApplication(), "Something went wrong.", Toast.LENGTH_SHORT).show()
+                return@withContext
             }
 
-            currentQuest!!.title = title.value.toString()
-            Log.d(TAG, "quest title: " + currentQuest.title)
-            currentQuest.description = title.value.toString()
-            Log.d(TAG, "quest title: " + currentQuest.description)
-            currentQuest.difficulty = difficulty.value!!
-            Log.d(TAG, "Quest ID: " + currentQuest.id)
-            database.updateQuest(currentQuest)
+            Log.d(TAG, "quest title: " + _currentQuest!!.title)
+            Log.d(TAG, "Quest ID: " + currentQuest!!.id)
+            Log.d(TAG, "quest title: " + currentQuest!!.description)
+
+            _currentQuest!!.title = title.value.toString()
+            _currentQuest!!.description = title.value.toString()
+            _currentQuest!!.difficulty = difficulty.value!!
+            database.updateQuest(_currentQuest!!)
         }
     }
 
@@ -120,7 +120,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     // ----------- on-click handlers --------------
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
-
         difficulty.value = parent.getItemAtPosition(pos) as Difficulty? //Difficulty.valueOf(parent.getItemAtPosition(pos).toString())
 
         toast.setText(parent.getItemAtPosition(pos).toString() + " selected")

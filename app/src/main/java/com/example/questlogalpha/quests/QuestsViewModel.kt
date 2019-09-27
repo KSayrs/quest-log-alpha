@@ -59,7 +59,7 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
     fun onQuestCreate() {
         uiScope.launch {
             Log.d("$TAG onQuestCreate", "Logging")
-            _navigateToViewEditQuest.value = "" // todo change this to something more comprehensive, like null. Or make it a string instead ofa quest.
+            _navigateToViewEditQuest.value = ""
         }
     }
 

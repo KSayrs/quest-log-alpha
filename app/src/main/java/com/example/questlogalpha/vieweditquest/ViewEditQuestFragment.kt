@@ -17,6 +17,7 @@ import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
 import com.example.questlogalpha.quests.Difficulty
+import java.security.acl.Owner
 
 class ViewEditQuestFragment : Fragment() {
 
@@ -51,13 +52,22 @@ class ViewEditQuestFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
+        // this will continue to observe it after stuff has loaded...
+        // todo check for performance issues, then maybe come up with a way to remove it after we have loaded the data
+        viewEditQuestViewModel.difficulty.observe(this, Observer {
+            if (viewEditQuestViewModel.difficulty.value != null) {
+                spinner.setSelection(viewEditQuestViewModel.difficulty.value!!.ordinal)
+            } else {
+                spinner.setSelection(Difficulty.MEDIUM.ordinal)
+            }
+        })
+
         viewEditQuestViewModel.navigateToQuestsViewModel.observe(this, Observer {
                 if (this.findNavController().currentDestination?.id == R.id.viewEditQuestFragment) {
                     this.findNavController().navigate(
                         ViewEditQuestFragmentDirections.actionViewEditQuestFragmentToMainViewFragment())
-                }
-                else {
-                    Log.e(TAG,"Current destination is " + this.findNavController().currentDestination?.label + " instead of R.id.viewEditQUestFragment!")
+                } else {
+                    Log.e(TAG,"Current destination is " + this.findNavController().currentDestination?.label + " instead of R.id.viewEditQuestFragment!")
                     return@Observer // this is a hack, otherwisethis becomes an infinite loop
                 }
 
