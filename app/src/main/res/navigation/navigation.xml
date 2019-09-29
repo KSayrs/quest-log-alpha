@@ -22,6 +22,8 @@
             android:label="MainViewFragment" >
         <action
                 android:id="@+id/action_mainViewFragment_to_viewEditQuestFragment"
-                app:destination="@id/viewEditQuestFragment" />
+                app:destination="@id/viewEditQuestFragment"
+                app:enterAnim="@anim/slide_up"
+                app:popExitAnim="@anim/slide_down" />
     </fragment>
 </navigation>
