@@ -17,7 +17,6 @@ import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
 import com.example.questlogalpha.quests.Difficulty
-import java.security.acl.Owner
 
 class ViewEditQuestFragment : Fragment() {
 
