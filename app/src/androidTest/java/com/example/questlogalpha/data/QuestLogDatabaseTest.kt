@@ -44,16 +44,7 @@ class QuestLogDatabaseTest {
         db.close()
     }
 
-    //-------------------------
-
-    @Test
-    @Throws(Exception::class)
-    fun addAndGetQuest(){
-        val quest = Quest("test","Test")
-        questsDao.insertQuest(quest)
-        val justMade = questsDao.getQuestById(quest.id)
-        assertEquals(quest, justMade)
-    }
+    //------------ Quest Tests -------------
 
     @Test
     @Throws(Exception::class)
@@ -67,8 +58,6 @@ class QuestLogDatabaseTest {
         assertEquals(quest, retrievedQuest)
         assertEquals(true, retrievedQuest?.completed)
     }
-
-    //-------------------------
 
     @Test
     @Throws(Exception::class)
@@ -107,4 +96,8 @@ class QuestLogDatabaseTest {
         val retrieved = getValue(questsDao.getAllQuests())
         assertEquals(0, retrieved.size)
     }
+
+    //-------------- Skills Test -----------------
+    // todo add tests
+
 }
