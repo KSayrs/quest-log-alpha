@@ -24,6 +24,9 @@ data class Skill (
     @ColumnInfo
     var level: Int = 0,
 
+    @ColumnInfo(name="skill_type")
+    var skillType: SkillType = SkillType.NONE,
+
     @ColumnInfo(name="current_xp")
     var currentXP: Int = 0,
 

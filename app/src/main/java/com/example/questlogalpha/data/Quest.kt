@@ -46,11 +46,7 @@ data class Quest(
     // todo maybe only one reward, and rewards have a type?
     // can a column be a whole array of things?
 
-    // todo skill rewards
-  //  @ColumnInfo(name = "skill_rewards") var skillRewards: ArrayList<Skill> = arrayListOf(),
-
-    // todo item rewards
-  //  @ColumnInfo(name = "item_rewards") var itemRewards: ArrayList<Item> = arrayListOf(),
+    @ColumnInfo(name = "rewards") var rewards: ArrayList<Reward> = arrayListOf(),
 
     // todo notifications
   //  @ColumnInfo var notifications: ArrayList<Notification> = arrayListOf(),
