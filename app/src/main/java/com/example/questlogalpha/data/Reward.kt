@@ -11,21 +11,22 @@ class Reward(rewardId: String, amt: Double = 0.0) {
 
 class RewardArrayConverter {
     @TypeConverter
-    fun stringToReward(value: String): Array<Reward> = value.let {
-        val rewardArray = mutableListOf<Reward>()
+    fun stringToReward(value: String): ArrayList<Reward> = value.let {
+        val rewardArray = ArrayList<Reward>()
 
         val obj: JSONObject = JSONObject(value)
         for (id in obj.keys()) {
             val r = Reward(id, obj.getDouble(id))
             rewardArray.add(r)
+
             Log.d(TAG, "stringToSkillReward: id: $id, amount: ${obj.getDouble(id)}")
         }
 
-        return rewardArray.toTypedArray()
+        return rewardArray
     }
 
     @TypeConverter
-    fun RewardToString(rewards: Array<Reward>): String? {
+    fun RewardToString(rewards: ArrayList<Reward>): String? {
         val jsonObject: JSONObject = JSONObject()
         for (reward in rewards) {
             jsonObject.put(reward.id, reward.amount)
