@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.questlogalpha.quests.QuestsDao
 import com.example.questlogalpha.data.LiveDataTestUtil.getValue
+import com.example.questlogalpha.personnage.SkillsDao
 import org.junit.Assert.assertEquals
 import org.junit.After
 import org.junit.Before
@@ -20,6 +21,7 @@ class QuestLogDatabaseTest {
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var questsDao: QuestsDao
+    private lateinit var skillsDao: SkillsDao
     private lateinit var db: QuestLogDatabase
 
     private lateinit var testQuest: Quest
@@ -34,6 +36,7 @@ class QuestLogDatabaseTest {
             .allowMainThreadQueries()
             .build()
         questsDao = db.questLogDatabaseDao
+        skillsDao = db.skillsDatabaseDao
 
         testQuest = Quest("test", "TestQuest")
     }
@@ -97,7 +100,31 @@ class QuestLogDatabaseTest {
         assertEquals(0, retrieved.size)
     }
 
-    //-------------- Skills Test -----------------
-    // todo add tests
+    //---------------------------- Skills Test ---------------------------------------
+    @Test
+    @Throws(Exception::class)
+    fun addAndUpdateSkill(){
+        val skill = Skill("Fencing",1, SkillType.PHYSICAL)
+        skillsDao.insertSkill(skill)
+        skill.level = 4
+        skillsDao.updateSkill(skill)
 
+        val retrievedSkill = skillsDao.getSkillById(skill.id)
+        assertEquals(skill, retrievedSkill)
+        assertEquals(4, retrievedSkill?.level)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun addAndLevelSkill(){
+        val skill = Skill("Fencing",4, SkillType.PHYSICAL)
+        skill.currentXP = skill.nextLevelXP // to avoid error in Skill
+        skillsDao.insertSkill(skill)
+        skill.onLevelUp()
+        skillsDao.updateSkill(skill)
+
+        val retrievedSkill = skillsDao.getSkillById(skill.id)
+        assertEquals(skill, retrievedSkill)
+        assertEquals(5, retrievedSkill?.level)
+    }
 }

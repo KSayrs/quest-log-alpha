@@ -53,7 +53,7 @@ interface SkillsDao {
      *
      * @param skillId id for Skill to be reset
      */
-    @Query("UPDATE skill_table SET level = 0, current_xp = 0, next_level_xp = 10 WHERE id = :skillId")
+    @Query("UPDATE skill_table SET level = 0, current_xp = 0 WHERE id = :skillId")
     fun resetSkillLevel(skillId: String)
 
     /**
