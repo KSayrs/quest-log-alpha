@@ -15,7 +15,6 @@ import kotlin.math.sqrt
  * @return the one real root. If there are no real roots, returns -1.0.
  * */
 
-// todo these are both fucking broken in identical ways and I don't knot why, I'm despairing and angry and it's 1:30am I quit
 fun cubicEquation(a:Double, b:Double, c:Double, d:Double=0.0, toSolveFor:Double = 0.0) : Double
 {
     Log.d(Util.TAG, "cubicEquation: a: $a, b: $b, c: $c, d: $d, toSolveFor: $toSolveFor")

@@ -117,7 +117,7 @@ class QuestLogDatabaseTest {
     @Test
     @Throws(Exception::class)
     fun addAndLevelSkill(){
-        val skill = Skill("Fencing",4, SkillType.PHYSICAL)
+        val skill = Skill("Fencing",2, SkillType.PHYSICAL)
         skill.currentXP = skill.nextLevelXP // to avoid error in Skill
         skillsDao.insertSkill(skill)
         skill.onLevelUp()
@@ -125,6 +125,6 @@ class QuestLogDatabaseTest {
 
         val retrievedSkill = skillsDao.getSkillById(skill.id)
         assertEquals(skill, retrievedSkill)
-        assertEquals(5, retrievedSkill?.level)
+        assertEquals(3, retrievedSkill?.level)
     }
 }

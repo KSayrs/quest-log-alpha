@@ -44,18 +44,19 @@ data class Skill (
     @PrimaryKey @ColumnInfo
     val id: String = UUID.randomUUID().toString()
 ){
-    val nextLevelXP: Double get() = (0.04 * level.toDouble().pow(3)) + (0.8 * level.toDouble().pow(2)+2*level.toDouble()) + 10
+    val nextLevelXP: Double get() = ((0.04 * level.toDouble()).pow(3)) + ((0.8 * level.toDouble()).pow(2)+2*level.toDouble()) + 10
 
     val canLevelUp: Boolean get() = (currentXP >= nextLevelXP)
 
     fun onLevelUp(callback:()->Unit = {}){
+
         if(!canLevelUp) {
 
             Log.e(TAG, "Current XP not high enough to level! Current: $currentXP, Next: $nextLevelXP")
             return
         }
         level++
-
+        
         // f(x) = 0.04(x^3) + 0.8(x^2) + 2x + 10
         val calc = floor(cubicEquation(0.04, 0.08, 2.0, 10.0, currentXP)).toInt()
         val apparentLevel = if(calc >= 0) calc else 0
