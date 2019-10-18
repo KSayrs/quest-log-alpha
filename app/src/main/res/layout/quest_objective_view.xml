@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        >
+
+    <data>
+        <variable
+                name="position"
+                type="int" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/quest_objective_view_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp">
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/quest_objective_checkbox"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/roboto"
+                android:text="Objective text"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+        </androidx.appcompat.widget.AppCompatCheckBox>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/edit_objective_icon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginRight="16dp"
+                android:backgroundTint="#00FFFFFF"
+                android:tint="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/delete_objective_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/ic_menu_edit" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/delete_objective_icon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginRight="12dp"
+                android:backgroundTint="@color/colorWhite"
+                android:tint="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/ic_delete" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

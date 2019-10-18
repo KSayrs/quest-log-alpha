@@ -50,7 +50,41 @@
                 app:layout_constraintTop_toBottomOf="@id/view_edit_quest_title_edit_text"
                 tools:layout_editor_absoluteX="16dp" />
 
-        <!-- TODO put checkList for objectives here -->
+        <!-- =================== Objectives =================== -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/objectives_header_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_edit_quest_description_edit_text">
+
+            <ImageButton
+                    android:id="@+id/add_objectives_button"
+                    style="@style/quest_element_header_button"
+                    app:layout_constraintBottom_toBottomOf="@id/objectives_header_text_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/objectives_header_text_view"
+                    app:srcCompat="@drawable/ic_add" />
+
+            <TextView
+                    android:id="@+id/objectives_header_text_view"
+                    style="@style/quest_element_header_text"
+                    android:text="@string/objectives"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_editor_absoluteX="16dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+                android:id="@+id/objectives"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/objectives_header_layout">
+        </LinearLayout>
 
         <!-- =================== Rewards =================== -->
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -58,7 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view_edit_quest_description_edit_text">
+                app:layout_constraintTop_toBottomOf="@id/objectives">
 
             <ImageButton
                     android:id="@+id/add_rewards_button"

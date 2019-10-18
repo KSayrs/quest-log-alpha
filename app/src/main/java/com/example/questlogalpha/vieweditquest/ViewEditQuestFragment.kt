@@ -17,6 +17,7 @@ import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
 import com.example.questlogalpha.quests.Difficulty
+import java.util.zip.Inflater
 
 class ViewEditQuestFragment : Fragment() {
 
@@ -50,6 +51,9 @@ class ViewEditQuestFragment : Fragment() {
         actionbar.show()
 
         setHasOptionsMenu(true)
+
+        // todo add objectives for every objective a quest has
+        //binding.objectives.addView(View.inflate(application, R.layout.quest_objective_view, container))
 
         // this will continue to observe it after stuff has loaded...
         // todo check for performance issues, then maybe come up with a way to remove it after we have loaded the data
