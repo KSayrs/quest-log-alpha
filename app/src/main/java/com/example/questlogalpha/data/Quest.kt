@@ -22,6 +22,7 @@ import androidx.room.PrimaryKey
 import com.example.questlogalpha.quests.Difficulty
 import java.time.ZonedDateTime
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Immutable model class for a Quest. In order to compile with Room, we can't use @JvmOverloads to
@@ -71,9 +72,8 @@ data class Quest(
     @ColumnInfo
     var difficulty: Difficulty = Difficulty.MEDIUM,
 
-    // todo objectives
-  // @ColumnInfo
-  // var objectives: ArrayList<Objective> = arrayListOf(),
+    @ColumnInfo
+    var objectives: ArrayList<Objective> = arrayListOf(),
 
     @ColumnInfo
     var questLine: String = "",

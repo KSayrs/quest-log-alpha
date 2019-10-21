@@ -6,28 +6,42 @@
 
     <data>
         <variable
-                name="position"
-                type="int" />
+                name="objective"
+                type="com.example.questlogalpha.data.Objective" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/quest_objective_view_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp">
+            android:paddingLeft="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp">
 
         <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/quest_objective_checkbox"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/roboto"
-                android:text="Objective text"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.appcompat.widget.AppCompatCheckBox>
+        <EditText
+                android:id="@+id/quest_objective_edit_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:background="@null"
+                android:fontFamily="@font/roboto"
+                android:text="@{objective.description}"
+                android:hint="@string/objective_hint"
+                android:inputType="text"
+                android:focusable="false"
+                android:imeOptions="flagNoExtractUi"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/quest_objective_checkbox"
+                app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/edit_objective_icon"

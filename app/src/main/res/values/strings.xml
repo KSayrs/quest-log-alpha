@@ -13,4 +13,5 @@
     <string name="done">Done</string>
     <string name="abandon">Abandon</string>
     <string name="objectives">Objectives</string>
+    <string name="objective_hint">Add an objective</string>
 </resources>

@@ -17,7 +17,7 @@ import java.util.concurrent.Executors
 
 
 @Database(entities = [Quest::class, Skill::class], version = 1, exportSchema = false)
-@TypeConverters(DifficultyConverter::class, ZonedDateTimeConverter::class, SkillTypeConverter::class, RewardArrayConverter::class)
+@TypeConverters(DifficultyConverter::class, ZonedDateTimeConverter::class, SkillTypeConverter::class, RewardArrayConverter::class, ObjectiveArrayConverter::class)
 abstract class QuestLogDatabase : RoomDatabase() {
 
     abstract val questLogDatabaseDao: QuestsDao
