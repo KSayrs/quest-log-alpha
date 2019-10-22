@@ -146,19 +146,16 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         // do nothing?
     }
 
-    fun onObjectiveChecked(objective: Objective, isChecked: Boolean) {
-        var found:Boolean = false
+    fun onObjectiveChecked(objectiveId: String) {
         for(obj in objectives.value!!) {
-            if(obj.id == objective.id){
-                obj.completed = isChecked
-                found = true
+            if(obj.id == objectiveId){
+                obj.completed = !obj.completed
                 modifiedObjective.value = obj
                 return
             }
         }
-        if(!found){
-            Log.e(TAG, "onObjectiveChecked: objective '${objective.description}' not found for quest ${currentQuest?.title}!")
-        }
+
+        Log.e(TAG, "onObjectiveChecked: objective '${objectiveId}' not found for quest ${currentQuest?.title}!")
     }
 
     fun onObjectiveDeleted(objective: Objective) {
@@ -175,10 +172,10 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     }
 
     fun onAddObjective(){
+        Log.d(TAG, "onAddObjective()")
         val newObjective = Objective()
         objectives.value!!.add(newObjective)
         modifiedObjective.value = newObjective
-        Log.d(TAG, "onAddObjective()")
     }
 
     // ------------------ navigation -----------------

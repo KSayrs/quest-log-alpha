@@ -8,6 +8,9 @@
         <variable
                 name="objective"
                 type="com.example.questlogalpha.data.Objective" />
+        <variable
+                name="viewModel"
+                type="com.example.questlogalpha.vieweditquest.ViewEditQuestViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,6 +26,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/roboto"
+                android:checked="@{objective.completed}"
+                android:onClick="@{(view)->viewModel.onObjectiveChecked(objective.id)}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -38,6 +43,8 @@
                 android:hint="@string/objective_hint"
                 android:inputType="text"
                 android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:onClick="@{(view)->viewModel.onObjectiveChecked(objective.id)}"
                 android:imeOptions="flagNoExtractUi"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/quest_objective_checkbox"

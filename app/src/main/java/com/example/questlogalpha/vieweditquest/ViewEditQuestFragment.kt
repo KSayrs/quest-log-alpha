@@ -21,9 +21,9 @@ import kotlinx.android.synthetic.main.quest_objective_view.view.*
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.EditorInfo
+import androidx.core.view.children
 import com.example.questlogalpha.databinding.QuestObjectiveViewBinding
 import java.lang.Exception
-
 
 class ViewEditQuestFragment : Fragment() {
 
@@ -69,37 +69,38 @@ class ViewEditQuestFragment : Fragment() {
         })
 
         // add/update objectives
-        // todo stop re-creating them every time
         viewEditQuestViewModel.modifiedObjective.observe(this, Observer {
-            binding.objectives.removeAllViews()
-            Log.d(TAG, "observer set")
-
             if(viewEditQuestViewModel.objectives.value == null) {
+                Log.e(TAG, "viewEditQuestViewModel.objectives is null. Ending observation early.")
                 return@Observer
             }
+            // todo extend view to allow findInChildren
+            val views = binding.objectives.children
             for(objective in viewEditQuestViewModel.objectives.value!!)
             {
-                val objectiveBinding: QuestObjectiveViewBinding = DataBindingUtil.inflate(inflater,
-                    R.layout.quest_objective_view, container, false)
-                val objView = objectiveBinding.root //inflater.inflate(application, R.layout.quest_objective_view, container, false)
+                var objectiveBound = false
+                for(view in views)
+                {
+                    val objBinding: QuestObjectiveViewBinding? = DataBindingUtil.getBinding(view)
+                    if(objBinding != null && objBinding.objective?.id == objective.id) {
+                        objectiveBound = true
+                        // todo figure out why this doesn't auto-update
+                        objBinding.questObjectiveCheckbox.isChecked = objective.completed
+                        Log.d(TAG, "objective already bound")
+                        break
+                    }
+                }
+                if(objectiveBound) continue
+
+                val objectiveBinding: QuestObjectiveViewBinding = DataBindingUtil.inflate(inflater, R.layout.quest_objective_view, container, false)
+                val objView = objectiveBinding.root
                 objectiveBinding.objective = objective
-                //val objView = inflater.inflate(R.layout.quest_objective_view, container, false)//inflater.inflate(application, R.layout.quest_objective_view, container, false)
+                objectiveBinding.viewModel = viewEditQuestViewModel
                 binding.objectives.addView(objView)
-                objView.quest_objective_checkbox.isChecked = objective.completed
-                //objView.quest_objective_edit_text.setText(objective.description)
-
-                // todo try these in the xml
-                objView.quest_objective_checkbox.setOnClickListener {
-                    viewEditQuestViewModel.onObjectiveChecked(objective, objView.quest_objective_checkbox.isChecked)
-                }
-
-                objView.quest_objective_edit_text.setOnClickListener {
-                    viewEditQuestViewModel.onObjectiveChecked(objective, !objView.quest_objective_checkbox.isChecked)
-                    objView.quest_objective_checkbox.isChecked = objective.completed
-                }
 
                 objView.delete_objective_icon.setOnClickListener {
                     viewEditQuestViewModel.onObjectiveDeleted(objective)
+                    binding.objectives.removeView(objView)
                 }
 
                 objView.edit_objective_icon.setOnClickListener {
@@ -115,6 +116,7 @@ class ViewEditQuestFragment : Fragment() {
                             viewEditQuestViewModel.onObjectiveEdit(objective, objView.quest_objective_edit_text.text.toString())
                             objView.quest_objective_edit_text.isFocusableInTouchMode = false
                             objView.quest_objective_edit_text.isCursorVisible = false
+                            objView.clearFocus()
 
                             val imm = application.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
                             imm!!.hideSoftInputFromWindow(activity?.currentFocus?.windowToken, 0)
