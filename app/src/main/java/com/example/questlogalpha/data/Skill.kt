@@ -2,14 +2,7 @@ package com.example.questlogalpha.data
 
 import android.util.Log
 import androidx.room.*
-import com.example.questlogalpha.Util
-import com.example.questlogalpha.cubicEquation
-import com.example.questlogalpha.cubicEquation2
-import java.lang.Math.exp
-import java.lang.Math.nextDown
 import java.util.*
-import kotlin.math.floor
-import kotlin.math.nextDown
 import kotlin.math.pow
 
 /**
@@ -44,29 +37,36 @@ data class Skill (
     @PrimaryKey @ColumnInfo
     val id: String = UUID.randomUUID().toString()
 ){
-    val nextLevelXP: Double get() = ((0.04 * level.toDouble()).pow(3)) + ((0.8 * level.toDouble()).pow(2)+2*level.toDouble()) + 10
+    val nextLevelXP: Double get() = getExperienceForNextLevel(level)
 
-    val canLevelUp: Boolean get() = (currentXP >= nextLevelXP)
+    val canLevelUp: Boolean get(){
+        if(getExperienceForNextLevel(level-2) > currentXP)
+        {
+            val shouldBe = getExperienceForNextLevel(level-1)
+            Log.w(TAG, "CurrentXP ($currentXP) not within level threshold! Adjusting currentXP to match level $level ($shouldBe)")
+            currentXP = shouldBe
+        }
+
+        return currentXP >= nextLevelXP
+    }
 
     fun onLevelUp(callback:()->Unit = {}){
 
         if(!canLevelUp) {
-            Log.e(TAG, "Current XP not high enough to level! Current: $currentXP, Next: $nextLevelXP")
+            Log.e(TAG, "Current XP not high enough to level! Level: $level, Current: $currentXP, Next: $nextLevelXP")
             return
         }
-        level++
 
-        // f(x) = 0.04(x^3) + 0.8(x^2) + 2x + 10
-        val calc = floor(cubicEquation(0.04, 0.08, 2.0, 10.0, currentXP)).toInt()
-        val apparentLevel = if(calc >= 0) calc else 0
-        if(apparentLevel != level)
-        {
-            Log.w(TAG, "onLevelUp: level ($level) and XP ($currentXP) mismatch! Adjusting level to $apparentLevel to compensate.")
-            level = apparentLevel
+        while(currentXP >= getExperienceForNextLevel(level)) {
+            level++
+            Log.d(TAG, "onLevelUp: level: $level, currentXP: $currentXP, nextLevelXP: $nextLevelXP")
         }
 
-        Log.d(TAG, "onLevelUp: level: $level, apparentLevel: $apparentLevel, currentXP: $currentXP, nextLevelXP: $nextLevelXP")
         callback()
+    }
+
+    private fun getExperienceForNextLevel(level: Int) : Double {
+        return ((0.04 * level.toDouble()).pow(3)) + ((0.8 * level.toDouble()).pow(2)+2*level.toDouble()) + 10
     }
 
     // -------------------------- log tag ------------------------------ //

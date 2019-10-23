@@ -48,6 +48,7 @@ class QuestLogDatabaseTest {
     }
 
     //------------ Quest Tests -------------
+    // todo add objective test
 
     @Test
     @Throws(Exception::class)
@@ -126,5 +127,33 @@ class QuestLogDatabaseTest {
         val retrievedSkill = skillsDao.getSkillById(skill.id)
         assertEquals(skill, retrievedSkill)
         assertEquals(3, retrievedSkill?.level)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun awardManyExperiencePoints(){
+        val skill = Skill("TestSkill",2, SkillType.PHYSICAL)
+        skill.currentXP = 100.0
+        skillsDao.insertSkill(skill)
+        skill.onLevelUp()
+        skillsDao.updateSkill(skill)
+
+        val retrievedSkill = skillsDao.getSkillById(skill.id)
+        assertEquals(skill, retrievedSkill)
+        assertEquals(11, retrievedSkill?.level)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun MismatchXPAdjustmentTest(){
+        val skill = Skill("TestSkill",5, SkillType.PHYSICAL)
+        skill.currentXP = 0.0
+        skillsDao.insertSkill(skill)
+        skill.onLevelUp()
+        skillsDao.updateSkill(skill)
+
+        val retrievedSkill = skillsDao.getSkillById(skill.id)
+        assertEquals(skill, retrievedSkill)
+        assertEquals(11, retrievedSkill?.level)
     }
 }

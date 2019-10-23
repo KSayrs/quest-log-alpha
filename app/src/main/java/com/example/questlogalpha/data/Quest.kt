@@ -44,8 +44,6 @@ data class Quest(
 
     @ColumnInfo
     var description: String = "",
-    // todo maybe only one reward, and rewards have a type?
-    // can a column be a whole array of things?
 
     @ColumnInfo(name = "rewards") var rewards: ArrayList<Reward> = arrayListOf(),
 
