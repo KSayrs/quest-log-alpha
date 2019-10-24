@@ -103,10 +103,10 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             Log.d(TAG, "quest title: " + _currentQuest!!.title)
             Log.d(TAG, "Quest ID: " + currentQuest!!.id)
             Log.d(TAG, "quest description: " + currentQuest!!.description)
-            Log.d(TAG, "quest first objective: " + currentQuest!!.objectives[0])
+//            Log.d(TAG, "quest first objective: " + currentQuest!!.objectives[0])
 
             _currentQuest!!.title = title.value.toString()
-            _currentQuest!!.description = title.value.toString()
+            _currentQuest!!.description = description.value.toString()
             _currentQuest!!.difficulty = difficulty.value!!
             _currentQuest!!.objectives = objectives.value!!
             database.updateQuest(_currentQuest!!)
@@ -115,14 +115,14 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
     private suspend fun insert(){
         withContext(Dispatchers.IO){
-            val newQuest = Quest(title.value.toString(),description.value.toString(), objectives = objectives.value!!, difficulty = difficulty.value!!)
+            val newQuest = Quest(title.value.toString(), description.value.toString(), objectives = objectives.value!!, difficulty = difficulty.value!!)
             database.insertQuest(newQuest)
 
             Log.d(TAG, "Newly made quest title: " + newQuest.title)
             Log.d(TAG, "Newly made quest description: " + newQuest.description)
             Log.d(TAG, "Newly made quest difficulty: " + newQuest.difficulty)
             Log.d(TAG, "Newly made quest id: " + newQuest.id)
-            Log.d(TAG, "Newly made quest objective one: " + newQuest.objectives[0])
+         //   Log.d(TAG, "Newly made quest objective one: " + newQuest.objectives[0])
             Log.d(TAG, "Quest made on: " + newQuest.dateCreated)
         }
     }
