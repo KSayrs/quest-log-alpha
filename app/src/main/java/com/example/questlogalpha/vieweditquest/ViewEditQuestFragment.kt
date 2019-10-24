@@ -167,7 +167,6 @@ class ViewEditQuestFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        Log.d(TAG, "onCreateOptionsMenu()")
         activity!!.menuInflater.inflate(R.menu.menu_actionbar, menu)
     }
 

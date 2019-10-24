@@ -15,14 +15,12 @@ class ObjectiveArrayConverter {
     @TypeConverter
     fun stringToObjective(value: String): ArrayList<Objective> = value.let {
         val objArray = ArrayList<Objective>()
-
         val obj: JSONObject = JSONObject(value)
+
         for (id in obj.keys()) {
             val objObj = obj.getJSONObject(id)
             val o = Objective(objObj.getString("description"), objObj.getBoolean("completed"), id)
             objArray.add(o)
-
-            Log.d(TAG, "stringToObjective: id: $id, description: ${objObj.getString("description")}")
         }
 
         return objArray
@@ -51,8 +49,6 @@ class ObjectiveArrayConverter {
 
             jsonObject.put(objective.id, obj)
         }
-
-        Log.d(TAG, "objectiveToString: jsonObject: \n $jsonObject")
 
         return jsonObject.toString()
     }
