@@ -154,6 +154,6 @@ class QuestLogDatabaseTest {
 
         val retrievedSkill = skillsDao.getSkillById(skill.id)
         assertEquals(skill, retrievedSkill)
-        assertEquals(11, retrievedSkill?.level)
+        assertEquals(5, retrievedSkill?.level)
     }
 }
