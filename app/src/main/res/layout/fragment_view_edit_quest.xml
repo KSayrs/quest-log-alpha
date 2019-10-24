@@ -17,26 +17,28 @@
 
         <EditText
                 android:id="@+id/view_edit_quest_title_edit_text"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:autofillHints=""
                 android:background="@null"
                 android:fontFamily="@font/roboto"
                 android:hint="@string/title_hint"
-                android:imeOptions="actionDone"
-                android:inputType="text"
-                android:maxLines="1"
+                android:imeOptions="actionDone|flagNoEnterAction"
+                android:inputType="text|textMultiLine"
+                android:maxLines="2"
                 android:text="@={viewEditQuestViewModel.title}"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
                 android:id="@+id/view_edit_quest_description_edit_text"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                 android:autofillHints=""
@@ -44,11 +46,11 @@
                 android:fontFamily="@font/roboto"
                 android:hint="@string/description_hint"
                 android:imeOptions="actionDone"
-                android:inputType="text"
+                android:inputType="textMultiLine|text"
                 android:text="@={viewEditQuestViewModel.description}"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view_edit_quest_title_edit_text"
-                tools:layout_editor_absoluteX="16dp" />
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_edit_quest_title_edit_text" />
 
         <!-- =================== Objectives =================== -->
         <androidx.constraintlayout.widget.ConstraintLayout
