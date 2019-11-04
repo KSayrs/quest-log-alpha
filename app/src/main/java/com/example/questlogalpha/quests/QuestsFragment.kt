@@ -44,7 +44,7 @@ class QuestsFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
 
-        var supportActionBar = (activity as AppCompatActivity).supportActionBar
+        val supportActionBar = (activity as AppCompatActivity).supportActionBar
         if(supportActionBar == null){
             Log.e("QuestsFragment.kt: onCreate: ", "supportActionBar is null.")
         }
@@ -69,7 +69,7 @@ class QuestsFragment : Fragment() {
         val binding: FragmentQuestsBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_quests, container, false)
         val application = requireNotNull(this.activity).application
         val dataSource = QuestLogDatabase.getInstance(application).questLogDatabaseDao
-        val viewModelFactory = ViewModelFactory("", dataSource, application)
+        val viewModelFactory = ViewModelFactory("", dataSource, null, application)
         val questsViewModel = ViewModelProviders.of(this, viewModelFactory).get(QuestsViewModel::class.java)
         val adapter = QuestsAdapter()
         binding.questList.adapter = adapter
@@ -108,10 +108,6 @@ class QuestsFragment : Fragment() {
                 adapter.viewModel = binding.questsViewModel
             }
         })
-
-     //   binding.questList.
-
-        // set listener for button
 
         return binding.root
     }

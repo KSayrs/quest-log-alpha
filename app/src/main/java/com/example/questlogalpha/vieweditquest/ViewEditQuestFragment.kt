@@ -1,5 +1,6 @@
 package com.example.questlogalpha.vieweditquest
 
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -21,15 +22,15 @@ import kotlinx.android.synthetic.main.quest_objective_view.view.*
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.EditorInfo
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.children
 import com.example.questlogalpha.databinding.QuestObjectiveViewBinding
+import com.example.questlogalpha.quests.AddRewardDialogFragment
 import java.lang.Exception
 
 class ViewEditQuestFragment : Fragment() {
 
     private var viewModel : ViewEditQuestViewModel ?= null
-
- //   private val args = ViewEditQuestFragmentArgs.fromBundle(arguments!!)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
 
@@ -38,7 +39,7 @@ class ViewEditQuestFragment : Fragment() {
         val dataSource = QuestLogDatabase.getInstance(application).questLogDatabaseDao
         val arguments =  ViewEditQuestFragmentArgs.fromBundle(arguments)
 
-        val viewModelFactory = ViewModelFactory(arguments.questId, dataSource, application)
+        val viewModelFactory = ViewModelFactory(arguments.questId, dataSource, null, application)
         val viewEditQuestViewModel = ViewModelProviders.of(this, viewModelFactory).get(ViewEditQuestViewModel::class.java)
 
         viewModel = viewEditQuestViewModel
@@ -131,6 +132,12 @@ class ViewEditQuestFragment : Fragment() {
                 }
             }
         })
+
+        // rewards
+        binding.addRewardsButton.setOnClickListener{
+            val dialog = AddRewardDialogFragment()
+            dialog.show(fragmentManager!!, "Tag??")
+        }
 
         // navigation
         viewEditQuestViewModel.navigateToQuestsViewModel.observe(this, Observer {

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        >
+
+    <data>
+        <variable
+                name="position"
+                type="int" />
+        <variable
+                name="skill"
+                type="com.example.questlogalpha.data.Skill" />
+    </data>
+
+    <!-- TODO find out why this needs to be hard-coded -->
+   <androidx.constraintlayout.widget.ConstraintLayout
+           android:id="@+id/skill_item_view-layout"
+           android:layout_width="350dp" android:layout_height="80dp">
+
+       <!-- TODO set this up with a default value like LifeRPG (or find a good way to GONE it when there is no image) -->
+        <ImageView
+                android:id="@+id/skill_icon"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:tint="@color/colorAccent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="?attr/actionModeSelectAllDrawable" />
+
+        <TextView
+                android:id="@+id/skill_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/roboto"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="@{skill.name}"
+                android:foregroundGravity="left"
+                android:textSize="24sp"
+                app:layout_constraintStart_toEndOf="@+id/skill_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- TODO add ProgressBar -->
+        <TextView
+                android:id="@+id/skill_experience"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="8dp"
+                android:fontFamily="@font/roboto"
+                android:maxLines="1"
+                android:text='@{skill.currentXP + "/" + skill.nextLevelXP}'
+                android:textSize="14sp"
+                app:layout_constraintStart_toEndOf="@+id/skill_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/skill_title" />
+
+        <TextView
+                android:id="@+id/skill_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto"
+                android:maxLines="1"
+                android:text='@{skill.level+""}'
+                android:textSize="48sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

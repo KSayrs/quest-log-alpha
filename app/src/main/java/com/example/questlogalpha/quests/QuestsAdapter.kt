@@ -43,12 +43,8 @@ class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestItemViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding: QuestItemViewBinding = DataBindingUtil.inflate(layoutInflater,
-            R.layout.quest_item_view, parent, false)
-        val holder =
-            QuestItemViewHolder(binding.root.quest_item_view_layout)
-
-        binding.position = holder.adapterPosition
+        val binding: QuestItemViewBinding = DataBindingUtil.inflate(layoutInflater, R.layout.quest_item_view, parent, false)
+        val holder = QuestItemViewHolder(binding.root.quest_item_view_layout)
 
         binding.deleteQuestIcon.setOnClickListener {
             val pos = holder.adapterPosition

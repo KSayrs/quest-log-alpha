@@ -20,8 +20,10 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.questlogalpha.data.QuestLogDatabase
+import com.example.questlogalpha.personnage.SkillsDao
 import com.example.questlogalpha.quests.QuestsDao
 import com.example.questlogalpha.quests.QuestsViewModel
+import com.example.questlogalpha.skills.SkillsViewModel
 import com.example.questlogalpha.vieweditquest.ViewEditQuestViewModel
 import java.lang.Appendable
 
@@ -31,7 +33,8 @@ import java.lang.Appendable
 @Suppress("UNCHECKED_CAST")
 class ViewModelFactory constructor(
     private val questId: String,
-    private val questsDataSource: QuestsDao,
+    private val questsDataSource: QuestsDao? = null,
+    private val skillsDataSource: SkillsDao? = null,
     private val application: Application
 ) : ViewModelProvider.NewInstanceFactory() {
 
@@ -39,11 +42,11 @@ class ViewModelFactory constructor(
         with(modelClass) {
             when {
                 isAssignableFrom(QuestsViewModel::class.java) ->
-                    QuestsViewModel(questsDataSource)
+                    QuestsViewModel(questsDataSource!!)
                 isAssignableFrom(ViewEditQuestViewModel::class.java) ->
-                    ViewEditQuestViewModel(questId, questsDataSource, application)
-            //   isAssignableFrom(AddEditTaskViewModel::class.java) ->
-            //       AddEditTaskViewModel(tasksRepository)
+                    ViewEditQuestViewModel(questId, questsDataSource!!, application)
+                isAssignableFrom(SkillsViewModel::class.java) ->
+                    SkillsViewModel(skillsDataSource!!)
             //   isAssignableFrom(TasksViewModel::class.java) ->
             //       TasksViewModel(tasksRepository)
                 else ->
