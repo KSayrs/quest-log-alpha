@@ -1,3 +1,5 @@
+/* Main section pager for app */
+
 package com.example.questlogalpha.ui.main
 
 import android.os.Bundle
@@ -30,6 +32,7 @@ class MainViewFragment : Fragment() {
                 .setAction("Action", null).show()
         }
 
+        // set the quests list to be the default landing page
         binding.viewPager.currentItem = 1 // todo don't use a hard value
 
         return binding.root

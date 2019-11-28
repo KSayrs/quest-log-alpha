@@ -57,10 +57,10 @@ class QuestsFragment : Fragment() {
     // Hide the navigation bar when we're on this activity
     override fun onResume() {
         super.onResume()
-        Log.d("QuestsFragment.kt: onResume", " called")
+        Log.d("$TAG: onResume", " called")
 
         val supportActionBar = (activity as AppCompatActivity).supportActionBar
-        if(supportActionBar == null) Log.e("MainActivity.kt: onResume: ", "supportActionBar is null.")
+        if(supportActionBar == null) Log.e("$TAG: onResume: ", "supportActionBar is null.")
         else if(supportActionBar.isShowing) supportActionBar.hide()
     }
 

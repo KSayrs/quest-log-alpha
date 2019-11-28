@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
@@ -55,19 +56,20 @@ class AddRewardDialogFragment : DialogFragment() {
         return AlertDialog.Builder(activity)
             .setTitle("Skills")
             .setView(dialogView)
-         //  .setSingleChoiceItems(adapter!!, -1,
-         //      DialogInterface.OnClickListener {
-         //          dialog, whichButton ->
-         //               Toast.makeText(context, "Skill $whichButton tapped", Toast.LENGTH_SHORT).show()
-         //  })
-           .setPositiveButton(android.R.string.ok,
-               DialogInterface.OnClickListener { dialog, whichButton ->
-                   Toast.makeText(context, "Skill ok tapped", Toast.LENGTH_SHORT).show()
-               })
-           .setNegativeButton(R.string.abandon,
-               DialogInterface.OnClickListener { dialog, id ->
-                   Toast.makeText(context, "Skill cancel tapped", Toast.LENGTH_SHORT).show()
-               })
+
+        //   .setSingleChoiceItems(adapter!!, -1,
+         //       DialogInterface.OnClickListener {
+         //           dialog, whichButton ->
+         //                Toast.makeText(context, "Skill $whichButton tapped", Toast.LENGTH_SHORT).show()
+         //   })
+         // .setPositiveButton(android.R.string.ok,
+         //     DialogInterface.OnClickListener { dialog, whichButton ->
+         //         Toast.makeText(context, "Skill ok tapped", Toast.LENGTH_SHORT).show()
+         //     })
+         // .setNegativeButton(R.string.abandon,
+         //     DialogInterface.OnClickListener { dialog, id ->
+         //         Toast.makeText(context, "Skill cancel tapped", Toast.LENGTH_SHORT).show()
+         //     })
             .create()
     }
 

@@ -38,18 +38,25 @@ abstract class QuestLogDatabase : RoomDatabase() {
                         QuestLogDatabase::class.java,
                         "quest_log_history_database"
                     ).fallbackToDestructiveMigration()
-              //        .addCallback(object : RoomDatabase.Callback(){
-              //        override fun onCreate(db: SupportSQLiteDatabase) {
-              //            // todo pre-populate skills
+                   //.addCallback(object : RoomDatabase.Callback(){
+                   //    override fun onCreate(db: SupportSQLiteDatabase) {
 
-              //            // new thread for inserting stuff
-              //            Executors.newSingleThreadScheduledExecutor().execute(Runnable {
-              //                getInstance(context.applicationContext).skillsDatabaseDao.insertSkill()
-              //            })
+                   //        // todo pre-populate skills
 
-              //            super.onCreate(db)
-              //        }
-              //    })
+
+                   //        // new thread for inserting stuff
+
+                   //     //  Executors.newSingleThreadScheduledExecutor().execute(Runnable {
+                   //     //      getInstance(context.applicationContext).skillsDatabaseDao.insertSkill(Skill("Fencing"))
+                   //     //      getInstance(context.applicationContext).skillsDatabaseDao.insertSkill(Skill("Dancing"))
+                   //     //      getInstance(context.applicationContext).skillsDatabaseDao.insertSkill(Skill("Reputation"))
+                   //     //  })
+
+
+                   //        super.onCreate(db)
+
+                   //    }
+                   //})
                         .build()
                     INSTANCE = instance
                 }
