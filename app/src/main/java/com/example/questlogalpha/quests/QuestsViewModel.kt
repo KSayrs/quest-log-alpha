@@ -77,18 +77,6 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
         }
     }
 
-    fun onQuestUpdateFinished(quest: Quest) {
-        uiScope.launch {
-            update(quest)
-        }
-    }
-
-    private suspend fun update(quest: Quest) {
-        withContext(Dispatchers.IO) {
-            database.updateQuest(quest)
-        }
-    }
-
     // ----------------------- delete quest ---------------------------- //
     fun onDeleteQuest(questId: String) {
         uiScope.launch {
