@@ -44,18 +44,6 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
        // initializeQuest()
     }
 
-    private suspend fun getAllQuests(): List<Quest>? {
-        return withContext(Dispatchers.IO){
-            database.getAllQuests().value
-        }
-    }
-
-    private suspend fun getQuestFromDatabase(questId: String): Quest? {
-        return withContext(Dispatchers.IO){
-            database.getQuestById(questId)
-        }
-    }
-
     fun onQuestCreate() {
         uiScope.launch {
             Log.d("$TAG onQuestCreate", "Logging")
@@ -67,13 +55,6 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
         uiScope.launch {
             Log.d("$TAG onQuestEdit", "Logging")
             _navigateToViewEditQuest.value = quest.id
-        }
-    }
-
-    // long running work to leave the UI thread free to handle other things
-    private suspend fun insert(quest: Quest){
-        withContext(Dispatchers.IO){
-            database.insertQuest(quest)
         }
     }
 
