@@ -10,20 +10,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import com.example.questlogalpha.R
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.questlogalpha.ITalkToDialogs
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
+import com.example.questlogalpha.databinding.FragmentAddRewardBinding
+import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
 import com.example.questlogalpha.skills.SkillsAdapter
 import com.example.questlogalpha.skills.SkillsViewModel
+import com.example.questlogalpha.vieweditquest.ViewEditQuestViewModel
 import kotlinx.android.synthetic.main.fragment_add_reward.*
 import kotlinx.android.synthetic.main.fragment_add_reward.view.*
+import java.util.*
 
-class AddRewardDialogFragment : DialogFragment() {
+class AddRewardDialogFragment(vm: ITalkToDialogs) : DialogFragment() {
     var viewModel : SkillsViewModel? = null
+    var viewEditViewModel : ITalkToDialogs? = vm
     var adapter : SkillsAdapter? = null
     var dialogView : View? = null
 
@@ -43,6 +50,8 @@ class AddRewardDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         Log.d(TAG, "onCreateDialog")
         dialogView = LayoutInflater.from(context).inflate(R.layout.fragment_add_reward, null, false)
+        val binding : FragmentAddRewardBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.fragment_add_reward, null, false)
+
         val dataSource = QuestLogDatabase.getInstance(activity!!.application).skillsDatabaseDao
         val viewModelFactory = ViewModelFactory("", null, dataSource, activity!!.application)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SkillsViewModel::class.java)
@@ -56,20 +65,23 @@ class AddRewardDialogFragment : DialogFragment() {
         return AlertDialog.Builder(activity)
             .setTitle("Skills")
             .setView(dialogView)
+            .setPositiveButton(android.R.string.ok,
+              DialogInterface.OnClickListener { dialog, whichButton ->
 
-        //   .setSingleChoiceItems(adapter!!, -1,
-         //       DialogInterface.OnClickListener {
-         //           dialog, whichButton ->
-         //                Toast.makeText(context, "Skill $whichButton tapped", Toast.LENGTH_SHORT).show()
-         //   })
-         // .setPositiveButton(android.R.string.ok,
-         //     DialogInterface.OnClickListener { dialog, whichButton ->
-         //         Toast.makeText(context, "Skill ok tapped", Toast.LENGTH_SHORT).show()
-         //     })
-         // .setNegativeButton(R.string.abandon,
-         //     DialogInterface.OnClickListener { dialog, id ->
-         //         Toast.makeText(context, "Skill cancel tapped", Toast.LENGTH_SHORT).show()
-         //     })
+                  if(adapter?.chosenSkill != null) {
+
+                      binding.chosenSkill = adapter?.chosenSkill
+                      binding.amount = dialogView!!.skill_amount.text.toString().toDouble()
+
+                      viewEditViewModel?.onPositiveButtonClicked(mapOf("skill" to binding.chosenSkill!!, "amount" to binding.amount!!))
+                     // Toast.makeText(context, "Skill ok tapped", Toast.LENGTH_SHORT).show()
+                      Toast.makeText(context, "Skill ${binding.chosenSkill?.name} tapped for ${binding.amount}", Toast.LENGTH_SHORT).show()
+                  }
+              })
+            .setNegativeButton(R.string.abandon,
+              DialogInterface.OnClickListener { dialog, id ->
+                  Toast.makeText(context, "Skill cancel tapped", Toast.LENGTH_SHORT).show()
+              })
             .create()
     }
 

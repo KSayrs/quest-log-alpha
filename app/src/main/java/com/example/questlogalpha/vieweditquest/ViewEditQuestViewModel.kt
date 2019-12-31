@@ -9,13 +9,16 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.questlogalpha.ITalkToDialogs
 import com.example.questlogalpha.data.Objective
 import com.example.questlogalpha.data.Quest
+import com.example.questlogalpha.data.Reward
+import com.example.questlogalpha.data.Skill
 import com.example.questlogalpha.quests.Difficulty
 import com.example.questlogalpha.quests.QuestsDao
 import kotlinx.coroutines.*
 
-class ViewEditQuestViewModel (private val questId: String, val database: QuestsDao, application: Application) : AndroidViewModel(application), AdapterView.OnItemSelectedListener {
+class ViewEditQuestViewModel (private val questId: String, val database: QuestsDao, application: Application) : AndroidViewModel(application), AdapterView.OnItemSelectedListener, ITalkToDialogs {
 
     val currentQuest : Quest? get() = _currentQuest
     private var _currentQuest : Quest ?= null
@@ -26,6 +29,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     val difficulty = MutableLiveData<Difficulty>()
     val objectives = MutableLiveData<ArrayList<Objective>>()
     val modifiedObjective = MutableLiveData<Objective>()
+    val rewards = MutableLiveData<ArrayList<Reward>>()
 
     private var isNewQuest: Boolean = true
     private var isDataLoaded = false
@@ -54,6 +58,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             objectives.value = arrayListOf()
             objectives.value!!.add(Objective("New Objective", false))
             modifiedObjective.value = null
+            rewards.value = arrayListOf()
             Log.d(TAG, "init: creating new quest")
         }
         else
@@ -74,6 +79,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
                 difficulty.value = currentQuest?.difficulty
                 objectives.value = currentQuest?.objectives
                 modifiedObjective.value = null
+                rewards.value = currentQuest?.rewards
             }
         }
     }
@@ -103,12 +109,14 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             Log.d(TAG, "quest title: " + _currentQuest!!.title)
             Log.d(TAG, "Quest ID: " + currentQuest!!.id)
             Log.d(TAG, "quest description: " + currentQuest!!.description)
+            Log.d(TAG, "quest rewards: " + currentQuest!!.rewards)
 //            Log.d(TAG, "quest first objective: " + currentQuest!!.objectives[0])
 
             _currentQuest!!.title = title.value.toString()
             _currentQuest!!.description = description.value.toString()
             _currentQuest!!.difficulty = difficulty.value!!
             _currentQuest!!.objectives = objectives.value!!
+            _currentQuest!!.rewards = rewards.value!!
             database.updateQuest(_currentQuest!!)
         }
     }
@@ -127,8 +135,9 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         }
     }
 
-    // ----------- on-click handlers --------------
+    // --------------------- on-click handlers ------------------ //
 
+    // spinner handlers
     override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
         difficulty.value = parent.getItemAtPosition(pos) as Difficulty? //Difficulty.valueOf(parent.getItemAtPosition(pos).toString())
 
@@ -146,6 +155,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         // do nothing?
     }
 
+    // objective handlers
     fun onObjectiveChecked(objectiveId: String) {
         for(obj in objectives.value!!) {
             if(obj.id == objectiveId){
@@ -164,6 +174,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         modifiedObjective.value = null
     }
 
+    // todo figure out what this comment means vvv
     // todo if this works we can edit onObjectiveChecked
     fun onObjectiveEdit(objective: Objective, objectiveText: String) {
         Log.d(TAG, "onObjectiveEdit()")
@@ -178,7 +189,14 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         modifiedObjective.value = newObjective
     }
 
-    // ------------------ navigation -----------------
+    override fun onPositiveButtonClicked(dictionary: Map<String, Any>) {
+        val amount:Double = dictionary["amount"] as Double
+        val skill: Skill = dictionary["skill"] as Skill
+        Log.d(TAG, "onPositiveButtonClicked(): ${skill.name}, $amount")
+        rewards.value!!.add(Reward(skill.id, amount))
+    }
+
+    // ------------------------ navigation ----------------------- //
 
     private val _navigateToQuestsViewModel = MutableLiveData<Boolean>()
     val navigateToQuestsViewModel: LiveData<Boolean> get() = _navigateToQuestsViewModel

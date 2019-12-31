@@ -22,7 +22,6 @@ import kotlinx.android.synthetic.main.quest_objective_view.view.*
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.EditorInfo
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.children
 import com.example.questlogalpha.databinding.QuestObjectiveViewBinding
 import com.example.questlogalpha.quests.AddRewardDialogFragment
@@ -135,7 +134,7 @@ class ViewEditQuestFragment : Fragment() {
 
         // rewards
         binding.addRewardsButton.setOnClickListener{
-            val dialog = AddRewardDialogFragment()
+            val dialog = AddRewardDialogFragment(viewEditQuestViewModel)
             dialog.show(fragmentManager!!, "Tag??")
         }
 

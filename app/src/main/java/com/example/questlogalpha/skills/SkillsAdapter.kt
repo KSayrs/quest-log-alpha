@@ -16,6 +16,8 @@ import kotlinx.android.synthetic.main.skill_item_view.view.*
 class SkillItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.ViewHolder(constraintLayout)
 
 class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
+    var chosenSkill:Skill? = null // used for dialogs
+
     var data = listOf<Skill>()
         set(value) {
             field = value
@@ -37,8 +39,8 @@ class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
         val holder = SkillItemViewHolder(binding.root.skill_item_view_layout)
 
         binding.root.setOnClickListener {
-            // todo select this one
             Log.d(TAG,"item ${holder.adapterPosition} tapped")
+            chosenSkill = binding.skill
         }
 
         Log.d(TAG,"onCreateViewHolder")
