@@ -68,13 +68,12 @@ class AddRewardDialogFragment(vm: ITalkToDialogs) : DialogFragment() {
             .setPositiveButton(android.R.string.ok,
               DialogInterface.OnClickListener { dialog, whichButton ->
 
-                  if(adapter?.chosenSkill != null) {
+                  if(adapter?.chosenSkill != null && dialogView!!.skill_amount.text.toString() != "") {
 
                       binding.chosenSkill = adapter?.chosenSkill
                       binding.amount = dialogView!!.skill_amount.text.toString().toDouble()
 
                       viewEditViewModel?.onPositiveButtonClicked(mapOf("skill" to binding.chosenSkill!!, "amount" to binding.amount!!))
-                     // Toast.makeText(context, "Skill ok tapped", Toast.LENGTH_SHORT).show()
                       Toast.makeText(context, "Skill ${binding.chosenSkill?.name} tapped for ${binding.amount}", Toast.LENGTH_SHORT).show()
                   }
               })
