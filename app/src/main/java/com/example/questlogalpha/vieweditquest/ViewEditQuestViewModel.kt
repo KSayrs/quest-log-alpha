@@ -27,12 +27,17 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     val title = MutableLiveData<String>()
     val description = MutableLiveData<String>()
     val difficulty = MutableLiveData<Difficulty>()
-    val objectives = MutableLiveData<ArrayList<Objective>>()
+    val objectives = MutableLiveData<ArrayList<Objective>>() // not observed
     val modifiedObjective = MutableLiveData<Objective>()
-    val rewards = MutableLiveData<ArrayList<Reward>>()
+    val modifiedReward = MutableLiveData<Reward>()
+
+    // not observed
+    private val _rewards = MutableLiveData<ArrayList<Reward>>()
+    val rewards: LiveData<ArrayList<Reward>> get() = _rewards
 
     private var isNewQuest: Boolean = true
     private var isDataLoaded = false
+    val skillRewards = arrayListOf<Skill>()
 
     var toast = Toast.makeText(getApplication(), "Item Selected", Toast.LENGTH_SHORT)
 
@@ -58,7 +63,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             objectives.value = arrayListOf()
             objectives.value!!.add(Objective("New Objective", false))
             modifiedObjective.value = null
-            rewards.value = arrayListOf()
+            _rewards.value = arrayListOf()
             Log.d(TAG, "init: creating new quest")
         }
         else
@@ -79,11 +84,12 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
                 difficulty.value = currentQuest?.difficulty
                 objectives.value = currentQuest?.objectives
                 modifiedObjective.value = null
-                rewards.value = currentQuest?.rewards
+                _rewards.value = currentQuest?.rewards
             }
         }
     }
 
+    // -------------------------------------------------------------------- //
     // ------------------------ database updates -------------------------- //
     fun onSaveQuest()
     {
@@ -135,9 +141,10 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         }
     }
 
+    // ---------------------------------------------------------- //
     // --------------------- on-click handlers ------------------ //
 
-    // spinner handlers
+    // ---------------- spinner handlers ---------------- //
     override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
         difficulty.value = parent.getItemAtPosition(pos) as Difficulty? //Difficulty.valueOf(parent.getItemAtPosition(pos).toString())
 
@@ -155,7 +162,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         // do nothing?
     }
 
-    // objective handlers
+    // ---------------- objective handlers ---------------- //
     fun onObjectiveChecked(objectiveId: String) {
         for(obj in objectives.value!!) {
             if(obj.id == objectiveId){
@@ -189,15 +196,55 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         modifiedObjective.value = newObjective
     }
 
+    // ---------------- reward handlers ---------------- //
     override fun onPositiveButtonClicked(dictionary: Map<String, Any>) {
         val amount:Double = dictionary["amount"] as Double
         val skill: Skill = dictionary["skill"] as Skill
-        Log.d(TAG, "onPositiveButtonClicked(): ${skill.name}, $amount")
-        rewards.value!!.add(Reward(skill.id, amount))
+        onAddReward(amount, skill)
     }
 
-    // ------------------------ navigation ----------------------- //
+    private fun onAddReward(amount: Double, skill: Skill)
+    {
+        Log.d(TAG, "onAddReward(): ${skill.name}, $amount")
+        val x = Reward(skill.id, amount)
+        _rewards.value!!.add(Reward(skill.id, amount))
+        modifiedReward.value = x
+        skillRewards.add(skill)
+    }
 
+    fun onRemoveReward(reward: Reward) {
+        _rewards.value!!.remove(reward)
+        modifiedReward.value = null
+    }
+
+    fun getRewardName(id: String) : String
+    {
+        for(item in skillRewards) {
+            if(id == item.id) {
+                return item.name
+            }
+        }
+
+        // wasn't found, throw error
+        Log.e(TAG, "${object{}.javaClass.enclosingMethod?.name}: Reward with id $id was not found in skillRewards list!!")
+        return ""
+    }
+
+    fun getRewardAmount(id: String) : String
+    {
+        for(item in skillRewards) {
+            if(id == item.id) {
+                return item.name
+            }
+        }
+
+        // wasn't found, throw error
+        Log.e(TAG, "${object{}.javaClass.enclosingMethod?.name}: Reward with id $id was not found in skillRewards list!!")
+        return ""
+    }
+
+    // ----------------------------------------------------------- //
+    // ------------------------ navigation ----------------------- //
     private val _navigateToQuestsViewModel = MutableLiveData<Boolean>()
     val navigateToQuestsViewModel: LiveData<Boolean> get() = _navigateToQuestsViewModel
 
@@ -206,9 +253,9 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         _navigateToQuestsViewModel.value = false
     }
 
-
+    // ------------------------------------------------------------------ //
     // -------------------------- log util ------------------------------ //
     companion object {
-        const val TAG: String = "KSLOG: ViewEditQuestViewModel"
+        var TAG: String = "KSLOG: ViewEditQuestViewModel"
     }
 }

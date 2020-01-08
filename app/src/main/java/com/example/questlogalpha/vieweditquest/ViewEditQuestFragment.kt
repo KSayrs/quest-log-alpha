@@ -1,6 +1,5 @@
 package com.example.questlogalpha.vieweditquest
 
-import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -132,10 +131,24 @@ class ViewEditQuestFragment : Fragment() {
             }
         })
 
-        // rewards
+        // show rewards
+        val rewardsAdapter = RewardsAdapter()
+        rewardsAdapter.viewModel = binding.viewEditQuestViewModel
+        binding.rewardsList.adapter = rewardsAdapter
+
+        viewEditQuestViewModel.modifiedReward.observe(this, Observer {
+            if(viewEditQuestViewModel.rewards.value == null) {
+                Log.e(TAG, "viewEditQuestViewModel.rewards is null. Ending observation early.")
+                return@Observer
+            }
+
+            rewardsAdapter.data = viewEditQuestViewModel.rewards.value!!
+        })
+
+        // add reward button
         binding.addRewardsButton.setOnClickListener{
             val dialog = AddRewardDialogFragment(viewEditQuestViewModel)
-            dialog.show(fragmentManager!!, "Tag??")
+            dialog.show(fragmentManager!!, "addRewards")
         }
 
         // navigation
