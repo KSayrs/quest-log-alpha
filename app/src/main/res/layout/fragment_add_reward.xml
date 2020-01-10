@@ -45,6 +45,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:inputType="number"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
                 app:layout_constraintTop_toBottomOf="@id/skills_list"
                 app:layout_constraintStart_toEndOf="@id/reward_amount_text"
                 app:layout_constraintEnd_toEndOf="parent"
