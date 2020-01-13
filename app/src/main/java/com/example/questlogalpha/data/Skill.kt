@@ -2,6 +2,7 @@ package com.example.questlogalpha.data
 
 import android.util.Log
 import androidx.room.*
+import com.example.questlogalpha.round
 import java.util.*
 import kotlin.math.pow
 
@@ -11,7 +12,6 @@ import kotlin.math.pow
  * @param name           name of the skill
  * @param level          current skill level
  * @param currentXP      current skill experience
- * @param nextLevelXP    experience that needs to be reached to level up
  * @param attritionRate  experience lost per week
  * @param iconPath       svg image
  */
@@ -40,11 +40,11 @@ data class Skill (
     val nextLevelXP: Double get() = getExperienceForNextLevel(level)
 
     val canLevelUp: Boolean get(){
-        if(getExperienceForNextLevel(level-2) > currentXP)
+        if(getExperienceForNextLevel(level - 2) > currentXP)
         {
             val shouldBe = getExperienceForNextLevel(level-1)
             Log.w(TAG, "CurrentXP ($currentXP) not within level threshold! Adjusting currentXP to match level $level ($shouldBe)")
-            currentXP = shouldBe
+            currentXP = round(shouldBe, 2)
         }
 
         return currentXP >= nextLevelXP
@@ -65,12 +65,14 @@ data class Skill (
         callback()
     }
 
+    // todo replace with geomerty version
     private fun getExperienceForNextLevel(level: Int) : Double {
-        return ((0.04 * level.toDouble()).pow(3)) + ((0.8 * level.toDouble()).pow(2)+2*level.toDouble()) + 10
+        return round(((0.04 * level.toDouble()).pow(3)) + ((0.8 * level.toDouble()).pow(2)+2*level.toDouble()) + 1, 2)
     }
 
     // -------------------------- log tag ------------------------------ //
     companion object {
         const val TAG: String = "KSLOG: Skill"
     }
+
 }

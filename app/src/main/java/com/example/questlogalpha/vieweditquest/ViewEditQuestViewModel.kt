@@ -10,10 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.questlogalpha.ITalkToDialogs
-import com.example.questlogalpha.data.Objective
-import com.example.questlogalpha.data.Quest
-import com.example.questlogalpha.data.Reward
-import com.example.questlogalpha.data.Skill
+import com.example.questlogalpha.data.*
 import com.example.questlogalpha.quests.Difficulty
 import com.example.questlogalpha.quests.QuestsDao
 import kotlinx.coroutines.*
@@ -29,11 +26,8 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     val difficulty = MutableLiveData<Difficulty>()
     val objectives = MutableLiveData<ArrayList<Objective>>() // not observed
     val modifiedObjective = MutableLiveData<Objective>()
-    val modifiedReward = MutableLiveData<Reward>()
-
-    // not observed
-    private val _rewards = MutableLiveData<ArrayList<Reward>>()
-    val rewards: LiveData<ArrayList<Reward>> get() = _rewards
+    val modifiedReward = MutableLiveData<SkillReward>()
+    val rewards = MutableLiveData<ArrayList<SkillReward>>()
 
     private var isNewQuest: Boolean = true
     private var isDataLoaded = false
@@ -63,7 +57,8 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             objectives.value = arrayListOf()
             objectives.value!!.add(Objective("New Objective", false))
             modifiedObjective.value = null
-            _rewards.value = arrayListOf()
+            modifiedReward.value = null
+            rewards.value = arrayListOf()
             Log.d(TAG, "init: creating new quest")
         }
         else
@@ -84,7 +79,8 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
                 difficulty.value = currentQuest?.difficulty
                 objectives.value = currentQuest?.objectives
                 modifiedObjective.value = null
-                _rewards.value = currentQuest?.rewards
+                modifiedReward.value = null
+                rewards.value = currentQuest?.rewards
             }
         }
     }
@@ -116,7 +112,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             Log.d(TAG, "Quest ID: " + currentQuest!!.id)
             Log.d(TAG, "quest description: " + currentQuest!!.description)
             Log.d(TAG, "quest rewards: " + currentQuest!!.rewards)
-//            Log.d(TAG, "quest first objective: " + currentQuest!!.objectives[0])
 
             _currentQuest!!.title = title.value.toString()
             _currentQuest!!.description = description.value.toString()
@@ -129,14 +124,13 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
     private suspend fun insert(){
         withContext(Dispatchers.IO){
-            val newQuest = Quest(title.value.toString(), description.value.toString(), objectives = objectives.value!!, difficulty = difficulty.value!!)
+            val newQuest = Quest(title.value.toString(), description.value.toString(), objectives = objectives.value!!, difficulty = difficulty.value!!, rewards = rewards.value!!)
             database.insertQuest(newQuest)
 
             Log.d(TAG, "Newly made quest title: " + newQuest.title)
             Log.d(TAG, "Newly made quest description: " + newQuest.description)
             Log.d(TAG, "Newly made quest difficulty: " + newQuest.difficulty)
             Log.d(TAG, "Newly made quest id: " + newQuest.id)
-         //   Log.d(TAG, "Newly made quest objective one: " + newQuest.objectives[0])
             Log.d(TAG, "Quest made on: " + newQuest.dateCreated)
         }
     }
@@ -150,11 +144,9 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
         toast.setText(parent.getItemAtPosition(pos).toString() + " selected")
         toast.show()
-
-        //  // An item was selected. You can retrieve the selected item using
-        //  // parent.getItemAtPosition(pos)
     }
 
+    // todo figure out if can delete
     override fun onNothingSelected(parent: AdapterView<*>) {
         toast.setText("nothing selected")
         toast.show()
@@ -203,44 +195,28 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         onAddReward(amount, skill)
     }
 
-    private fun onAddReward(amount: Double, skill: Skill)
-    {
+    private fun onAddReward(amount: Double, skill: Skill) {
         Log.d(TAG, "onAddReward(): ${skill.name}, $amount")
-        val x = Reward(skill.id, amount)
-        _rewards.value!!.add(Reward(skill.id, amount))
-        modifiedReward.value = x
+        val newReward = SkillReward(skill.id, amount, skill.name)
+        rewards.value!!.add(newReward)
+        modifiedReward.value = newReward
         skillRewards.add(skill)
     }
 
-    fun onRemoveReward(reward: Reward) {
-        _rewards.value!!.remove(reward)
-        modifiedReward.value = null
-    }
+    fun onRemoveReward(reward: SkillReward) {
+        rewards.value!!.remove(reward)
 
-    fun getRewardName(id: String) : String
-    {
+        var skillToRemove: Skill? = null
         for(item in skillRewards) {
-            if(id == item.id) {
-                return item.name
+            if(reward.id == item.id) {
+                skillToRemove = item
+                break
             }
         }
-
-        // wasn't found, throw error
-        Log.e(TAG, "${object{}.javaClass.enclosingMethod?.name}: Reward with id $id was not found in skillRewards list!!")
-        return ""
-    }
-
-    fun getRewardAmount(id: String) : String
-    {
-        for(item in skillRewards) {
-            if(id == item.id) {
-                return item.name
-            }
+        if(skillToRemove != null) {
+            skillRewards.remove(skillToRemove)
+            modifiedReward.value = null
         }
-
-        // wasn't found, throw error
-        Log.e(TAG, "${object{}.javaClass.enclosingMethod?.name}: Reward with id $id was not found in skillRewards list!!")
-        return ""
     }
 
     // ----------------------------------------------------------- //

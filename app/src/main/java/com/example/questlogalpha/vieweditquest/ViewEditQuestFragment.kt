@@ -85,6 +85,14 @@ class ViewEditQuestFragment : Fragment() {
                         objectiveBound = true
                         // todo figure out why this doesn't auto-update
                         objBinding.questObjectiveCheckbox.isChecked = objective.completed
+                        if(objective.description != "") {
+                            Log.d(TAG, "objective description: ${objective.description}")
+                            objBinding.questObjectiveEditText.setText(objective.description)
+                        }
+                        else
+                        {
+                            objBinding.questObjectiveEditText.setText("Empty Objective")
+                        }
                         Log.d(TAG, "objective already bound")
                         break
                     }
@@ -133,12 +141,24 @@ class ViewEditQuestFragment : Fragment() {
 
         // show rewards
         val rewardsAdapter = RewardsAdapter()
-        rewardsAdapter.viewModel = binding.viewEditQuestViewModel
+        rewardsAdapter.viewModel = viewEditQuestViewModel
         binding.rewardsList.adapter = rewardsAdapter
+
+        // we need to observe both of these because without the full list it won't initialize
+        // and without the individual it won't add new ones
+        viewEditQuestViewModel.rewards.observe(this, Observer {
+            Log.d(TAG, "observe rewards full list")
+            if(viewEditQuestViewModel.rewards.value == null) {
+                Log.e(TAG, "viewEditQuestViewModel.rewards is null. Ending observation (rewards) early.")
+                return@Observer
+            }
+
+            rewardsAdapter.data = viewEditQuestViewModel.rewards.value!!
+        })
 
         viewEditQuestViewModel.modifiedReward.observe(this, Observer {
             if(viewEditQuestViewModel.rewards.value == null) {
-                Log.e(TAG, "viewEditQuestViewModel.rewards is null. Ending observation early.")
+                Log.e(TAG, "viewEditQuestViewModel.rewards is null. Ending observation (modifiedReward) early.")
                 return@Observer
             }
 
@@ -159,7 +179,7 @@ class ViewEditQuestFragment : Fragment() {
                         ViewEditQuestFragmentDirections.actionViewEditQuestFragmentToMainViewFragment())
                 } else {
                     Log.e(TAG,"Current destination is " + this.findNavController().currentDestination?.label + " instead of R.id.viewEditQuestFragment!")
-                    return@Observer // this is a hack, otherwisethis becomes an infinite loop
+                    return@Observer // this is a hack, otherwise this becomes an infinite loop
                 }
 
                 viewEditQuestViewModel.doneNavigating()

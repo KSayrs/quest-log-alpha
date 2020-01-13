@@ -1,10 +1,12 @@
+/*
+* View Model for the list of quests
+*/
 package com.example.questlogalpha.quests
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.questlogalpha.data.Quest
 import kotlinx.coroutines.*
 
@@ -19,7 +21,6 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
     }
 
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-//    private var selectedQuest = MutableLiveData<Quest?>()
 
     private val _navigateToViewEditQuest = MutableLiveData<String?>()
 
@@ -40,21 +41,34 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
     }
 
     init {
-        Log.d("$TAG QusetsVM","QuestsViewModel initiated")
+        Log.d(TAG,"QuestsViewModel initiated")
        // initializeQuest()
     }
 
     fun onQuestCreate() {
         uiScope.launch {
-            Log.d("$TAG onQuestCreate", "Logging")
             _navigateToViewEditQuest.value = ""
         }
     }
 
     fun onQuestEdit(quest: Quest) {
         uiScope.launch {
-            Log.d("$TAG onQuestEdit", "Logging")
             _navigateToViewEditQuest.value = quest.id
+        }
+    }
+
+    // ----------------------- complete quest -------------------------- //
+    fun onSetQuestCompletion(questId: String, completed: Boolean){
+        uiScope.launch {
+            Log.d("$TAG onCompleteQuest", "Completed: $completed")
+            setQuestCompletion(questId, completed)
+        }
+    }
+
+    private suspend fun setQuestCompletion(questId: String, completed: Boolean)
+    {
+        withContext(Dispatchers.IO) {
+            database.updateCompleted(questId, completed)
         }
     }
 

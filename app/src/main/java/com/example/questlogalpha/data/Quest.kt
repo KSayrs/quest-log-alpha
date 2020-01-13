@@ -45,7 +45,7 @@ data class Quest(
     @ColumnInfo
     var description: String = "",
 
-    @ColumnInfo(name = "rewards") var rewards: ArrayList<Reward> = arrayListOf(),
+    @ColumnInfo(name = "rewards") var rewards: ArrayList<SkillReward> = arrayListOf(),
 
     // todo notifications
   //  @ColumnInfo var notifications: ArrayList<Notification> = arrayListOf(),

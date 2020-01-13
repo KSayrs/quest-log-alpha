@@ -1,6 +1,8 @@
 package com.example.questlogalpha
 
 import android.util.Log
+import java.math.BigDecimal
+import java.math.RoundingMode
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -70,6 +72,14 @@ fun cubicEquation2(a:Double, b:Double, c:Double, d:Double=0.0, toSolveFor:Double
 
     Log.d(Util.TAG, "cubicEquation2: total: $total")
     return total
+}
+
+fun round(value: Double, places: Int): Double {
+    require(places >= 0)
+
+    var bd = BigDecimal.valueOf(value)
+    bd = bd.setScale(places, RoundingMode.HALF_UP)
+    return bd.toDouble()
 }
 
 class Util {

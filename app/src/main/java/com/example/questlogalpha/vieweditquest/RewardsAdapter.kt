@@ -2,15 +2,15 @@
 package com.example.questlogalpha.vieweditquest
 
 import android.util.Log
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.questlogalpha.R
-import com.example.questlogalpha.data.Reward
+import com.example.questlogalpha.data.SkillReward
 import com.example.questlogalpha.databinding.SkillInRewardListBinding
+import com.example.questlogalpha.skills.SkillsViewModel
 import kotlinx.android.synthetic.main.skill_in_reward_list.view.*
 
 /**
@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.skill_in_reward_list.view.*
 class RewardItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.ViewHolder(constraintLayout)
 
 class RewardsAdapter: RecyclerView.Adapter<RewardItemViewHolder>() {
-    var data = listOf<Reward>()
+    var data = listOf<SkillReward>()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -39,7 +39,7 @@ class RewardsAdapter: RecyclerView.Adapter<RewardItemViewHolder>() {
     override fun onBindViewHolder(holder: RewardItemViewHolder, position: Int) {
         val item = data[position]
         if(viewModel != null) {
-            holder.constraintLayout.skill_name.text = holder.constraintLayout.context.getString(R.string.skill_reward_amount, String.format("%.0f", item.amount), viewModel?.getRewardName(item.id))
+            holder.constraintLayout.skill_name.text = holder.constraintLayout.context.getString(R.string.skill_reward_amount, String.format("%.0f", item.amount), item.name)
         }
         else {
             holder.constraintLayout.skill_name.text = "viewModel is null!"
@@ -57,11 +57,17 @@ class RewardsAdapter: RecyclerView.Adapter<RewardItemViewHolder>() {
 
             if(viewModel != null){
                 viewModel!!.onRemoveReward(data[pos])
+                remove(pos)
             }
-            else Log.e(TAG, "binding.questsViewModel is null!")
+            else Log.e(TAG, "questsViewModel is null!")
         }
 
         return holder
+    }
+
+    private fun remove(position: Int){
+        notifyItemChanged(position)
+        notifyItemRangeRemoved(position, 1)
     }
 
     // -------------------------- log tag ------------------------------ //

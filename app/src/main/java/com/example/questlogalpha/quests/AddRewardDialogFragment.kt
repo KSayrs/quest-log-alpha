@@ -51,6 +51,7 @@ class AddRewardDialogFragment(vm: ITalkToDialogs) : DialogFragment() {
         Log.d(TAG, "onCreateDialog")
         dialogView = LayoutInflater.from(context).inflate(R.layout.fragment_add_reward, null, false)
         val binding : FragmentAddRewardBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.fragment_add_reward, null, false)
+        binding.lifecycleOwner = this
 
         val dataSource = QuestLogDatabase.getInstance(activity!!.application).skillsDatabaseDao
         val viewModelFactory = ViewModelFactory("", null, dataSource, activity!!.application)

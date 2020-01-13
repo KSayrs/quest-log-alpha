@@ -48,7 +48,6 @@
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/skill_amount"
                 app:layout_constraintStart_toEndOf="@+id/remove_skill_reward_icon"
                 app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

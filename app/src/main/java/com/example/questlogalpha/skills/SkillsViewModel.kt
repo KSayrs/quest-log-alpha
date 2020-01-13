@@ -9,6 +9,7 @@ import com.example.questlogalpha.data.Skill
 import com.example.questlogalpha.data.SkillType
 import com.example.questlogalpha.personnage.SkillsDao
 import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
 class SkillsViewModel (val database: SkillsDao) : ViewModel() {
 
@@ -34,6 +35,8 @@ class SkillsViewModel (val database: SkillsDao) : ViewModel() {
     // public functions
     // ---------------------------------------------------------------- //
 
+    // --------- debug -------- //
+    /** Adds a debug skill with the name "NewSkill", has 0 xp, and is of SkillType.NONE */
     fun onAddDebugSkill()
     {
         // todo launch to new screen -- ViewEditSkill
@@ -42,6 +45,7 @@ class SkillsViewModel (val database: SkillsDao) : ViewModel() {
         }
     }
 
+    // --------- navigation -------- //
     fun onAddSkill() {
         viewModelScope.launch {
             Log.d("$TAG onAddSkill", "Logging")
@@ -56,9 +60,32 @@ class SkillsViewModel (val database: SkillsDao) : ViewModel() {
         }
     }
 
+    // --------- add experience/check for level -------- //
+    /** Adds experience to a skill, checks if it is high enough to level, and levels the skill if it is. Updates database.
+     * @param skillId the String id for the Skill
+     * @param experience the experience to award
+     * */
+    fun addExperience(skillId: String, experience: Double) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val skill = database.getSkillById(skillId) ?: return@withContext
+                skill.currentXP += experience
+                if (skill.canLevelUp) {
+                    skill.onLevelUp()
+                }
+                database.updateSkill(skill)
+            }
+        }
+    }
 
     // private functions
     // ---------------------------------------------------------------- //
+
+    private suspend fun updateSkill(skill:Skill){
+        withContext(Dispatchers.IO){
+            database.updateSkill(skill)
+        }
+    }
 
     private suspend fun getAllSkills(): List<Skill>? {
         return withContext(Dispatchers.IO){
