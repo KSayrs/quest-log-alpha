@@ -16,6 +16,7 @@ import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentQuestsBinding
+import com.example.questlogalpha.skills.SkillsViewModel
 import com.example.questlogalpha.ui.main.MainViewFragmentDirections
 
 // TODO: Rename parameter arguments, choose names that match
@@ -69,8 +70,12 @@ class QuestsFragment : Fragment() {
         val binding: FragmentQuestsBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_quests, container, false)
         val application = requireNotNull(this.activity).application
         val dataSource = QuestLogDatabase.getInstance(application).questLogDatabaseDao
-        val viewModelFactory = ViewModelFactory("", dataSource, null, application)
+        val skillsDataSource = QuestLogDatabase.getInstance(application).skillsDatabaseDao
+        val viewModelFactory = ViewModelFactory("", dataSource, skillsDataSource, application)
+
         val questsViewModel = ViewModelProviders.of(this, viewModelFactory).get(QuestsViewModel::class.java)
+        val skillsViewModel = ViewModelProviders.of(this, viewModelFactory).get(SkillsViewModel::class.java)
+
         val adapter = QuestsAdapter()
         binding.questList.adapter = adapter
 
@@ -106,6 +111,7 @@ class QuestsFragment : Fragment() {
             it?.let {
                 adapter.data = it
                 adapter.viewModel = binding.questsViewModel
+                adapter.skillsViewModel = skillsViewModel
             }
         })
 

@@ -10,7 +10,6 @@ import com.example.questlogalpha.quests.QuestsDao
 import androidx.sqlite.db.SupportSQLiteDatabase
 import android.icu.lang.UCharacter.GraphemeClusterBreak.V
 import android.os.AsyncTask.execute
-import android.icu.lang.UCharacter.GraphemeClusterBreak.V
 import com.example.questlogalpha.personnage.SkillsDao
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors

@@ -35,8 +35,6 @@ class AddRewardDialogFragment(vm: ITalkToDialogs) : DialogFragment() {
     var dialogView : View? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        Log.d(TAG, "onCreateView")
-
         viewModel!!.skills.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter!!.data = it
@@ -48,7 +46,6 @@ class AddRewardDialogFragment(vm: ITalkToDialogs) : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        Log.d(TAG, "onCreateDialog")
         dialogView = LayoutInflater.from(context).inflate(R.layout.fragment_add_reward, null, false)
         val binding : FragmentAddRewardBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.fragment_add_reward, null, false)
         binding.lifecycleOwner = this
