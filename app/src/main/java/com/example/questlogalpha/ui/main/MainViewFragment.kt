@@ -25,13 +25,7 @@ class MainViewFragment : Fragment() {
         // binding.viewPager.adapter = sectionsPagerAdapter
         binding.viewPager.adapter = SectionsPagerAdapter(activity!!.applicationContext, childFragmentManager) // so far this one doesn't have the blank back problem
         binding.tabs.setupWithViewPager(binding.viewPager)
-
-        // other things in the main activity
-        binding.fab.setOnClickListener { view: View ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
-
+        
         // set the quests list to be the default landing page
         binding.viewPager.currentItem = 1 // todo don't use a hard value
 
