@@ -29,6 +29,9 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     val modifiedReward = MutableLiveData<SkillReward>()
     val rewards = MutableLiveData<ArrayList<SkillReward>>()
 
+    private val _dataLoading = MutableLiveData<Boolean>()
+    val dataLoading: LiveData<Boolean> = _dataLoading
+
     private var isNewQuest: Boolean = true
     private var isDataLoaded = false
     val skillRewards = arrayListOf<Skill>()
@@ -55,7 +58,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             description.value = ""
             difficulty.value = Difficulty.MEDIUM
             objectives.value = arrayListOf()
-            objectives.value!!.add(Objective("New Objective", false))
+           // objectives.value!!.add(Objective("New Objective", false))
             modifiedObjective.value = null
             modifiedReward.value = null
             rewards.value = arrayListOf()
@@ -63,26 +66,42 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         }
         else
         {
-            // apparently this can replace the whole job stuff
             viewModelScope.launch {
                 withContext(Dispatchers.IO) {
-                    val q: Quest? = database.getQuestById(questId) ?: return@withContext
-
-                    if (q == null) Log.e(TAG, "init: existing quest: quest is null!")
-                    _currentQuest = q
-                    isDataLoaded = true
+                    val q =  async { database.getQuestById(questId) }
+                  //  val q: Quest? = database.getQuestById(questId) ?: return@withContext
+                    val loadedQuest = q.await()
+                    async { onDataLoaded(loadedQuest) }
                 }
-
-                // todo figure out a way to wait until data is loaded
-                title.value = currentQuest?.title
-                description.value = currentQuest?.description
-                difficulty.value = currentQuest?.difficulty
-                objectives.value = currentQuest?.objectives
-                modifiedObjective.value = null
-                modifiedReward.value = null
-                rewards.value = currentQuest?.rewards
             }
         }
+    }
+
+    private fun onDataLoaded(quest: Quest?)
+    {
+        if (quest == null) {
+            Log.e(TAG, "onDataLoaded: existing quest: quest is null!")
+            return
+        }
+        _currentQuest = quest
+
+        title.postValue(currentQuest?.title)
+        description.postValue(currentQuest?.description)
+        difficulty.postValue(currentQuest?.difficulty)
+        objectives.postValue(currentQuest?.objectives)
+        modifiedObjective.postValue(null)
+        modifiedReward.postValue(null)
+        rewards.postValue(currentQuest?.rewards)
+
+
+      // title.value = currentQuest?.title
+      // description.value = currentQuest?.description
+      // difficulty.value = currentQuest?.difficulty
+      // objectives.value = currentQuest?.objectives
+      // modifiedObjective.value = null
+      // modifiedReward.value = null
+      // rewards.value = currentQuest?.rewards
+        isDataLoaded = true
     }
 
     // -------------------------------------------------------------------- //
@@ -155,16 +174,9 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     }
 
     // ---------------- objective handlers ---------------- //
-    fun onObjectiveChecked(objectiveId: String) {
-        for(obj in objectives.value!!) {
-            if(obj.id == objectiveId){
-                obj.completed = !obj.completed
-                modifiedObjective.value = obj
-                return
-            }
-        }
-
-        Log.e(TAG, "onObjectiveChecked: objective '${objectiveId}' not found for quest ${currentQuest?.title}!")
+    fun onObjectiveChecked(objective: Objective) {
+        objective.completed = !objective.completed
+        modifiedObjective.value = objective
     }
 
     fun onObjectiveDeleted(objective: Objective) {
@@ -173,16 +185,12 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         modifiedObjective.value = null
     }
 
-    // todo figure out what this comment means vvv
-    // todo if this works we can edit onObjectiveChecked
     fun onObjectiveEdit(objective: Objective, objectiveText: String) {
-        Log.d(TAG, "onObjectiveEdit()")
         objective.description = objectiveText
         modifiedObjective.value = objective
     }
 
     fun onAddObjective(){
-        Log.d(TAG, "onAddObjective()")
         val newObjective = Objective()
         objectives.value!!.add(newObjective)
         modifiedObjective.value = newObjective

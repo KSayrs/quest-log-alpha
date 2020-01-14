@@ -50,6 +50,11 @@ class ViewEditQuestFragment : Fragment() {
         spinner.adapter = ArrayAdapter<Difficulty>(application, android.R.layout.simple_spinner_item, Difficulty.values())
         spinner.onItemSelectedListener = viewEditQuestViewModel
 
+        // set up rewards adapter
+        val rewardsAdapter = RewardsAdapter()
+        rewardsAdapter.viewModel = viewEditQuestViewModel
+        binding.rewardsList.adapter = rewardsAdapter
+
         // show the action bar on this page
         val actionbar = (activity as AppCompatActivity).supportActionBar
         actionbar!!.setDisplayHomeAsUpEnabled(true)
@@ -85,15 +90,6 @@ class ViewEditQuestFragment : Fragment() {
                         objectiveBound = true
                         // todo figure out why this doesn't auto-update
                         objBinding.questObjectiveCheckbox.isChecked = objective.completed
-                        if(objective.description != "") {
-                            Log.d(TAG, "objective description: ${objective.description}")
-                            objBinding.questObjectiveEditText.setText(objective.description)
-                        }
-                        else
-                        {
-                            objBinding.questObjectiveEditText.setText("Empty Objective")
-                        }
-                        Log.d(TAG, "objective already bound")
                         break
                     }
                 }
@@ -139,11 +135,6 @@ class ViewEditQuestFragment : Fragment() {
             }
         })
 
-        // show rewards
-        val rewardsAdapter = RewardsAdapter()
-        rewardsAdapter.viewModel = viewEditQuestViewModel
-        binding.rewardsList.adapter = rewardsAdapter
-
         // we need to observe both of these because without the full list it won't initialize
         // and without the individual it won't add new ones
         viewEditQuestViewModel.rewards.observe(this, Observer {
@@ -158,7 +149,7 @@ class ViewEditQuestFragment : Fragment() {
 
         viewEditQuestViewModel.modifiedReward.observe(this, Observer {
             if(viewEditQuestViewModel.rewards.value == null) {
-                Log.e(TAG, "viewEditQuestViewModel.rewards is null. Ending observation (modifiedReward) early.")
+                Log.w(TAG, "viewEditQuestViewModel.rewards is null. Ending observation (modifiedReward) early.")
                 return@Observer
             }
 
