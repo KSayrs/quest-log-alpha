@@ -30,7 +30,7 @@ import java.util.*
 
 class AddRewardDialogFragment(vm: ITalkToDialogs) : DialogFragment() {
     var viewModel : SkillsViewModel? = null
-    var viewEditViewModel : ITalkToDialogs? = vm
+    private var viewEditViewModel : ITalkToDialogs? = vm
     var adapter : SkillsAdapter? = null
     var dialogView : View? = null
 

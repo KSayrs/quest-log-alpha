@@ -65,6 +65,12 @@ class RewardsAdapter: RecyclerView.Adapter<RewardItemViewHolder>() {
         return holder
     }
 
+    // todo move the onclick action for the add rewards to the viewmodel, then call this
+    fun forceNotifty()
+    {
+        notifyDataSetChanged()
+    }
+
     private fun remove(position: Int){
         notifyItemChanged(position)
         notifyItemRangeRemoved(position, 1)

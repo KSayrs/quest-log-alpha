@@ -39,7 +39,6 @@ class RewardArrayConverter {
             obj.put("name", reward.name)
 
             jsonObject.put(reward.id, obj)
-           // jsonObject.put(reward.id, reward.amount)
         }
 
         Log.d(TAG, "RewardArrayConverter: skillRewardToString: jsonObject: \n $jsonObject")

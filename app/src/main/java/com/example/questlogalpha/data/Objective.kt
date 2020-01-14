@@ -26,18 +26,19 @@ class ObjectiveArrayConverter {
         return objArray
     }
 
-    /* This creates a json that looks like this:
-        LONGASJAVASTRINGID {
-            "description": "some text here",
-            "completed": true
-        }
-        LONGASJAVASTRINGID2 {
-            "description": "some other text here",
-            "completed": false
-        }
-        etc...
+    /**
+     * Converts an Objective to a json string format that looks like this:
+     * LONGASJAVASTRINGID {
+     * "description": "some text here",
+     * "completed": true
+     * }
+     * LONGASJAVASTRINGID2 {
+     * "description": "some other text here",
+     * "completed": false
+     * }
+     * etc...
+     * @param objectives the ArrayList of Objectives to be completed
      */
-
     @TypeConverter
     fun objectiveToString(objectives: ArrayList<Objective>): String? {
         val jsonObject: JSONObject = JSONObject()
@@ -50,6 +51,7 @@ class ObjectiveArrayConverter {
             jsonObject.put(objective.id, obj)
         }
 
+        Log.d(TAG, "ObjectiveArrayConverter: objectiveToString: jsonObject: \n $jsonObject")
         return jsonObject.toString()
     }
 
