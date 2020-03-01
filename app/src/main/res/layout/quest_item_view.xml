@@ -12,12 +12,13 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/quest_item_view-layout"
-            android:layout_width="match_parent" android:layout_height="80dp">
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
 
         <!-- TODO set this up with a default value like LifeRPG (or find a good way to GONE it when there is no image) -->
         <ImageView
                 android:id="@+id/quest_icon"
-                android:layout_width="80dp"
+                android:layout_width="60dp"
                 android:layout_height="match_parent"
                 android:tint="@color/colorAccent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -29,33 +30,33 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginRight="16dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/roboto"
+                android:foregroundGravity="left"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:text="Quest Title"
-                android:foregroundGravity="left"
-                android:textSize="24sp"
-                app:layout_constraintStart_toEndOf="@+id/quest_icon"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toStartOf="@+id/edit_quest_icon"
+                app:layout_constraintStart_toEndOf="@+id/quest_icon"
                 app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
                 android:id="@+id/quest_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginRight="8dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/roboto"
                 android:maxLines="1"
                 android:text="Quest Description"
-                android:textSize="14sp"
-                app:layout_constraintStart_toEndOf="@+id/quest_icon"
+                android:textSize="11sp"
                 app:layout_constraintEnd_toEndOf="@+id/delete_quest_icon"
+                app:layout_constraintStart_toEndOf="@+id/quest_icon"
                 app:layout_constraintTop_toBottomOf="@id/quest_title" />
 
         <androidx.appcompat.widget.AppCompatImageButton
