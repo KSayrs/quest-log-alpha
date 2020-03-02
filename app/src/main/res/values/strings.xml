@@ -15,4 +15,6 @@
     <string name="objectives">Objectives</string>
     <string name="objective_hint">Add an objective</string>
     <string name="skill_reward_amount">+%1$s %2$s</string>
+    <string name="skill_name_hint">Skill Name</string>
+    <string name="cancel">Cancel</string>
 </resources>

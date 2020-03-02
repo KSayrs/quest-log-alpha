@@ -35,10 +35,17 @@ class SkillsViewModel (val database: SkillsDao) : ViewModel() {
     // public functions
     // ---------------------------------------------------------------- //
 
+    /** Adds a new skill to the database.
+     * @param skill The skill to add*/
+    fun onAddNewSkill(skill: Skill) {
+        viewModelScope.launch {
+            insert(skill)
+        }
+    }
+
     // --------- debug -------- //
     /** Adds a debug skill with the name "NewSkill", has 0 xp, and is of SkillType.NONE */
-    fun onAddDebugSkill()
-    {
+    fun onAddDebugSkill() {
         // todo launch to new screen -- ViewEditSkill
         viewModelScope.launch {
             insert(Skill("NewSkill", 0, SkillType.NONE))

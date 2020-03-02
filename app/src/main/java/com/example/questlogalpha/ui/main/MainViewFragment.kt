@@ -25,7 +25,7 @@ class MainViewFragment : Fragment() {
         // binding.viewPager.adapter = sectionsPagerAdapter
         binding.viewPager.adapter = SectionsPagerAdapter(activity!!.applicationContext, childFragmentManager) // so far this one doesn't have the blank back problem
         binding.tabs.setupWithViewPager(binding.viewPager)
-        
+
         // set the quests list to be the default landing page
         binding.viewPager.currentItem = 1 // todo don't use a hard value
 
