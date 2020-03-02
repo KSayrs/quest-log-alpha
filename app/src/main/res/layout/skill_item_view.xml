@@ -16,13 +16,13 @@
     <!-- TODO find out why this needs to be hard-coded -->
    <androidx.constraintlayout.widget.ConstraintLayout
            android:id="@+id/skill_item_view-layout"
-           android:layout_width="350dp" android:layout_height="80dp">
+           android:layout_width="match_parent" android:layout_height="wrap_content">
 
        <!-- TODO set this up with a default value like LifeRPG (or find a good way to GONE it when there is no image) -->
         <ImageView
                 android:id="@+id/skill_icon"
                 android:layout_width="80dp"
-                android:layout_height="match_parent"
+                android:layout_height="80dp"
                 android:tint="@color/colorAccent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
