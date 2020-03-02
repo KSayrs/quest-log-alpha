@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -20,13 +19,9 @@ import com.example.questlogalpha.ITalkToDialogs
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentAddRewardBinding
-import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
 import com.example.questlogalpha.skills.SkillsAdapter
 import com.example.questlogalpha.skills.SkillsViewModel
-import com.example.questlogalpha.vieweditquest.ViewEditQuestViewModel
-import kotlinx.android.synthetic.main.fragment_add_reward.*
 import kotlinx.android.synthetic.main.fragment_add_reward.view.*
-import java.util.*
 
 class AddRewardDialogFragment(vm: ITalkToDialogs) : DialogFragment() {
     var viewModel : SkillsViewModel? = null

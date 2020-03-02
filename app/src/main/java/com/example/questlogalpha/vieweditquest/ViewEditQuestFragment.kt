@@ -64,7 +64,7 @@ class ViewEditQuestFragment : Fragment() {
 
         // this will continue to observe it after stuff has loaded...
         // todo check for performance issues, then maybe come up with a way to remove it after we have loaded the data
-        viewEditQuestViewModel.difficulty.observe(this, Observer {
+        viewEditQuestViewModel.difficulty.observe(viewLifecycleOwner, Observer {
             if (viewEditQuestViewModel.difficulty.value != null) {
                 spinner.setSelection(viewEditQuestViewModel.difficulty.value!!.ordinal)
             } else {
@@ -73,7 +73,7 @@ class ViewEditQuestFragment : Fragment() {
         })
 
         // add/update objectives
-        viewEditQuestViewModel.modifiedObjective.observe(this, Observer {
+        viewEditQuestViewModel.modifiedObjective.observe(viewLifecycleOwner, Observer {
             if(viewEditQuestViewModel.objectives.value == null) {
                 Log.e(TAG, "viewEditQuestViewModel.objectives is null. Ending observation early.")
                 return@Observer
@@ -113,7 +113,7 @@ class ViewEditQuestFragment : Fragment() {
                     imm!!.showSoftInput(objView.quest_objective_edit_text, InputMethodManager.SHOW_IMPLICIT)
                 }
 
-                objView.quest_objective_edit_text.setOnEditorActionListener { v, actionId, event ->
+                objView.quest_objective_edit_text.setOnEditorActionListener { _, actionId, _ ->
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         try {
                             viewEditQuestViewModel.onObjectiveEdit(objective, objView.quest_objective_edit_text.text.toString())
@@ -137,7 +137,7 @@ class ViewEditQuestFragment : Fragment() {
 
         // we need to observe both of these because without the full list it won't initialize
         // and without the individual it won't add new ones
-        viewEditQuestViewModel.rewards.observe(this, Observer {
+        viewEditQuestViewModel.rewards.observe(viewLifecycleOwner, Observer {
             Log.d(TAG, "observe rewards full list")
             if(viewEditQuestViewModel.rewards.value == null) {
                 Log.e(TAG, "viewEditQuestViewModel.rewards is null. Ending observation (rewards) early.")
@@ -147,7 +147,7 @@ class ViewEditQuestFragment : Fragment() {
             rewardsAdapter.data = viewEditQuestViewModel.rewards.value!!
         })
 
-        viewEditQuestViewModel.modifiedReward.observe(this, Observer {
+        viewEditQuestViewModel.modifiedReward.observe(viewLifecycleOwner, Observer {
             if(viewEditQuestViewModel.rewards.value == null) {
                 Log.w(TAG, "viewEditQuestViewModel.rewards is null. Ending observation (modifiedReward) early.")
                 return@Observer
@@ -159,11 +159,11 @@ class ViewEditQuestFragment : Fragment() {
         // add reward button
         binding.addRewardsButton.setOnClickListener{
             val dialog = AddRewardDialogFragment(viewEditQuestViewModel)
-            dialog.show(fragmentManager!!, "addRewards")
+            dialog.show(childFragmentManager, "addRewards")
         }
 
         // navigation
-        viewEditQuestViewModel.navigateToQuestsViewModel.observe(this, Observer {
+        viewEditQuestViewModel.navigateToQuestsViewModel.observe(viewLifecycleOwner, Observer {
             // todo test with activity!!.onBackPressed()
                 if (this.findNavController().currentDestination?.id == R.id.viewEditQuestFragment) {
                     this.findNavController().navigate(
