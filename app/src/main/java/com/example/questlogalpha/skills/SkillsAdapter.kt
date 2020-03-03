@@ -12,7 +12,6 @@ import com.example.questlogalpha.data.Skill
 import com.example.questlogalpha.databinding.SkillItemViewBinding
 import kotlinx.android.synthetic.main.skill_item_view.view.*
 
-// todo change this to a ListAdapter, and make a separate recyclerview adapter for the actual skills screen
 class SkillItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.ViewHolder(constraintLayout)
 
 class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
@@ -26,7 +25,7 @@ class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
 
     override fun getItemCount() = data.size
 
-    // in theory this happens after onCreate
+    // this happens after onCreate
     override fun onBindViewHolder(holder: SkillItemViewHolder, position: Int) {
         val binding = DataBindingUtil.getBinding <SkillItemViewBinding>(holder.itemView)
         binding?.position = position
@@ -42,8 +41,6 @@ class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
             Log.d(TAG,"item ${holder.adapterPosition} tapped")
             chosenSkill = binding.skill
         }
-
-        Log.d(TAG,"onCreateViewHolder")
 
         return holder
     }
