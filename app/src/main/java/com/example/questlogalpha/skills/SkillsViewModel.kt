@@ -43,6 +43,8 @@ class SkillsViewModel (val database: SkillsDao) : ViewModel() {
         }
     }
 
+    // todo add delete skill public and private functions
+
     // --------- debug -------- //
     /** Adds a debug skill with the name "NewSkill", has 0 xp, and is of SkillType.NONE */
     fun onAddDebugSkill() {

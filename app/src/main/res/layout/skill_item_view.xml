@@ -13,7 +13,6 @@
                 type="com.example.questlogalpha.data.Skill" />
     </data>
 
-    <!-- TODO find out why this needs to be hard-coded -->
    <androidx.constraintlayout.widget.ConstraintLayout
            android:id="@+id/skill_item_view-layout"
            android:layout_width="match_parent" android:layout_height="wrap_content">
@@ -45,6 +44,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         <!-- TODO add ProgressBar -->
+       <!-- TODO add Spinner -->
         <TextView
                 android:id="@+id/skill_experience"
                 android:layout_width="0dp"

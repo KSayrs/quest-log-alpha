@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- todo rename file -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -41,8 +42,9 @@
                 android:autofillHints=""
                 android:background="@null"
                 android:hint="@string/skill_name_hint"
-                android:text=""
-                android:textAlignment="center"
+                android:imeOptions="actionDone"
+                android:saveEnabled="false"
+                android:textAlignment="viewStart"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 app:layout_constraintBottom_toBottomOf="@+id/skill_icon"
                 app:layout_constraintStart_toEndOf="@+id/skill_icon"

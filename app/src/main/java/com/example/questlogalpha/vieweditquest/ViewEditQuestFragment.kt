@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
@@ -38,7 +38,7 @@ class ViewEditQuestFragment : Fragment() {
         val arguments =  ViewEditQuestFragmentArgs.fromBundle(arguments)
 
         val viewModelFactory = ViewModelFactory(arguments.questId, dataSource, null, application)
-        val viewEditQuestViewModel = ViewModelProviders.of(this, viewModelFactory).get(ViewEditQuestViewModel::class.java)
+        val viewEditQuestViewModel = ViewModelProvider(this, viewModelFactory).get(ViewEditQuestViewModel::class.java)
 
         viewModel = viewEditQuestViewModel
 

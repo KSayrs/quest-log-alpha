@@ -59,8 +59,13 @@ class SkillsFragment : Fragment() {
 
         // add skill button
         binding.addSkillButton.setOnClickListener{
-            val dialog = AddNewSkillDialogFragment()
+            val dialog = AddNewSkillDialogFragment(null)
             dialog.show(childFragmentManager, "addSkill")
+        }
+
+        adapter.onItemClick = { skill ->
+            val dialog = AddNewSkillDialogFragment(skill)
+            dialog.show(childFragmentManager, "editSkill")
         }
 
         return binding.root

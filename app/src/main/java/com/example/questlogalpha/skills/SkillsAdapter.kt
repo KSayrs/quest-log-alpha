@@ -16,6 +16,7 @@ class SkillItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.
 
 class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
     var chosenSkill:Skill? = null // used for dialogs
+    var onItemClick: ((Skill) -> Unit)? = null
 
     var data = listOf<Skill>()
         set(value) {
@@ -40,6 +41,7 @@ class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
         binding.root.setOnClickListener {
             Log.d(TAG,"item ${holder.adapterPosition} tapped")
             chosenSkill = binding.skill
+            onItemClick?.invoke(binding.skill!!)
         }
 
         return holder
