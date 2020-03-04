@@ -1,4 +1,3 @@
-// todo rename class
 package com.example.questlogalpha.skills
 
 import android.app.AlertDialog
@@ -17,14 +16,11 @@ import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.data.Skill
 import kotlinx.android.synthetic.main.dialog_fragment_add_skill.view.*
 
-
-class AddNewSkillDialogFragment(chosenSkill: Skill?) : DialogFragment() {
+class AddEditSkillDialogFragment(chosenSkill: Skill?) : DialogFragment() {
     var viewModel : SkillsViewModel? = null
     var adapter : SkillsAdapter? = null
     var dialogView : View? = null
     val skill = chosenSkill
-
-    override fun getTheme() = R.style.RoundedCornersDialog2
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_fragment_add_skill, null, false)
@@ -34,36 +30,42 @@ class AddNewSkillDialogFragment(chosenSkill: Skill?) : DialogFragment() {
 
         // set up toolbar
         val toolbar = dialogView!!.findViewById<androidx.appcompat.widget.Toolbar>(R.id.dialog_toolbar)
-        toolbar.inflateMenu(R.menu.menu_skill_dialog_actionbar)
-        if(this.skill == null) toolbar.title = "Add Skill"
-        else toolbar.title = "Edit Skill"
+        toolbar.title = if(this.skill == null) getString(R.string.add_skill) else getString(R.string.edit_skill)
 
-        toolbar.setOnMenuItemClickListener {
-            when(it.itemId) {
-                // todo add logic to delete skill
-                R.id.action_delete_skill -> Toast.makeText(context, "Delete skill tapped", Toast.LENGTH_SHORT).show()
-                else -> Log.e(TAG, "onCreateDialog: Some nonexistent action menu item was clicked!")
+        if(this.skill != null) {
+            toolbar.inflateMenu(R.menu.menu_skill_dialog_actionbar)
+            toolbar.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.action_delete_skill -> {
+                        viewModel!!.onDeleteSkill(this.skill)
+                        dismiss() // close the dialog
+                    }
+                    else -> Log.e(TAG,"onCreateDialog: Some nonexistent action menu item was clicked!")
+                }
+                true
             }
-            true
         }
+
+        // make Dialog
+        val acceptMessage:String = if(this.skill == null) getString(R.string.add) else getString(R.string.edit)
 
         return AlertDialog.Builder(activity)
             .setView(dialogView)
-            .setPositiveButton(android.R.string.ok,
+            .setPositiveButton(acceptMessage,
                 DialogInterface.OnClickListener { _, _ ->
-                    if(skill == null) {
+                    if(this.skill == null) {
                         val newSkill = Skill(dialogView!!.new_skill_name.text.toString())
                         viewModel!!.onAddNewSkill(newSkill)
                     }
                     else {
-                        // todo add logic to update skill
-                        Toast.makeText(context, "TODO: Update skill", Toast.LENGTH_SHORT).show()
+                        this.skill.name = dialogView!!.new_skill_name.text.toString()
+                        viewModel!!.onEditSkill(this.skill)
                     }
                 })
             .setNegativeButton(
                 getString(R.string.cancel),
                 DialogInterface.OnClickListener { _, _ ->
-                    Toast.makeText(context, "Canceled adding skill", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Canceled", Toast.LENGTH_SHORT).show()
                 })
             .create()
     }

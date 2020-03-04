@@ -18,4 +18,7 @@
     <string name="skill_name_hint">Skill Name</string>
     <string name="cancel">Cancel</string>
     <string name="delete_skill">Erase Skill</string>
+    <string name="edit">Edit</string>
+    <string name="add_skill">Add Skill</string>
+    <string name="edit_skill">Edit Skill</string>
 </resources>

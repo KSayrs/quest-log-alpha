@@ -10,7 +10,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
@@ -59,12 +58,12 @@ class SkillsFragment : Fragment() {
 
         // add skill button
         binding.addSkillButton.setOnClickListener{
-            val dialog = AddNewSkillDialogFragment(null)
+            val dialog = AddEditSkillDialogFragment(null)
             dialog.show(childFragmentManager, "addSkill")
         }
 
         adapter.onItemClick = { skill ->
-            val dialog = AddNewSkillDialogFragment(skill)
+            val dialog = AddEditSkillDialogFragment(skill)
             dialog.show(childFragmentManager, "editSkill")
         }
 

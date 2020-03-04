@@ -9,24 +9,10 @@ import com.example.questlogalpha.data.Skill
 import com.example.questlogalpha.data.SkillType
 import com.example.questlogalpha.personnage.SkillsDao
 import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
 
 class SkillsViewModel (val database: SkillsDao) : ViewModel() {
 
     val skills = database.getAllSkills()
-
-    /**
-     * TODO add navigation
-     */
-    private val _navigateToViewEditSkill = MutableLiveData<String?>()
-    val navigateToViewEditSkill: LiveData<String?> get() = _navigateToViewEditSkill
-
- // /**
- //  * Call this immediately after navigating to [ViewEditSkillFragment]
- //  */
-    fun doneNavigating() {
-       _navigateToViewEditSkill.value = null
-    }
 
     init {
         Log.d(TAG," initiated")
@@ -43,33 +29,30 @@ class SkillsViewModel (val database: SkillsDao) : ViewModel() {
         }
     }
 
-    // todo add delete skill public and private functions
+    /** Edits a skill in the database.
+     * @param skill The skill to edit */
+    fun onEditSkill(skill: Skill) {
+        viewModelScope.launch {
+            updateSkill(skill)
+        }
+    }
+
+    /** Removes a skill from the database.
+     * @param skill The skill to remove */
+    fun onDeleteSkill(skill: Skill) {
+        viewModelScope.launch {
+            delete(skill)
+        }
+    }
 
     // --------- debug -------- //
     /** Adds a debug skill with the name "NewSkill", has 0 xp, and is of SkillType.NONE */
     fun onAddDebugSkill() {
-        // todo launch to new screen -- ViewEditSkill
         viewModelScope.launch {
             insert(Skill("NewSkill", 0, SkillType.NONE))
         }
     }
 
-    // --------- navigation -------- //
-    fun onAddSkill() {
-        viewModelScope.launch {
-            Log.d("$TAG onAddSkill", "Logging")
-            _navigateToViewEditSkill.value = ""
-        }
-    }
-
-    fun onEditSkill(skill: Skill) {
-        viewModelScope.launch {
-            Log.d("$TAG onEditSkill", "Logging")
-            _navigateToViewEditSkill.value = skill.id
-        }
-    }
-
-    // --------- add experience/check for level -------- //
     /** Adds experience to a skill, checks if it is high enough to level, and levels the skill if it is. Updates database.
      * @param skillId the String id for the Skill
      * @param experience the experience to award
@@ -90,21 +73,27 @@ class SkillsViewModel (val database: SkillsDao) : ViewModel() {
     // private functions
     // ---------------------------------------------------------------- //
 
-    private suspend fun updateSkill(skill:Skill){
-        withContext(Dispatchers.IO){
+    private suspend fun updateSkill(skill:Skill) {
+        withContext(Dispatchers.IO) {
             database.updateSkill(skill)
         }
     }
 
     private suspend fun getAllSkills(): List<Skill>? {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             database.getAllSkills().value
         }
     }
 
-    private suspend fun insert(skill: Skill){
-        withContext(Dispatchers.IO){
+    private suspend fun insert(skill: Skill) {
+        withContext(Dispatchers.IO) {
             database.insertSkill(skill)
+        }
+    }
+
+    private suspend fun delete(skill: Skill) {
+        withContext(Dispatchers.IO) {
+            database.deleteSkillById(skill.id)
         }
     }
 
