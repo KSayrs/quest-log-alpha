@@ -19,11 +19,13 @@ import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
 import com.example.questlogalpha.quests.Difficulty
 import kotlinx.android.synthetic.main.quest_objective_view.view.*
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.text.InputType
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.children
 import com.example.questlogalpha.databinding.QuestObjectiveViewBinding
 import com.example.questlogalpha.quests.AddRewardDialogFragment
+import com.example.questlogalpha.setClearFocusOnDone
 import java.lang.Exception
 
 class ViewEditQuestFragment : Fragment() {
@@ -177,20 +179,10 @@ class ViewEditQuestFragment : Fragment() {
         })
 
         Log.d(TAG,"Current destination is " + this.findNavController().currentDestination?.label)
-
-        // todo extend editText so we don't have to deal with this
-        binding.viewEditQuestTitleEditText.setOnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                binding.viewEditQuestTitleEditText.clearFocus()
-            }
-            false
-        }
-        binding.viewEditQuestDescriptionEditText.setOnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                binding.viewEditQuestDescriptionEditText.clearFocus()
-            }
-            false
-        }
+        
+        binding.viewEditQuestTitleEditText.setRawInputType(InputType.TYPE_CLASS_TEXT)
+        binding.viewEditQuestTitleEditText.setClearFocusOnDone()
+        binding.viewEditQuestDescriptionEditText.setClearFocusOnDone()
 
         return binding.root
     }

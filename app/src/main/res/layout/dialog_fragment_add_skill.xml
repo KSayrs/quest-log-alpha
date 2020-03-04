@@ -36,17 +36,18 @@
 
         <EditText
                 android:id="@+id/new_skill_name"
-                android:layout_width="104dp"
-                android:layout_height="24dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:autofillHints=""
                 android:background="@null"
                 android:hint="@string/skill_name_hint"
                 android:imeOptions="actionDone"
+                android:inputType="text"
                 android:saveEnabled="false"
-                android:textAlignment="viewStart"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 app:layout_constraintBottom_toBottomOf="@+id/skill_icon"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/skill_icon"
                 app:layout_constraintTop_toTopOf="@+id/skill_icon" />
 

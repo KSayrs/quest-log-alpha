@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +15,7 @@ import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.data.Skill
+import com.example.questlogalpha.setClearFocusOnDone
 import kotlinx.android.synthetic.main.dialog_fragment_add_skill.view.*
 
 class AddEditSkillDialogFragment(chosenSkill: Skill?) : DialogFragment() {
@@ -45,6 +47,8 @@ class AddEditSkillDialogFragment(chosenSkill: Skill?) : DialogFragment() {
                 true
             }
         }
+
+        dialogView!!.new_skill_name.setClearFocusOnDone()
 
         // make Dialog
         val acceptMessage:String = if(this.skill == null) getString(R.string.add) else getString(R.string.edit)
