@@ -70,7 +70,7 @@ class AddRewardDialogFragment(vm: ITalkToDialogs) : DialogFragment() {
                       Toast.makeText(context, "Skill ${binding.chosenSkill?.name} tapped for ${binding.amount}", Toast.LENGTH_SHORT).show()
                   }
               })
-            .setNegativeButton(R.string.abandon,
+            .setNegativeButton(R.string.cancel,
               DialogInterface.OnClickListener { dialog, id ->
                   Toast.makeText(context, "Skill cancel tapped", Toast.LENGTH_SHORT).show()
               })

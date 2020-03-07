@@ -50,7 +50,7 @@ class AddEditSkillDialogFragment(chosenSkill: Skill?) : DialogFragment() {
         dialogView!!.new_skill_name.setClearFocusOnDone()
 
         // make Dialog
-        val acceptMessage:String = if(this.skill == null) getString(R.string.add) else getString(R.string.edit)
+        val acceptMessage:String = if(this.skill == null) getString(R.string.add) else getString(R.string.save)
 
         return AlertDialog.Builder(activity)
             .setView(dialogView)
