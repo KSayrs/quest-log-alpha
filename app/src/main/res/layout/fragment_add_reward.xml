@@ -17,49 +17,53 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/add_reward_constraint"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content" >
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/skills_list"
                 android:layout_width="match_parent"
-                android:layout_height="450dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintHeight_default="wrap"
+                app:layout_constraintHeight_percent="0.9"
+                android:layout_height="0dp"
                 app:layout_constraintTop_toTopOf="parent "
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/edit_text_wrapper"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/edit_text_wrapper"
                 app:layoutManager = "androidx.recyclerview.widget.LinearLayoutManager"/>
 
         <TextView
                 android:id="@+id/reward_amount_text"
                 android:text="Reward Amount:"
                 android:layout_width="0dp"
+                android:textSize="18dp"
                 android:layout_height="wrap_content"
                 android:textAlignment="textEnd"
-                app:layout_constraintTop_toBottomOf="@id/skills_list"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/edit_text_wrapper"
+                app:layout_constraintTop_toTopOf="@id/edit_text_wrapper"
+                app:layout_constraintWidth_percent="0.5"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/edit_text_wrapper"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.5"
                 app:layout_constraintStart_toEndOf="@id/reward_amount_text"
-                app:layout_constraintTop_toBottomOf="@id/skills_list" >
+                app:layout_constraintBottom_toBottomOf="parent">
 
             <EditText
                     android:id="@+id/skill_amount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="00"
                     android:autofillHints="false"
+                    android:hint="00"
                     android:imeOptions="actionDone"
                     android:inputType="number"
                     android:singleLine="true"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
