@@ -48,13 +48,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="0dp"
                 android:layout_marginRight="8dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/roboto"
                 android:maxLines="1"
                 android:text="Quest Description"
-                android:textSize="11sp"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="@+id/delete_quest_icon"
                 app:layout_constraintStart_toEndOf="@+id/quest_icon"
                 app:layout_constraintTop_toBottomOf="@id/quest_title" />
@@ -66,9 +66,9 @@
                 android:layout_marginRight="16dp"
                 android:backgroundTint="#00FFFFFF"
                 android:tint="@color/colorPrimary"
-                app:layout_constraintBottom_toBottomOf="@+id/quest_title"
+                app:layout_constraintBottom_toBottomOf="@+id/quest_icon"
                 app:layout_constraintEnd_toStartOf="@+id/delete_quest_icon"
-                app:layout_constraintTop_toTopOf="@+id/quest_title"
+                app:layout_constraintTop_toTopOf="@+id/quest_icon"
                 app:srcCompat="@android:drawable/ic_menu_edit" />
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -78,9 +78,9 @@
                 android:layout_marginRight="16dp"
                 android:backgroundTint="@color/colorWhite"
                 android:tint="@color/colorAccent"
-                app:layout_constraintBottom_toBottomOf="@+id/quest_title"
+                app:layout_constraintBottom_toBottomOf="@+id/quest_icon"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/quest_title"
+                app:layout_constraintTop_toTopOf="@+id/quest_icon"
                 app:srcCompat="@android:drawable/ic_delete" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
