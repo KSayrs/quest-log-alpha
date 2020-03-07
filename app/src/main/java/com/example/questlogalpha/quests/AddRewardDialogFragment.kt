@@ -18,10 +18,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.questlogalpha.ITalkToDialogs
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
-import com.example.questlogalpha.databinding.FragmentAddRewardBinding
+import com.example.questlogalpha.databinding.DialogFragmentAddRewardBinding
 import com.example.questlogalpha.skills.SkillsAdapter
 import com.example.questlogalpha.skills.SkillsViewModel
-import kotlinx.android.synthetic.main.fragment_add_reward.view.*
+import kotlinx.android.synthetic.main.dialog_fragment_add_reward.view.*
 
 class AddRewardDialogFragment(vm: ITalkToDialogs) : DialogFragment() {
     var viewModel : SkillsViewModel? = null
@@ -41,8 +41,8 @@ class AddRewardDialogFragment(vm: ITalkToDialogs) : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        dialogView = LayoutInflater.from(context).inflate(R.layout.fragment_add_reward, null, false)
-        val binding : FragmentAddRewardBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.fragment_add_reward, null, false)
+        dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_fragment_add_reward, null, false)
+        val binding : DialogFragmentAddRewardBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_fragment_add_reward, null, false)
         binding.lifecycleOwner = this
 
         val dataSource = QuestLogDatabase.getInstance(activity!!.application).skillsDatabaseDao
