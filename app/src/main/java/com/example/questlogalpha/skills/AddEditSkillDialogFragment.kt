@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +15,7 @@ import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.data.Skill
 import com.example.questlogalpha.setClearFocusOnDone
-import kotlinx.android.synthetic.main.dialog_fragment_add_skill.view.*
+import kotlinx.android.synthetic.main.dialog_fragment_add_edit_skill.view.*
 
 class AddEditSkillDialogFragment(chosenSkill: Skill?) : DialogFragment() {
     var viewModel : SkillsViewModel? = null
@@ -25,7 +24,7 @@ class AddEditSkillDialogFragment(chosenSkill: Skill?) : DialogFragment() {
     val skill = chosenSkill
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_fragment_add_skill, null, false)
+        dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_fragment_add_edit_skill, null, false)
         val dataSource = QuestLogDatabase.getInstance(activity!!.application).skillsDatabaseDao
         val viewModelFactory = ViewModelFactory("", null, dataSource, activity!!.application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)
