@@ -62,7 +62,7 @@ class SkillsFragment : Fragment() {
             dialog.show(childFragmentManager, "addSkill")
         }
 
-        adapter.onItemClick = { skill ->
+        adapter.onItemClick = { skill, _ ->
             val dialog = AddEditSkillDialogFragment(skill)
             dialog.show(childFragmentManager, "editSkill")
         }

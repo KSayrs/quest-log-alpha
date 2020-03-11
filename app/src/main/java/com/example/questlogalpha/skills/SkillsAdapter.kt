@@ -2,8 +2,8 @@ package com.example.questlogalpha.skills
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +16,10 @@ class SkillItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.
 
 class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
     var chosenSkill:Skill? = null // used for dialogs
-    var onItemClick: ((Skill) -> Unit)? = null
+    var onItemClick: ((Skill, View) -> Unit)? = null
+    var onSelectionChange: ((View) -> Unit)? = null
+
+    private var lastClicked:View? = null;
 
     var data = listOf<Skill>()
         set(value) {
@@ -41,7 +44,14 @@ class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
         binding.root.setOnClickListener {
             Log.d(TAG,"item ${holder.adapterPosition} tapped")
             chosenSkill = binding.skill
-            onItemClick?.invoke(binding.skill!!)
+            onItemClick?.invoke(binding.skill!!, holder.itemView)
+
+            if(lastClicked == null) lastClicked = it
+            else if(lastClicked != it)
+            {
+                onSelectionChange?.invoke(lastClicked!!)
+                lastClicked = it
+            }
         }
 
         return holder

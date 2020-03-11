@@ -3,6 +3,9 @@ package com.example.questlogalpha.quests
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -55,12 +58,19 @@ class AddRewardDialogFragment(vm: ITalkToDialogs) : DialogFragment() {
         mRecyclerView.layoutManager = LinearLayoutManager(context)
         mRecyclerView.adapter = adapter
 
+        adapter!!.onItemClick = { _, view ->
+            view.background = ColorDrawable(resources.getColor(R.color.highlightColor, null))
+        }
+
+        adapter!!.onSelectionChange = { view ->
+            view.background = ColorDrawable(Color.TRANSPARENT)
+        }
+
         return AlertDialog.Builder(activity)
             .setTitle("Skills")
             .setView(dialogView)
             .setPositiveButton(android.R.string.ok,
               DialogInterface.OnClickListener { dialog, whichButton ->
-
                   if(adapter?.chosenSkill != null && dialogView!!.skill_amount.text.toString() != "") {
 
                       binding.chosenSkill = adapter?.chosenSkill

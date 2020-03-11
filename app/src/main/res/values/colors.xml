@@ -5,4 +5,5 @@
     <color name="colorAccent">#EA80FC</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorTertiary">#B6B6B6</color>
+    <color name="highlightColor">#EDEDED</color>
 </resources>
