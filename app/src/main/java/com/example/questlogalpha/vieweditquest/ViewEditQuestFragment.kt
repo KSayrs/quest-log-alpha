@@ -32,12 +32,16 @@ class ViewEditQuestFragment : Fragment() {
 
     private var viewModel : ViewEditQuestViewModel ?= null
 
+    private var questId : String = ""
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
 
         val binding: FragmentViewEditQuestBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_view_edit_quest, container, false)
         val application = requireNotNull(this.activity).application
         val dataSource = QuestLogDatabase.getInstance(application).questLogDatabaseDao
         val arguments =  ViewEditQuestFragmentArgs.fromBundle(arguments)
+
+        questId = arguments.questId
 
         val viewModelFactory = ViewModelFactory(arguments.questId, dataSource, null, application)
         val viewEditQuestViewModel = ViewModelProvider(this, viewModelFactory).get(ViewEditQuestViewModel::class.java)
@@ -179,7 +183,7 @@ class ViewEditQuestFragment : Fragment() {
         })
 
         Log.d(TAG,"Current destination is " + this.findNavController().currentDestination?.label)
-        
+
         binding.viewEditQuestTitleEditText.setRawInputType(InputType.TYPE_CLASS_TEXT)
         binding.viewEditQuestTitleEditText.setClearFocusOnDone()
         binding.viewEditQuestDescriptionEditText.setClearFocusOnDone()
@@ -192,6 +196,11 @@ class ViewEditQuestFragment : Fragment() {
         activity!!.menuInflater.inflate(R.menu.menu_actionbar, menu)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        if(questId == "") menu.removeItem(R.id.action_abandon_quest)
+        super.onPrepareOptionsMenu(menu)
+    }
+
     // handle button activities
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(viewModel == null){
@@ -202,9 +211,12 @@ class ViewEditQuestFragment : Fragment() {
 
         val id = item.itemId
 
-        // save quest
+        // save/delete quest
         if (id == R.id.action_done_editing) {
             viewModel!!.onSaveQuest()
+        }
+        if (id == R.id.action_abandon_quest) {
+            viewModel!!.onDeleteQuest()
         }
         return super.onOptionsItemSelected(item)
     }

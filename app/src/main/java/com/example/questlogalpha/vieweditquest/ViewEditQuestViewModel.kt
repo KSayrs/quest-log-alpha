@@ -119,14 +119,23 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         }
     }
 
-    private suspend fun update() {
-        withContext(Dispatchers.IO) {
-            if(_currentQuest == null) {
-                Log.e(TAG,"update called when quest is null!")
-                Toast.makeText(getApplication(), "Something went wrong.", Toast.LENGTH_SHORT).show()
-                return@withContext
-            }
+    fun onDeleteQuest()
+    {
+        if (isNewQuest) return
 
+        viewModelScope.launch {
+            delete()
+            _navigateToQuestsViewModel.value = true // navigate back to the quests screen
+        }
+    }
+
+    private suspend fun update() {
+        if(_currentQuest == null) {
+            Log.e(TAG,"update called when quest is null!")
+            Toast.makeText(getApplication(), "Something went wrong.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        withContext(Dispatchers.IO) {
             Log.d(TAG, "quest title: " + _currentQuest!!.title)
             Log.d(TAG, "Quest ID: " + currentQuest!!.id)
             Log.d(TAG, "quest description: " + currentQuest!!.description)
@@ -141,7 +150,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         }
     }
 
-    private suspend fun insert(){
+    private suspend fun insert() {
         withContext(Dispatchers.IO){
             val newQuest = Quest(title.value.toString(), description.value.toString(), objectives = objectives.value!!, difficulty = difficulty.value!!, rewards = rewards.value!!)
             database.insertQuest(newQuest)
@@ -151,6 +160,19 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             Log.d(TAG, "Newly made quest difficulty: " + newQuest.difficulty)
             Log.d(TAG, "Newly made quest id: " + newQuest.id)
             Log.d(TAG, "Quest made on: " + newQuest.dateCreated)
+        }
+    }
+
+    private suspend fun delete() {
+        if(_currentQuest == null) {
+            Log.e(TAG,"delete called when quest is null!")
+            Toast.makeText(getApplication(), "Something went wrong.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        withContext(Dispatchers.IO) {
+            database.deleteQuestById(_currentQuest!!.id)
+            Log.d(TAG, "Deleted quest with name: " + _currentQuest!!.title)
         }
     }
 
