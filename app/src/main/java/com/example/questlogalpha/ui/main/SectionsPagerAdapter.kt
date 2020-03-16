@@ -14,10 +14,10 @@ private val TAB_TITLES = arrayOf(
     R.string.skills
 )
 
-/**
+/** ************************************************************************************************
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
- */
+ * ********************************************************************************************** */
 class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) : FragmentPagerAdapter(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {

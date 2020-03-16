@@ -14,6 +14,9 @@ import kotlinx.android.synthetic.main.skill_item_view.view.*
 
 class SkillItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.ViewHolder(constraintLayout)
 
+/** ************************************************************************************************
+ * A [RecyclerView.Adapter] to show all skills in the database.
+ * ********************************************************************************************** */
 class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
     var chosenSkill:Skill? = null // used for dialogs
     var onItemClick: ((Skill, View) -> Unit)? = null

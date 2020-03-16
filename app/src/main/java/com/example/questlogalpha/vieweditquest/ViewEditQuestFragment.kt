@@ -28,6 +28,9 @@ import com.example.questlogalpha.quests.AddRewardDialogFragment
 import com.example.questlogalpha.setClearFocusOnDone
 import java.lang.Exception
 
+/** ************************************************************************************************
+ * [Fragment] to display all data relating to a quest.
+ * ********************************************************************************************** */
 class ViewEditQuestFragment : Fragment() {
 
     private var viewModel : ViewEditQuestViewModel ?= null

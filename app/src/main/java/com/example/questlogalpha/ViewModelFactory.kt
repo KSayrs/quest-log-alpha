@@ -27,9 +27,9 @@ import com.example.questlogalpha.skills.SkillsViewModel
 import com.example.questlogalpha.vieweditquest.ViewEditQuestViewModel
 import java.lang.Appendable
 
-/**
- * Factory for all ViewModels.
- */
+/** ************************************************************************************************
+ * Factory ([ViewModelProvider.NewInstanceFactory]) for all ViewModels.
+ * ********************************************************************************************** */
 @Suppress("UNCHECKED_CAST")
 class ViewModelFactory constructor(
     private val questId: String,

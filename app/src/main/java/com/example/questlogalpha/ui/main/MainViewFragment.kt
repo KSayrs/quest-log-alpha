@@ -1,5 +1,3 @@
-/* Main section pager for app */
-
 package com.example.questlogalpha.ui.main
 
 import android.os.Bundle
@@ -10,8 +8,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.questlogalpha.R
 import com.example.questlogalpha.databinding.FragmentMainViewBinding
-import com.google.android.material.snackbar.Snackbar
 
+/** ************************************************************************************************
+ * The main [Fragment] that shows the viewPager.
+ * ********************************************************************************************** */
 class MainViewFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
@@ -21,7 +21,6 @@ class MainViewFragment : Fragment() {
         binding.lifecycleOwner = this
 
         // left/right scrolling. This activity probably won't actually need anything else.
-     //   val sectionsPagerAdapter = SectionsPagerAdapter(activity!!.applicationContext, activity!!.supportFragmentManager)
         // binding.viewPager.adapter = sectionsPagerAdapter
         binding.viewPager.adapter = SectionsPagerAdapter(activity!!.applicationContext, childFragmentManager) // so far this one doesn't have the blank back problem
         binding.tabs.setupWithViewPager(binding.viewPager)

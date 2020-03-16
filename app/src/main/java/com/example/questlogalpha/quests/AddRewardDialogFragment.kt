@@ -23,6 +23,9 @@ import com.example.questlogalpha.skills.SkillsAdapter
 import com.example.questlogalpha.skills.SkillsViewModel
 import kotlinx.android.synthetic.main.dialog_fragment_add_reward.view.*
 
+/** ************************************************************************************************
+ * [DialogFragment] to display when adding a reward to a quest.
+ * ********************************************************************************************** */
 class AddRewardDialogFragment : DialogFragment() {
     var viewModel : SkillsViewModel? = null
     var adapter : SkillsAdapter? = null

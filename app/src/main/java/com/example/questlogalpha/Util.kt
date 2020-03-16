@@ -6,7 +6,6 @@ import java.math.RoundingMode
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-// many thanks to https://math.vanderbilt.edu/schectex/courses/cubic/, the only website in hours of searching that actually gave me the damn formula. Fucking wolfram alpha charging for step-by-step
 /**
  * Solves for a real root x in ax^3 + bx^2 + cx + d = toSolveFor.
  * @param a
@@ -81,6 +80,8 @@ fun round(value: Double, places: Int): Double {
     bd = bd.setScale(places, RoundingMode.HALF_UP)
     return bd.toDouble()
 }
+
+// todo add geometry formula
 
 class Util {
     // -------------------------- log tag ------------------------------ //

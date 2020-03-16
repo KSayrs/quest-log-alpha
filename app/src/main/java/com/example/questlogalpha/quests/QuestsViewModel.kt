@@ -9,7 +9,7 @@ import kotlinx.coroutines.*
 
 // if you'll need application stuff, change this to inherit from AndroidViewModel
 /** ************************************************************************************************
- * View Model for the list of quests.
+ * [ViewModel] for the list of quests.
  * ********************************************************************************************** */
 class QuestsViewModel (val database: QuestsDao) : ViewModel() {
 

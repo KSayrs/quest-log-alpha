@@ -14,6 +14,9 @@ import com.example.questlogalpha.quests.Difficulty
 import com.example.questlogalpha.quests.QuestsDao
 import kotlinx.coroutines.*
 
+/** ************************************************************************************************
+ * [AndroidViewModel] for the [ViewEditQuestFragment] screen.
+ * ********************************************************************************************** */
 class ViewEditQuestViewModel (private val questId: String, val database: QuestsDao, application: Application) : AndroidViewModel(application), AdapterView.OnItemSelectedListener {
 
     val currentQuest : Quest? get() = _currentQuest
