@@ -18,6 +18,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.example.questlogalpha.R
+import com.example.questlogalpha.data.SkillReward
 import com.example.questlogalpha.databinding.QuestItemViewBinding
 import com.example.questlogalpha.skills.SkillsViewModel
 
@@ -32,6 +33,9 @@ import com.example.questlogalpha.skills.SkillsViewModel
  */
 class QuestItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.ViewHolder(constraintLayout)
 
+/** ************************************************************************************************
+ * A [RecyclerView.Adapter] for quests. Shows quest image, title, and description, as well as the option to edit or remove them.
+ * ********************************************************************************************** */
 class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
     var data = listOf<Quest>()
         set(value) {
@@ -40,7 +44,8 @@ class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
         }
 
     var viewModel: QuestsViewModel? = null
-    var skillsViewModel: SkillsViewModel? = null
+
+    var onQuestTitleTapped: ((Quest) -> Unit)? = null
 
     override fun getItemCount() = data.size
 
@@ -82,22 +87,8 @@ class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
         val oldColors: ColorStateList = binding.questTitle.textColors
         binding.questTitle.setOnClickListener {
             val pos = holder.adapterPosition
-            if(viewModel != null){
-                viewModel!!.onSetQuestCompletion(data[pos].id, !data[pos].completed)
-                if(skillsViewModel!= null) {
-                    for (reward in data[pos].rewards) {
-                        skillsViewModel!!.addExperience(reward.id, reward.amount)
-                    }
-                }
-                else {
-                    Log.e(TAG, "SkillsViewModel is null!")
-                    return@setOnClickListener
-                }
-            }
-            else {
-                Log.e(TAG, "QuestsViewModel is null!")
-                return@setOnClickListener
-            }
+
+            onQuestTitleTapped?.invoke(data[pos])
 
             if(data[pos].completed){
                 binding.questTitle.setTextColor(oldColors)

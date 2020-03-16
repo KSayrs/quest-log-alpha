@@ -86,8 +86,21 @@ class QuestsFragment : Fragment() {
         questsViewModel.quests.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.data = it
+                adapter.onQuestTitleTapped = { quest ->
+                    questsViewModel.onSetQuestCompletion(quest.id, !quest.completed)
+
+                    if(!quest.completed) { // crossing out a quest
+                        for (reward in quest.rewards) {
+                            skillsViewModel.addExperience(reward.id, reward.amount)
+                        }
+                    }
+                    else { // undo-ing an accident
+                       for (reward in quest.rewards) {
+                           skillsViewModel.removeExperience(reward.id, reward.amount)
+                       }
+                    }
+                }
                 adapter.viewModel = binding.questsViewModel
-                adapter.skillsViewModel = skillsViewModel
             }
         })
 

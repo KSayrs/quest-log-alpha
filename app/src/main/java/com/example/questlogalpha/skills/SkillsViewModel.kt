@@ -46,14 +46,6 @@ class SkillsViewModel (val database: SkillsDao) : ViewModel() {
         }
     }
 
-    // --------- debug -------- //
-    /** Adds a debug skill with the name "NewSkill", has 0 xp, and is of SkillType.NONE */
-    fun onAddDebugSkill() {
-        viewModelScope.launch {
-            insert(Skill("NewSkill", 0, SkillType.NONE))
-        }
-    }
-
     /** Adds [experience] to a skill with [skillId], checks if it is high enough to level, and levels the skill if it is. Updates database. */
     fun addExperience(skillId: String, experience: Double) {
         viewModelScope.launch {
@@ -65,6 +57,27 @@ class SkillsViewModel (val database: SkillsDao) : ViewModel() {
                 }
                 database.updateSkill(skill)
             }
+        }
+    }
+
+    /** Removes [experience] from a skill with [skillId] and makes a level adjustment if necessary. Updates database. */
+    fun removeExperience(skillId: String, experience: Double) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val skill = database.getSkillById(skillId) ?: return@withContext
+                skill.currentXP -= experience
+                skill.onUndoExperienceChange()
+
+                database.updateSkill(skill)
+            }
+        }
+    }
+
+    // --------- debug -------- //
+    /** Adds a debug skill with the name "NewSkill", has 0 xp, and is of SkillType.NONE */
+    fun onAddDebugSkill() {
+        viewModelScope.launch {
+            insert(Skill("NewSkill", 0, SkillType.NONE))
         }
     }
 

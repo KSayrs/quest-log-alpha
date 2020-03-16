@@ -39,6 +39,7 @@ data class Skill (
 ){
     val nextLevelXP: Double get() = getExperienceForNextLevel(level)
 
+    /** Returns whether the player has enough xp to level. If the user's experience is not within the level threshold, adjusts currentXP to match. */
     val canLevelUp: Boolean get(){
         if(getExperienceForNextLevel(level - 2) > currentXP)
         {
@@ -50,6 +51,22 @@ data class Skill (
         return currentXP >= nextLevelXP
     }
 
+    /** TODO implement
+     *
+     * Adjusts level according to experience. Usually it is the other way around, but if experience has just been removed,
+     * we want to make sure the level goes back down if that had been enough to level before. */
+    fun onUndoExperienceChange()
+    {
+       //if(getExperienceForNextLevel(level - 1) > currentXP)
+       //{
+       //    val shouldBe = getExperienceForNextLevel(level-1)
+       //    Log.w(TAG, "CurrentXP ($currentXP) not within level threshold! Adjusting currentXP to match level $level ($shouldBe)")
+       //    currentXP = round(shouldBe, 2)
+       //}
+    }
+
+    /** Increases skill level to match current experience. Will not level if the player is not able to.
+     * Call [callback] after leveling, if applicable. */
     fun onLevelUp(callback:()->Unit = {}){
 
         if(!canLevelUp) {
@@ -65,7 +82,7 @@ data class Skill (
         callback()
     }
 
-    // todo replace with geomerty version
+    // todo replace with geometry version as it's less expensive
     private fun getExperienceForNextLevel(level: Int) : Double {
         return round(((0.04 * level.toDouble()).pow(3)) + ((0.8 * level.toDouble()).pow(2)+2*level.toDouble()) + 1, 2)
     }
