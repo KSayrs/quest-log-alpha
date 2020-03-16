@@ -16,7 +16,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.questlogalpha.R
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.questlogalpha.ITalkToDialogs
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.DialogFragmentAddRewardBinding
@@ -24,7 +23,7 @@ import com.example.questlogalpha.skills.SkillsAdapter
 import com.example.questlogalpha.skills.SkillsViewModel
 import kotlinx.android.synthetic.main.dialog_fragment_add_reward.view.*
 
-class AddRewardDialogFragment() : DialogFragment() {
+class AddRewardDialogFragment : DialogFragment() {
     var viewModel : SkillsViewModel? = null
     var adapter : SkillsAdapter? = null
     var dialogView : View? = null

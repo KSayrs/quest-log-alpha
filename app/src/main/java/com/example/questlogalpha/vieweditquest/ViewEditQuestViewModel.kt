@@ -9,13 +9,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.questlogalpha.ITalkToDialogs
 import com.example.questlogalpha.data.*
 import com.example.questlogalpha.quests.Difficulty
 import com.example.questlogalpha.quests.QuestsDao
 import kotlinx.coroutines.*
 
-class ViewEditQuestViewModel (private val questId: String, val database: QuestsDao, application: Application) : AndroidViewModel(application), AdapterView.OnItemSelectedListener, ITalkToDialogs {
+class ViewEditQuestViewModel (private val questId: String, val database: QuestsDao, application: Application) : AndroidViewModel(application), AdapterView.OnItemSelectedListener {
 
     val currentQuest : Quest? get() = _currentQuest
     private var _currentQuest : Quest ?= null
@@ -38,15 +37,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
     var toast = Toast.makeText(getApplication(), "Item Selected", Toast.LENGTH_SHORT)
 
-    private var viewModelJob = Job()
-
-    override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancel()
-    }
-
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-
     // init happens after the fragment's onCreateView
     init {
         isNewQuest = (questId == "")
@@ -58,7 +48,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             description.value = ""
             difficulty.value = Difficulty.MEDIUM
             objectives.value = arrayListOf()
-           // objectives.value!!.add(Objective("New Objective", false))
             modifiedObjective.value = null
             modifiedReward.value = null
             rewards.value = arrayListOf()
@@ -69,7 +58,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             viewModelScope.launch {
                 withContext(Dispatchers.IO) {
                     val q =  async { database.getQuestById(questId) }
-                  //  val q: Quest? = database.getQuestById(questId) ?: return@withContext
                     val loadedQuest = q.await()
                     async { onDataLoaded(loadedQuest) }
                 }
@@ -93,14 +81,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         modifiedReward.postValue(null)
         rewards.postValue(currentQuest?.rewards)
 
-
-      // title.value = currentQuest?.title
-      // description.value = currentQuest?.description
-      // difficulty.value = currentQuest?.difficulty
-      // objectives.value = currentQuest?.objectives
-      // modifiedObjective.value = null
-      // modifiedReward.value = null
-      // rewards.value = currentQuest?.rewards
         isDataLoaded = true
     }
 
@@ -219,7 +199,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     }
 
     // ---------------- reward handlers ---------------- //
-    override fun onPositiveButtonClicked(dictionary: Map<String, Any>) {
+    fun onPositiveButtonClicked(dictionary: Map<String, Any>) {
         val amount:Double = dictionary["amount"] as Double
         val skill: Skill = dictionary["skill"] as Skill
         onAddReward(amount, skill)
@@ -249,7 +229,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         }
     }
 
-    // ----------------------------------------------------------- //
     // ------------------------ navigation ----------------------- //
     private val _navigateToQuestsViewModel = MutableLiveData<Boolean>()
     val navigateToQuestsViewModel: LiveData<Boolean> get() = _navigateToQuestsViewModel
@@ -259,7 +238,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         _navigateToQuestsViewModel.value = false
     }
 
-    // ------------------------------------------------------------------ //
     // -------------------------- log util ------------------------------ //
     companion object {
         var TAG: String = "KSLOG: ViewEditQuestViewModel"
