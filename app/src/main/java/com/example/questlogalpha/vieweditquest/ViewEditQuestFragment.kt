@@ -166,7 +166,10 @@ class ViewEditQuestFragment : Fragment() {
 
         // add reward button
         binding.addRewardsButton.setOnClickListener{
-            val dialog = AddRewardDialogFragment(viewEditQuestViewModel)
+            val dialog = AddRewardDialogFragment()
+            dialog.onPositiveButtonClicked = {
+                viewEditQuestViewModel.onPositiveButtonClicked(it)
+            }
             dialog.show(childFragmentManager, "addRewards")
         }
 
