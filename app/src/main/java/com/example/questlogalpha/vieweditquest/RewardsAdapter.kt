@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.questlogalpha.R
 import com.example.questlogalpha.data.SkillReward
 import com.example.questlogalpha.databinding.SkillInRewardListBinding
-import com.example.questlogalpha.skills.SkillsViewModel
 import kotlinx.android.synthetic.main.skill_in_reward_list.view.*
 
 /**
@@ -20,7 +19,6 @@ import kotlinx.android.synthetic.main.skill_in_reward_list.view.*
  * to the RecyclerView such as where on the screen it was last drawn during scrolling.
  *
  * // todo move this class elsewhere
- * // todo implement this a different way, maybe with an interface and/or a separate handler for the on-click so that the adapter doesn't require a reference to the viewModel.
  */
 class RewardItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.ViewHolder(constraintLayout)
 
@@ -33,18 +31,14 @@ class RewardsAdapter: RecyclerView.Adapter<RewardItemViewHolder>() {
 
     var viewModel: ViewEditQuestViewModel? = null
 
+    var onItemRemoved: ((SkillReward) -> Unit)? = null
+
     override fun getItemCount() = data.size
 
     // this happens after onCreate
     override fun onBindViewHolder(holder: RewardItemViewHolder, position: Int) {
         val item = data[position]
-        if(viewModel != null) {
-            holder.constraintLayout.skill_name.text = holder.constraintLayout.context.getString(R.string.skill_reward_amount, String.format("%.0f", item.amount), item.name)
-        }
-        else {
-            holder.constraintLayout.skill_name.text = "viewModel is null!"
-            Log.e(TAG, "binding.questsViewModel is null!")
-        }
+        holder.constraintLayout.skill_name.text = holder.constraintLayout.context.getString(R.string.skill_reward_amount, String.format("%.0f", item.amount), item.name)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RewardItemViewHolder {
@@ -55,20 +49,11 @@ class RewardsAdapter: RecyclerView.Adapter<RewardItemViewHolder>() {
         binding.removeSkillRewardIcon.setOnClickListener {
             val pos = holder.adapterPosition
 
-            if(viewModel != null){
-                viewModel!!.onRemoveReward(data[pos])
-                remove(pos)
-            }
-            else Log.e(TAG, "questsViewModel is null!")
+            onItemRemoved?.invoke(data[pos])
+            remove(pos)
         }
 
         return holder
-    }
-
-    // todo move the onclick action for the add rewards to the viewmodel, then call this
-    fun forceNotifty()
-    {
-        notifyDataSetChanged()
     }
 
     private fun remove(position: Int){

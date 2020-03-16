@@ -58,7 +58,9 @@ class ViewEditQuestFragment : Fragment() {
 
         // set up rewards adapter
         val rewardsAdapter = RewardsAdapter()
-        rewardsAdapter.viewModel = viewEditQuestViewModel
+        rewardsAdapter.onItemRemoved = {
+            viewModel!!.onRemoveReward(it)
+        }
         binding.rewardsList.adapter = rewardsAdapter
 
         // show the action bar on this page
