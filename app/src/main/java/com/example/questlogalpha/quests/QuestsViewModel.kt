@@ -1,6 +1,3 @@
-/*
-* View Model for the list of quests
-*/
 package com.example.questlogalpha.quests
 
 import android.util.Log
@@ -10,7 +7,10 @@ import androidx.lifecycle.ViewModel
 import com.example.questlogalpha.data.Quest
 import kotlinx.coroutines.*
 
-// if you'll need application stuff, change this to AndroidViewModel
+// if you'll need application stuff, change this to inherit from AndroidViewModel
+/** ************************************************************************************************
+ * View Model for the list of quests.
+ * ********************************************************************************************** */
 class QuestsViewModel (val database: QuestsDao) : ViewModel() {
 
     private var viewModelJob = Job()
@@ -27,15 +27,11 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
     // todo should this be called in a coroutine?
     val quests = database.getAllQuests()
 
-    /**
-     * When true immediately navigate back to the [ViewEditQuestFragment]
-     */
+    /** When true immediately navigate back to the [com.example.questlogalpha.vieweditquest.ViewEditQuestFragment] */
     val navigateToViewEditQuest: LiveData<String?>
         get() = _navigateToViewEditQuest
 
-    /**
-     * Call this immediately after navigating to [ViewEditQuestFragment]
-     */
+    /** Call this immediately after navigating to [com.example.questlogalpha.vieweditquest.ViewEditQuestFragment] */
     fun doneNavigating() {
         _navigateToViewEditQuest.value = null
     }

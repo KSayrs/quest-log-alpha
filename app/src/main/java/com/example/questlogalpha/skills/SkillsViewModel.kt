@@ -1,8 +1,6 @@
 package com.example.questlogalpha.skills
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.questlogalpha.data.Skill
@@ -10,35 +8,38 @@ import com.example.questlogalpha.data.SkillType
 import com.example.questlogalpha.personnage.SkillsDao
 import kotlinx.coroutines.*
 
+/** ************************************************************************************************
+ * View model for all skill-related screens:
+ * - [SkillsFragment]
+ * - [AddEditSkillDialogFragment]
+ * - [com.example.questlogalpha.quests.AddRewardDialogFragment]
+ * ********************************************************************************************** */
 class SkillsViewModel (val database: SkillsDao) : ViewModel() {
 
     val skills = database.getAllSkills()
 
     init {
-        Log.d(TAG," initiated")
+        Log.d(TAG,"initiated")
     }
 
     // public functions
     // ---------------------------------------------------------------- //
 
-    /** Adds a new skill to the database.
-     * @param skill The skill to add*/
+    /** Adds a new [skill] to the database. */
     fun onAddNewSkill(skill: Skill) {
         viewModelScope.launch {
             insert(skill)
         }
     }
 
-    /** Edits a skill in the database.
-     * @param skill The skill to edit */
+    /** Edits a [skill] in the database. */
     fun onEditSkill(skill: Skill) {
         viewModelScope.launch {
             updateSkill(skill)
         }
     }
 
-    /** Removes a skill from the database.
-     * @param skill The skill to remove */
+    /** Removes a [skill] from the database. */
     fun onDeleteSkill(skill: Skill) {
         viewModelScope.launch {
             delete(skill)
@@ -53,10 +54,7 @@ class SkillsViewModel (val database: SkillsDao) : ViewModel() {
         }
     }
 
-    /** Adds experience to a skill, checks if it is high enough to level, and levels the skill if it is. Updates database.
-     * @param skillId the String id for the Skill
-     * @param experience the experience to award
-     * */
+    /** Adds [experience] to a skill with [skillId], checks if it is high enough to level, and levels the skill if it is. Updates database. */
     fun addExperience(skillId: String, experience: Double) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {

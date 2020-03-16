@@ -9,14 +9,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentSkillsBinding
 
+/** ************************************************************************************************
+ * [Fragment] to display all skills in the database.
+ * ********************************************************************************************** */
 class SkillsFragment : Fragment() {
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +44,7 @@ class SkillsFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val dataSource = QuestLogDatabase.getInstance(application).skillsDatabaseDao
         val viewModelFactory = ViewModelFactory("", null, dataSource, application)
-        val skillsViewModel = ViewModelProviders.of(this, viewModelFactory).get(SkillsViewModel::class.java)
+        val skillsViewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)
         val adapter = SkillsAdapter()
         binding.skillList.adapter = adapter
 

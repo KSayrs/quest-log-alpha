@@ -9,9 +9,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-
 import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
@@ -19,40 +18,17 @@ import com.example.questlogalpha.databinding.FragmentQuestsBinding
 import com.example.questlogalpha.skills.SkillsViewModel
 import com.example.questlogalpha.ui.main.MainViewFragmentDirections
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [QuestsFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [QuestsFragment.newInstance] factory method to
- * create an instance of this fragment.
- *
- */
+/** ************************************************************************************************
+ * [Fragment] to display all quests in the database.
+ * ********************************************************************************************** */
 class QuestsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
 
         val supportActionBar = (activity as AppCompatActivity).supportActionBar
-        if(supportActionBar == null){
-            Log.e("QuestsFragment.kt: onCreate: ", "supportActionBar is null.")
-        }
-        else {
-            supportActionBar.hide()
-        }
-      //  (activity as AppCompatActivity).supportActionBar!!.hide()
+        if(supportActionBar == null) Log.e("QuestsFragment.kt: onCreate: ", "supportActionBar is null.")
+        else  supportActionBar.hide()
     }
 
     // Hide the navigation bar when we're on this activity
@@ -73,8 +49,8 @@ class QuestsFragment : Fragment() {
         val skillsDataSource = QuestLogDatabase.getInstance(application).skillsDatabaseDao
         val viewModelFactory = ViewModelFactory("", dataSource, skillsDataSource, application)
 
-        val questsViewModel = ViewModelProviders.of(this, viewModelFactory).get(QuestsViewModel::class.java)
-        val skillsViewModel = ViewModelProviders.of(this, viewModelFactory).get(SkillsViewModel::class.java)
+        val questsViewModel = ViewModelProvider(this, viewModelFactory).get(QuestsViewModel::class.java)
+        val skillsViewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)
 
         val adapter = QuestsAdapter()
         binding.questList.adapter = adapter
@@ -83,7 +59,7 @@ class QuestsFragment : Fragment() {
         binding.lifecycleOwner = this
 
         // Add an Observer on the state variable for Navigating when add quest button is pressed.
-        questsViewModel.navigateToViewEditQuest.observe(this, Observer { questId ->
+        questsViewModel.navigateToViewEditQuest.observe(viewLifecycleOwner, Observer { questId ->
             questId?.let {
                 // We need to get the navController from this, because button is not ready, and it
                 // just has to be a view. For some reason, this only matters if we hit stop again
@@ -106,7 +82,7 @@ class QuestsFragment : Fragment() {
             }
         })
 
-        // assign the quests to the adapter stuff
+        // assign the quests to the adapter
         questsViewModel.quests.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.data = it
@@ -117,7 +93,6 @@ class QuestsFragment : Fragment() {
 
         return binding.root
     }
-
     // -------------------------- log tag ------------------------------ //
 
     companion object {
