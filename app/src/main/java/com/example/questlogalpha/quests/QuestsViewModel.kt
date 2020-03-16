@@ -42,7 +42,6 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
 
     init {
         Log.d(TAG,"QuestsViewModel initiated")
-       // initializeQuest()
     }
 
     fun onQuestCreate() {
@@ -80,9 +79,23 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
     }
 
     private suspend fun deleteQuest(questId: String) {
-         withContext(Dispatchers.IO) {
-             database.deleteQuestById(questId)
-         }
+        withContext(Dispatchers.IO) {
+            database.deleteQuestById(questId)
+        }
+    }
+
+    // ----------------------- update quest ---------------------------- //
+    /** For use outside the normal quest screens. Updates a [quest] in the database. */
+    fun onUpdateQuest(quest: Quest) {
+        uiScope.launch {
+            updateQuest(quest)
+        }
+    }
+
+    private suspend fun updateQuest(quest: Quest) {
+        withContext(Dispatchers.IO) {
+            database.updateQuest(quest)
+        }
     }
 
     // -------------------------- log tag ------------------------------ //

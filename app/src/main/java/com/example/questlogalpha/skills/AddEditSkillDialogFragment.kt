@@ -9,24 +9,39 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
+import com.example.questlogalpha.data.Quest
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.data.Skill
+import com.example.questlogalpha.quests.QuestsViewModel
 import com.example.questlogalpha.setClearFocusOnDone
 import kotlinx.android.synthetic.main.dialog_fragment_add_edit_skill.view.*
 
-class AddEditSkillDialogFragment(chosenSkill: Skill?) : DialogFragment() {
+/** ************************************************************************************************
+ * The dialog fragment that pops up when adding or editing a [chosenSkill].
+ * ********************************************************************************************** */
+class AddEditSkillDialogFragment(chosenSkill: Skill? = null) : DialogFragment() {
     var viewModel : SkillsViewModel? = null
     var adapter : SkillsAdapter? = null
     var dialogView : View? = null
     val skill = chosenSkill
 
+    private var questsViewModel: QuestsViewModel? = null
+    private var quests: List<Quest>? = null
+
+    // public override functions
+    // ---------------------------------------------------------------- //
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_fragment_add_edit_skill, null, false)
         val dataSource = QuestLogDatabase.getInstance(activity!!.application).skillsDatabaseDao
-        val viewModelFactory = ViewModelFactory("", null, dataSource, activity!!.application)
+        val questsDataSource = QuestLogDatabase.getInstance(activity!!.application).questLogDatabaseDao
+        val viewModelFactory = ViewModelFactory("", questsDataSource, dataSource, activity!!.application)
+
+        questsViewModel = ViewModelProvider(this, viewModelFactory).get(QuestsViewModel::class.java)
         viewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)
 
         // set up toolbar
@@ -38,14 +53,22 @@ class AddEditSkillDialogFragment(chosenSkill: Skill?) : DialogFragment() {
             toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.action_delete_skill -> {
+                        removeSkillFromQuestRewards()
                         viewModel!!.onDeleteSkill(this.skill)
-                        dismiss() // close the dialog
+                        dismiss()
                     }
                     else -> Log.e(TAG,"onCreateDialog: Some nonexistent action menu item was clicked!")
                 }
                 true
             }
         }
+
+        // grab quest data
+        questsViewModel?.quests?.observe(this, Observer {
+            it?.let {
+                quests = it
+            }
+        })
 
         dialogView!!.new_skill_name.setClearFocusOnDone()
 
@@ -80,8 +103,35 @@ class AddEditSkillDialogFragment(chosenSkill: Skill?) : DialogFragment() {
         if(this.skill != null) dialogView?.new_skill_name?.setText(this.skill.name)
     }
 
+    // private functions
+    // ---------------------------------------------------------------- //
+
+    /** Iterates through all quests in the database and removes rewards that would reward this [skill] */
+    private fun removeSkillFromQuestRewards()
+    {
+        if(questsViewModel == null) {
+            Log.w(TAG, "Quests View Model is null! Quests that reward this skill will not have the reward removed.")
+            return
+        }
+        if(quests == null) {
+            Log.d(TAG, "quests is null! Quests that reward this skill will not have the reward removed.")
+            return
+        }
+
+        for(quest in quests!!) {
+            val rewards = quest.rewards
+            for(reward in rewards) {
+                // reward ids always match the id of the skill or item it is rewarding
+                if(reward.id == this.skill!!.id) {
+                    quest.rewards.remove(reward)
+                    questsViewModel!!.onUpdateQuest(quest)
+                }
+            }
+        }
+    }
+
     // -------------------------- log tag ------------------------------ //
     companion object {
-        const val TAG: String = "KSLOG: AddNewSkillDialogFragment"
+        const val TAG: String = "KSLOG: AddEditSkillDialogFragment"
     }
 }
