@@ -22,14 +22,15 @@ import kotlinx.android.synthetic.main.skill_in_reward_list.view.*
  */
 class RewardItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.ViewHolder(constraintLayout)
 
+/** ************************************************************************************************
+ * A [RecyclerView.Adapter] to show all skill rewards for a given quest, as well as the option to remove them.
+ * ********************************************************************************************** */
 class RewardsAdapter: RecyclerView.Adapter<RewardItemViewHolder>() {
     var data = listOf<SkillReward>()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
-
-    var viewModel: ViewEditQuestViewModel? = null
 
     var onItemRemoved: ((SkillReward) -> Unit)? = null
 
