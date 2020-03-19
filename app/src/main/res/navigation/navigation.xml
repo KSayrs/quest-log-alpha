@@ -11,7 +11,8 @@
             android:label="ViewEditQuestFragment" >
         <action
                 android:id="@+id/action_viewEditQuestFragment_to_mainViewFragment"
-                app:destination="@id/mainViewFragment" />
+                app:destination="@id/mainViewFragment"
+                app:exitAnim="@anim/slide_down" />
         <argument
                 android:name="questId"
                 app:argType="string" />
