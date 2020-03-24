@@ -1,4 +1,9 @@
 <resources>
+    <!-- Notification channels -->
+    <string name="familiar_quest_reminders">Quest Notifications</string>
+    <string name="familiar_quest_reminders_description">If this is turned off, familiar notifications that are set will not activate.</string>
+
+    <!-- In-app strings -->
     <string name="app_name">Quest Log Alpha</string>
     <string name="timeline">Timeline</string>
     <string name="quests">Quests</string>
@@ -22,4 +27,6 @@
     <string name="add_skill">Add Skill</string>
     <string name="edit_skill">Edit Skill</string>
     <string name="save">Save</string>
+    <string name="skip">Skip</string>
+    <string name="dismiss">Dismiss</string>
 </resources>

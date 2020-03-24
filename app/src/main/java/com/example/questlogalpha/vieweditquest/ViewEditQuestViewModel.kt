@@ -1,6 +1,11 @@
 package com.example.questlogalpha.vieweditquest
 
+import android.app.AlarmManager
 import android.app.Application
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.icu.util.Calendar
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -9,6 +14,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.questlogalpha.NotificationReceiver
 import com.example.questlogalpha.data.*
 import com.example.questlogalpha.quests.Difficulty
 import com.example.questlogalpha.quests.QuestsDao
@@ -21,6 +27,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
     val currentQuest : Quest? get() = _currentQuest
     private var _currentQuest : Quest ?= null
+    val app = application
 
     // Two-way databinding, exposing MutableLiveData
     val title = MutableLiveData<String>()
@@ -231,6 +238,21 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             modifiedReward.value = null
         }
     }
+
+    // ------------------- date/time picker -------------------- //
+
+    fun onSetNotificationDate(year: Int, month: Int, day: Int)
+    {
+        //Set a notification in days specified
+
+    }
+
+    fun onSetNotificationTime()
+    {
+        //Set a notification for the time specified
+
+    }
+
 
     // ------------------------ navigation ----------------------- //
     private val _navigateToQuestsViewModel = MutableLiveData<Boolean>()

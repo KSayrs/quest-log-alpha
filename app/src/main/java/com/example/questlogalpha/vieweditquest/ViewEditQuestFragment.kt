@@ -1,32 +1,39 @@
 package com.example.questlogalpha.vieweditquest
 
+import android.app.Notification
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.Intent
+import android.icu.util.Calendar
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.questlogalpha.R
-import com.example.questlogalpha.ViewModelFactory
+import com.example.questlogalpha.*
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
-import com.example.questlogalpha.quests.Difficulty
-import kotlinx.android.synthetic.main.quest_objective_view.view.*
-import android.content.Context.INPUT_METHOD_SERVICE
-import android.text.InputType
-import android.view.inputmethod.InputMethodManager
-import android.view.inputmethod.EditorInfo
-import androidx.core.view.children
 import com.example.questlogalpha.databinding.QuestObjectiveViewBinding
 import com.example.questlogalpha.quests.AddRewardDialogFragment
-import com.example.questlogalpha.setClearFocusOnDone
-import java.lang.Exception
+import com.example.questlogalpha.quests.Difficulty
+import kotlinx.android.synthetic.main.quest_objective_view.view.*
+
 
 /** ************************************************************************************************
  * [Fragment] to display all data relating to a quest.
@@ -168,12 +175,80 @@ class ViewEditQuestFragment : Fragment() {
         })
 
         // add reward button
-        binding.addRewardsButton.setOnClickListener{
+        binding.addRewardsButton.setOnClickListener {
             val dialog = AddRewardDialogFragment()
             dialog.onPositiveButtonClicked = {
                 viewEditQuestViewModel.onPositiveButtonClicked(it)
             }
             dialog.show(childFragmentManager, "addRewards")
+        }
+
+        // add notification button
+        binding.addFamiliarNotificationButton.setOnClickListener {
+            val dialog = DatePickerDialogFragment()
+            val timeDialog = TimePickerDialogFragment(true)
+
+            val alarm: Calendar = Calendar.getInstance()
+
+            dialog.onDateSet = { year, month, day ->
+                Log.d(TAG, "Date picked: $year $month $day")
+
+                alarm.add(Calendar.YEAR, year)
+                alarm.add(Calendar.MONTH, month)
+                alarm.add(Calendar.DATE, day)
+
+                timeDialog.show(childFragmentManager, "addTime")
+            }
+            timeDialog.onTimeSet  = { hour, minute ->
+                Log.d(TAG, "Time picked: $hour:$minute ")
+
+                alarm.add(Calendar.HOUR_OF_DAY, hour)
+                alarm.add(Calendar.MINUTE, minute)
+
+                val intent = Intent(context, NotificationReceiver::class.java)
+                val pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0)
+
+               // val am = application.getSystemService(ALARM_SERVICE) as AlarmManager?
+                //am!![AlarmManager.RTC_WAKEUP, alarm.timeInMillis] = pendingIntent
+
+                // build notification channel
+                val notificationChannelId = NotificationUtil.createNotificationChannel(
+                    context!!,
+                    channelId,
+                    getString(R.string.familiar_quest_reminders),
+                    getString(R.string.familiar_quest_reminders_description),
+                    NotificationManager.IMPORTANCE_DEFAULT,
+                    true,
+                    Notification.VISIBILITY_PUBLIC)
+
+                if(notificationChannelId == null)
+                {
+                    Log.e(TAG, "notificationChannelId is null!")
+                }
+
+                // build notification
+                val builder = NotificationCompat.Builder(context!!, notificationChannelId!!)
+                    .setSmallIcon(android.R.drawable.ic_popup_reminder)
+                    .setContentTitle("My notification")
+                    .setContentText("Hello World!")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    // Set the intent that will fire when the user taps the notification
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+                    .addAction(NotificationUtil.createSnoozeAction(context!!, NotificationReceiver::class.java))
+                    .addAction(NotificationUtil.createDismissAction(context!!, NotificationReceiver::class.java))
+
+                val mNotificationManager = NotificationManagerCompat.from(context!!)
+                mNotificationManager.notify(888, builder.build())
+
+                // todo call viewmodel onSaveNotificationTime / onSetNotificationTime
+            }
+            timeDialog.onDismiss = {
+                Log.d(TAG, "timeDialog dismissing")
+                // todo call viewModel onSaveNotificationTime / onSetNotificationTime
+            }
+
+            dialog.show(childFragmentManager, "addDate")
         }
 
         // navigation
@@ -192,6 +267,7 @@ class ViewEditQuestFragment : Fragment() {
 
         Log.d(TAG,"Current destination is " + this.findNavController().currentDestination?.label)
 
+        // improving EditText UX
         binding.viewEditQuestTitleEditText.setRawInputType(InputType.TYPE_CLASS_TEXT)
         binding.viewEditQuestTitleEditText.setClearFocusOnDone()
         binding.viewEditQuestDescriptionEditText.setClearFocusOnDone()
@@ -229,10 +305,17 @@ class ViewEditQuestFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
+    // private
+    // -------------------------------------------------------------------
+    private fun generateBigTextStyleNotification() {
+
+    }
+
     // -------------------------- log tag ------------------------------ //
 
     companion object {
-        const val TAG: String = "KSLOG: ViewEditQuestFragment"
+        private const val TAG: String = "KSLOG: ViewEditQuestFragment"
+        const val channelId:String = "familiar_channel"
     }
 
 }

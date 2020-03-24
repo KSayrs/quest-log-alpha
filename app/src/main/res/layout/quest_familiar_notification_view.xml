@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools" >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/familiar_notification_in_quest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/activity_horizontal_margin">
+
+
+        <ImageView
+                android:id="@+id/alert_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:tint="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/ic_popup_reminder" />
+
+        <TextView
+                android:id="@+id/alert_time_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:fontFamily="@font/roboto"
+                android:textSize="18sp"
+                android:text="Time could not be converted"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/alert_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+                android:id="@+id/open_indicator"
+
+                android:layout_marginLeft="6dp"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:textAlignment="textStart"
+                android:tint="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/alert_time_text"
+                app:layout_constraintTop_toTopOf="@+id/alert_time_text"
+                app:srcCompat="@android:drawable/ic_media_play" />
+
+        <ImageView
+                android:id="@+id/delete_alert_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/ic_delete" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

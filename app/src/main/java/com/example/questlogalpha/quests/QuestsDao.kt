@@ -11,7 +11,7 @@ import com.example.questlogalpha.data.Quest
  */
 
 @Dao
-interface QuestsDao {
+interface  QuestsDao {
     /**
      * Select all quests from the quests table.
      *
