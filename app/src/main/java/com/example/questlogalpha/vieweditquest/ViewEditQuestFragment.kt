@@ -88,15 +88,14 @@ class ViewEditQuestFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
-        // this will continue to observe it after stuff has loaded...
-        // todo check for performance issues, then maybe come up with a way to remove it after we have loaded the data
-        viewEditQuestViewModel.difficulty.observe(viewLifecycleOwner, Observer {
+        // set the ordinal on data load
+        viewEditQuestViewModel.difficulty.observeOnce {
             if (viewEditQuestViewModel.difficulty.value != null) {
                 spinner.setSelection(viewEditQuestViewModel.difficulty.value!!.ordinal)
             } else {
                 spinner.setSelection(Difficulty.MEDIUM.ordinal)
             }
-        })
+        }
 
         // add/update objectives
         viewEditQuestViewModel.modifiedObjective.observe(viewLifecycleOwner, Observer {
