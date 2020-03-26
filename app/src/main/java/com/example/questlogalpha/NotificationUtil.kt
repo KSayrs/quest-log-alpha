@@ -15,12 +15,11 @@
  */
 package com.example.questlogalpha
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 
 /**
@@ -52,15 +51,18 @@ object NotificationUtil {
 
             channelId
         } else {
+            Log.w(TAG, "createNotificationChannel returning null")
             // Returns null for pre-O (26) devices.
             null
         }
     }
 
-    fun createSnoozeAction(context: Context, cls: Class<*>) : NotificationCompat.Action {
-        val snoozeIntent = Intent(context, cls::class.java)
-        snoozeIntent.action = "ACTION_SNOOZE"
+    fun createSnoozeAction(context: Context) : NotificationCompat.Action {
+        val snoozeIntent = Intent(context, NotificationIntentService::class.java)
+        snoozeIntent.action = NotificationIntentService.ACTION_SNOOZE
+        snoozeIntent.putExtra(NotificationIntentService.NOTIFICATION_ID, NotificationIntentService.NotificationId)
 
+        //val snoozePendingIntent = PendingIntent.getBroadcast(context, 0, snoozeIntent, 0)
         val snoozePendingIntent = PendingIntent.getService(context, 0, snoozeIntent, 0)
 
         return NotificationCompat.Action.Builder(
@@ -71,16 +73,24 @@ object NotificationUtil {
     }
 
     // Dismiss Action.
-    fun createDismissAction(context: Context, cls: Class<*>) : NotificationCompat.Action {
-        val dismissIntent = Intent(context, cls::class.java)
-        dismissIntent.action = "ACTION_DISMISS"
+    fun createDismissAction(context: Context) : NotificationCompat.Action {
+        val dismissIntent = Intent(context, NotificationIntentService::class.java)
+        dismissIntent.action = NotificationIntentService.ACTION_DISMISS
+        dismissIntent.putExtra(NotificationIntentService.NOTIFICATION_ID, NotificationIntentService.NotificationId)
 
-        val dismissPendingIntent = PendingIntent.getService(context, 0, dismissIntent, 0)
+       // val dismissPendingIntent = PendingIntent.getBroadcast(context, 0, dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT )
+        val dismissPendingIntent = PendingIntent.getService(context, 0, dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT )
 
+       // return  dismissPendingIntent
         return NotificationCompat.Action.Builder(
             android.R.drawable.ic_popup_reminder,
             context.getString(R.string.dismiss),
             dismissPendingIntent
         ).build()
     }
+
+
+
+    // -------------------------- log tag ------------------------------ //
+    private const val TAG:String = "KSLOG: NotificationUtil"
 }

@@ -21,8 +21,14 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <service android:name=".NotificationReceiver" android:enabled="true" android:exported="false">
-            <intent-filter> <action android:name="NOTIFICATION_SERVICE" /></intent-filter>
+        <receiver android:name=".NotificationReceiver" android:enabled="true" android:exported="false">
+            <intent-filter>
+                <action android:name="NOTIFICATION_SERVICE" />
+            </intent-filter>
+        </receiver>
+        <service
+                android:name=".NotificationIntentService"
+                android:exported="false">
         </service>
     </application>
 

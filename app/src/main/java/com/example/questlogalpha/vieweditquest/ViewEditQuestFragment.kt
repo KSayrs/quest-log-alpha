@@ -1,9 +1,10 @@
 package com.example.questlogalpha.vieweditquest
 
+import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
+import android.content.Context.ALARM_SERVICE
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.icu.util.Calendar
@@ -18,8 +19,6 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -34,27 +33,32 @@ import com.example.questlogalpha.quests.AddRewardDialogFragment
 import com.example.questlogalpha.quests.Difficulty
 import kotlinx.android.synthetic.main.quest_objective_view.view.*
 
-
 /** ************************************************************************************************
  * [Fragment] to display all data relating to a quest.
  * ********************************************************************************************** */
 class ViewEditQuestFragment : Fragment() {
 
-    private var viewModel : ViewEditQuestViewModel ?= null
+    private var viewModel: ViewEditQuestViewModel? = null
 
-    private var questId : String = ""
+    private var questId: String = ""
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
-        val binding: FragmentViewEditQuestBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_view_edit_quest, container, false)
+        val binding: FragmentViewEditQuestBinding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_view_edit_quest, container, false)
         val application = requireNotNull(this.activity).application
         val dataSource = QuestLogDatabase.getInstance(application).questLogDatabaseDao
-        val arguments =  ViewEditQuestFragmentArgs.fromBundle(arguments)
+        val arguments = ViewEditQuestFragmentArgs.fromBundle(arguments)
 
         questId = arguments.questId
 
         val viewModelFactory = ViewModelFactory(arguments.questId, dataSource, null, application)
-        val viewEditQuestViewModel = ViewModelProvider(this, viewModelFactory).get(ViewEditQuestViewModel::class.java)
+        val viewEditQuestViewModel =
+            ViewModelProvider(this, viewModelFactory).get(ViewEditQuestViewModel::class.java)
 
         viewModel = viewEditQuestViewModel
 
@@ -63,7 +67,11 @@ class ViewEditQuestFragment : Fragment() {
 
         // set up spinner
         val spinner: Spinner = binding.difficultySpinner
-        spinner.adapter = ArrayAdapter<Difficulty>(application, android.R.layout.simple_spinner_item, Difficulty.values())
+        spinner.adapter = ArrayAdapter<Difficulty>(
+            application,
+            android.R.layout.simple_spinner_item,
+            Difficulty.values()
+        )
         spinner.onItemSelectedListener = viewEditQuestViewModel
 
         // set up rewards adapter
@@ -92,28 +100,31 @@ class ViewEditQuestFragment : Fragment() {
 
         // add/update objectives
         viewEditQuestViewModel.modifiedObjective.observe(viewLifecycleOwner, Observer {
-            if(viewEditQuestViewModel.objectives.value == null) {
+            if (viewEditQuestViewModel.objectives.value == null) {
                 Log.e(TAG, "viewEditQuestViewModel.objectives is null. Ending observation early.")
                 return@Observer
             }
             // todo extend view to allow findInChildren
             val views = binding.objectives.children
-            for(objective in viewEditQuestViewModel.objectives.value!!)
-            {
+            for (objective in viewEditQuestViewModel.objectives.value!!) {
                 var objectiveBound = false
-                for(view in views)
-                {
+                for (view in views) {
                     val objBinding: QuestObjectiveViewBinding? = DataBindingUtil.getBinding(view)
-                    if(objBinding != null && objBinding.objective?.id == objective.id) {
+                    if (objBinding != null && objBinding.objective?.id == objective.id) {
                         objectiveBound = true
                         // todo figure out why this doesn't auto-update
                         objBinding.questObjectiveCheckbox.isChecked = objective.completed
                         break
                     }
                 }
-                if(objectiveBound) continue
+                if (objectiveBound) continue
 
-                val objectiveBinding: QuestObjectiveViewBinding = DataBindingUtil.inflate(inflater, R.layout.quest_objective_view, container, false)
+                val objectiveBinding: QuestObjectiveViewBinding = DataBindingUtil.inflate(
+                    inflater,
+                    R.layout.quest_objective_view,
+                    container,
+                    false
+                )
                 val objView = objectiveBinding.root
                 objectiveBinding.objective = objective
                 objectiveBinding.viewModel = viewEditQuestViewModel
@@ -127,24 +138,32 @@ class ViewEditQuestFragment : Fragment() {
                 objView.edit_objective_icon.setOnClickListener {
                     objView.quest_objective_edit_text.isFocusableInTouchMode = true
                     objView.quest_objective_edit_text.requestFocus()
-                    val imm = application.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
-                    imm!!.showSoftInput(objView.quest_objective_edit_text, InputMethodManager.SHOW_IMPLICIT)
+                    val imm =
+                        application.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
+                    imm!!.showSoftInput(
+                        objView.quest_objective_edit_text,
+                        InputMethodManager.SHOW_IMPLICIT
+                    )
                 }
 
                 objView.quest_objective_edit_text.setOnEditorActionListener { _, actionId, _ ->
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         try {
-                            viewEditQuestViewModel.onObjectiveEdit(objective, objView.quest_objective_edit_text.text.toString())
+                            viewEditQuestViewModel.onObjectiveEdit(
+                                objective,
+                                objView.quest_objective_edit_text.text.toString()
+                            )
                             objView.quest_objective_edit_text.isFocusableInTouchMode = false
                             objView.quest_objective_edit_text.isCursorVisible = false
                             objView.clearFocus()
 
-                            val imm = application.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
+                            val imm =
+                                application.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
                             imm!!.hideSoftInputFromWindow(activity?.currentFocus?.windowToken, 0)
 
                             binding.viewEditQuestTitleEditText.clearFocus()
                             binding.viewEditQuestDescriptionEditText.clearFocus()
-                        } catch (e:Exception) {
+                        } catch (e: Exception) {
                             Log.e(TAG, "onEditorAction: $e")
                         }
                     }
@@ -157,8 +176,11 @@ class ViewEditQuestFragment : Fragment() {
         // and without the individual it won't add new ones
         viewEditQuestViewModel.rewards.observe(viewLifecycleOwner, Observer {
             Log.d(TAG, "observe rewards full list")
-            if(viewEditQuestViewModel.rewards.value == null) {
-                Log.e(TAG, "viewEditQuestViewModel.rewards is null. Ending observation (rewards) early.")
+            if (viewEditQuestViewModel.rewards.value == null) {
+                Log.e(
+                    TAG,
+                    "viewEditQuestViewModel.rewards is null. Ending observation (rewards) early."
+                )
                 return@Observer
             }
 
@@ -166,8 +188,11 @@ class ViewEditQuestFragment : Fragment() {
         })
 
         viewEditQuestViewModel.modifiedReward.observe(viewLifecycleOwner, Observer {
-            if(viewEditQuestViewModel.rewards.value == null) {
-                Log.w(TAG, "viewEditQuestViewModel.rewards is null. Ending observation (modifiedReward) early.")
+            if (viewEditQuestViewModel.rewards.value == null) {
+                Log.w(
+                    TAG,
+                    "viewEditQuestViewModel.rewards is null. Ending observation (modifiedReward) early."
+                )
                 return@Observer
             }
 
@@ -193,53 +218,26 @@ class ViewEditQuestFragment : Fragment() {
             dialog.onDateSet = { year, month, day ->
                 Log.d(TAG, "Date picked: $year $month $day")
 
-                alarm.add(Calendar.YEAR, year)
-                alarm.add(Calendar.MONTH, month)
-                alarm.add(Calendar.DATE, day)
+                alarm.add(Calendar.YEAR, (year - alarm.get(Calendar.YEAR)))
+                alarm.add(Calendar.MONTH, (month - alarm.get(Calendar.MONTH)))
+                alarm.add(Calendar.DATE, (day - alarm.get(Calendar.DATE)))
 
                 timeDialog.show(childFragmentManager, "addTime")
             }
-            timeDialog.onTimeSet  = { hour, minute ->
+            timeDialog.onTimeSet = { hour, minute ->
                 Log.d(TAG, "Time picked: $hour:$minute ")
 
-                alarm.add(Calendar.HOUR_OF_DAY, hour)
-                alarm.add(Calendar.MINUTE, minute)
+                alarm.add(Calendar.HOUR_OF_DAY, (hour - alarm.get(Calendar.HOUR_OF_DAY)))
+                alarm.add(Calendar.MINUTE, (minute - alarm.get(Calendar.MINUTE)))
 
-                val intent = Intent(context, NotificationReceiver::class.java)
-                val pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0)
+                // thanks https://gist.github.com/BrandonSmith/6679223
+                scheduleNotification(getNotification(
+                    binding.viewEditQuestTitleEditText.text.toString(),
+                    binding.viewEditQuestDescriptionEditText.text.toString()),
+                    alarm.timeInMillis)
 
-               // val am = application.getSystemService(ALARM_SERVICE) as AlarmManager?
-                //am!![AlarmManager.RTC_WAKEUP, alarm.timeInMillis] = pendingIntent
-
-                // build notification channel
-                val notificationChannelId = NotificationUtil.createNotificationChannel(
-                    context!!,
-                    channelId,
-                    getString(R.string.familiar_quest_reminders),
-                    getString(R.string.familiar_quest_reminders_description),
-                    NotificationManager.IMPORTANCE_DEFAULT,
-                    true,
-                    Notification.VISIBILITY_PUBLIC)
-
-                if(notificationChannelId == null)
-                {
-                    Log.e(TAG, "notificationChannelId is null!")
-                }
-
-                // build notification
-                val builder = NotificationCompat.Builder(context!!, notificationChannelId!!)
-                    .setSmallIcon(android.R.drawable.ic_popup_reminder)
-                    .setContentTitle("My notification")
-                    .setContentText("Hello World!")
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    // Set the intent that will fire when the user taps the notification
-                    .setContentIntent(pendingIntent)
-                    .setAutoCancel(true)
-                    .addAction(NotificationUtil.createSnoozeAction(context!!, NotificationReceiver::class.java))
-                    .addAction(NotificationUtil.createDismissAction(context!!, NotificationReceiver::class.java))
-
-                val mNotificationManager = NotificationManagerCompat.from(context!!)
-                mNotificationManager.notify(888, builder.build())
+                Log.d(TAG, "CurrentTime: ${System.currentTimeMillis()}")
+                Log.d(TAG, "Alarm set for ${alarm.timeInMillis}")
 
                 // todo call viewmodel onSaveNotificationTime / onSetNotificationTime
             }
@@ -254,18 +252,22 @@ class ViewEditQuestFragment : Fragment() {
         // navigation
         viewEditQuestViewModel.navigateToQuestsViewModel.observe(viewLifecycleOwner, Observer {
             // todo test with activity!!.onBackPressed()
-                if (this.findNavController().currentDestination?.id == R.id.viewEditQuestFragment) {
-                    this.findNavController().navigate(
-                        ViewEditQuestFragmentDirections.actionViewEditQuestFragmentToMainViewFragment())
-                } else {
-                    Log.e(TAG,"Current destination is " + this.findNavController().currentDestination?.label + " instead of R.id.viewEditQuestFragment!")
-                    return@Observer // this is a hack, otherwise this becomes an infinite loop
-                }
+            if (this.findNavController().currentDestination?.id == R.id.viewEditQuestFragment) {
+                this.findNavController().navigate(
+                    ViewEditQuestFragmentDirections.actionViewEditQuestFragmentToMainViewFragment()
+                )
+            } else {
+                Log.e(
+                    TAG,
+                    "Current destination is " + this.findNavController().currentDestination?.label + " instead of R.id.viewEditQuestFragment!"
+                )
+                return@Observer // this is a hack, otherwise this becomes an infinite loop
+            }
 
-                viewEditQuestViewModel.doneNavigating()
+            viewEditQuestViewModel.doneNavigating()
         })
 
-        Log.d(TAG,"Current destination is " + this.findNavController().currentDestination?.label)
+        Log.d(TAG, "Current destination is " + this.findNavController().currentDestination?.label)
 
         // improving EditText UX
         binding.viewEditQuestTitleEditText.setRawInputType(InputType.TYPE_CLASS_TEXT)
@@ -281,13 +283,13 @@ class ViewEditQuestFragment : Fragment() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        if(questId == "") menu.removeItem(R.id.action_abandon_quest)
+        if (questId == "") menu.removeItem(R.id.action_abandon_quest)
         super.onPrepareOptionsMenu(menu)
     }
 
     // handle button activities
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(viewModel == null){
+        if (viewModel == null) {
             Toast.makeText(this.context, "Please try again.", Toast.LENGTH_SHORT).show()
             Log.e("ViewEditQuestFragment: onOptionsItemSelected", "viewModel is null!!")
             return false
@@ -297,6 +299,7 @@ class ViewEditQuestFragment : Fragment() {
 
         // save/delete quest
         if (id == R.id.action_done_editing) {
+
             viewModel!!.onSaveQuest()
         }
         if (id == R.id.action_abandon_quest) {
@@ -307,15 +310,66 @@ class ViewEditQuestFragment : Fragment() {
 
     // private
     // -------------------------------------------------------------------
-    private fun generateBigTextStyleNotification() {
 
+    /** Schedule a notification to happen later in time. */
+    private fun scheduleNotification(notification: Notification, notificationTime: Long)
+    {
+        val notificationIntent = Intent(context, NotificationIntentService::class.java)
+        notificationIntent.putExtra(NotificationIntentService.NOTIFICATION_ID, NotificationIntentService.NotificationId)
+        notificationIntent.putExtra(NotificationIntentService.NOTIFICATION, notification)
+        val pendingIntent = PendingIntent.getService(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+    //    val pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val alarmManager = context!!.getSystemService(ALARM_SERVICE) as AlarmManager?
+        alarmManager!!.set(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent)
     }
 
-    // -------------------------- log tag ------------------------------ //
+    /** Build and return a [Notification]. */
+    private fun getNotification(title:String, content: String) : Notification
+    {
+        // build notification channel
+        val notificationChannelId = NotificationUtil.createNotificationChannel(
+            context!!,
+            channelId,
+            getString(R.string.familiar_quest_reminders),
+            getString(R.string.familiar_quest_reminders_description),
+            NotificationManager.IMPORTANCE_DEFAULT,
+            true,
+            Notification.VISIBILITY_PUBLIC
+        )
+
+        // to make a new notification id, add
+        // builder.addExtras(NOTIFICATION_ID, number)
+        // and then get it in the receiver.
+
+        val dismissIntent = Intent(context, NotificationIntentService::class.java)
+        dismissIntent.action = NotificationIntentService.ACTION_DISMISS
+        dismissIntent.putExtra(NotificationIntentService.NOTIFICATION_ID, NotificationIntentService.NotificationId)
+
+    //    val dismissPendingIntent = PendingIntent.getBroadcast(context, 0, dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT )
+        val dismissPendingIntent = PendingIntent.getService(context, 0, dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT )
+
+        val builder = NotificationCompat.Builder(context!!, notificationChannelId!!)
+        builder.setContentTitle(title)
+        builder.setContentText(content)
+        builder.setSmallIcon(R.drawable.ic_scroll_quill)
+        builder.priority = NotificationCompat.PRIORITY_DEFAULT
+        builder.setAutoCancel(true)
+        builder.addAction(R.drawable.ic_scroll_quill, "Dismiss", dismissPendingIntent)
+        builder.addAction(
+            NotificationUtil.createSnoozeAction(context!!)
+        )
+     //  builder.addAction(
+     //      NotificationUtil.createDismissAction(context!!)
+     //  )
+        return builder.build()
+    }
 
     companion object {
-        private const val TAG: String = "KSLOG: ViewEditQuestFragment"
         const val channelId:String = "familiar_channel"
+
+        // -------------------------- log tag ------------------------------ //
+        private const val TAG: String = "KSLOG: ViewEditQuestFragment"
     }
 
 }
