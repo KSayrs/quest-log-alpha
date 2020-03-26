@@ -24,7 +24,6 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
 
     private val _navigateToViewEditQuest = MutableLiveData<String?>()
 
-    // todo should this be called in a coroutine?
     val quests = database.getAllQuests()
 
     /** When true immediately navigate back to the [com.example.questlogalpha.vieweditquest.ViewEditQuestFragment] */

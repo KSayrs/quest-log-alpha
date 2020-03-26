@@ -263,7 +263,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         _navigateToQuestsViewModel.value = false
     }
 
-    // -------------------------- log util ------------------------------ //
+    // -------------------------- log tag ------------------------------ //
     companion object {
         var TAG: String = "KSLOG: ViewEditQuestViewModel"
     }

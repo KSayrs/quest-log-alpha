@@ -1,4 +1,3 @@
-// todo in rewrite - make general adapter that handles more of the boilerplate
 package com.example.questlogalpha.vieweditquest
 
 import android.util.Log
@@ -17,8 +16,6 @@ import kotlinx.android.synthetic.main.skill_in_reward_list.view.*
  *
  * A ViewHolder holds a view for the [RecyclerView] as well as providing additional information
  * to the RecyclerView such as where on the screen it was last drawn during scrolling.
- *
- * // todo move this class elsewhere
  */
 class RewardItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.ViewHolder(constraintLayout)
 
