@@ -314,11 +314,11 @@ class ViewEditQuestFragment : Fragment() {
     /** Schedule a notification to happen later in time. */
     private fun scheduleNotification(notification: Notification, notificationTime: Long)
     {
-        val notificationIntent = Intent(context, NotificationIntentService::class.java)
+        val notificationIntent = Intent(context, NotificationReceiver::class.java)
         notificationIntent.putExtra(NotificationIntentService.NOTIFICATION_ID, NotificationIntentService.NotificationId)
         notificationIntent.putExtra(NotificationIntentService.NOTIFICATION, notification)
-        val pendingIntent = PendingIntent.getService(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-    //    val pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        //val pendingIntent = PendingIntent.getService(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val alarmManager = context!!.getSystemService(ALARM_SERVICE) as AlarmManager?
         alarmManager!!.set(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent)

@@ -1,6 +1,5 @@
 package com.example.questlogalpha
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -42,12 +41,6 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
-    }
-
-    override fun onStop() {
-        Log.d(TAG, "onStop")
-        super.onStop()
-        startService(Intent(this, NotificationIntentService::class.java))
     }
 
     // -------------------------- log tag ------------------------------ //
