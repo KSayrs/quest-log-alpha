@@ -1,11 +1,6 @@
 package com.example.questlogalpha.vieweditquest
 
-import android.app.AlarmManager
 import android.app.Application
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.icu.util.Calendar
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -14,7 +9,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.questlogalpha.NotificationReceiver
 import com.example.questlogalpha.data.*
 import com.example.questlogalpha.quests.Difficulty
 import com.example.questlogalpha.quests.QuestsDao
@@ -23,7 +17,7 @@ import kotlinx.coroutines.*
 /** ************************************************************************************************
  * [AndroidViewModel] for the [ViewEditQuestFragment] screen.
  * ********************************************************************************************** */
-class ViewEditQuestViewModel (private val questId: String, val database: QuestsDao, application: Application) : AndroidViewModel(application), AdapterView.OnItemSelectedListener {
+class ViewEditQuestViewModel (private val questId: String, val database: QuestsDao, val globalVariableData: GlobalVariablesDao, application: Application) : AndroidViewModel(application), AdapterView.OnItemSelectedListener {
 
     val currentQuest : Quest? get() = _currentQuest
     private var _currentQuest : Quest ?= null
@@ -33,16 +27,19 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     val title = MutableLiveData<String>()
     val description = MutableLiveData<String>()
     val difficulty = MutableLiveData<Difficulty>()
-    val objectives = MutableLiveData<ArrayList<Objective>>() // not observed
+    val objectives = MutableLiveData<ArrayList<Objective>>()
     val modifiedObjective = MutableLiveData<Objective>()
     val modifiedReward = MutableLiveData<SkillReward>()
     val rewards = MutableLiveData<ArrayList<SkillReward>>()
+    val storedNotifications = MutableLiveData<ArrayList<StoredNotification>>()
 
+    // todo observe this and wait to show items until this is complete
     private val _dataLoading = MutableLiveData<Boolean>()
     val dataLoading: LiveData<Boolean> = _dataLoading
 
     private var isNewQuest: Boolean = true
     private var isDataLoaded = false
+    private var notificationId:GlobalVariable? = null
     val skillRewards = arrayListOf<Skill>()
 
     var toast = Toast.makeText(getApplication(), "Item Selected", Toast.LENGTH_SHORT)
@@ -61,6 +58,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             modifiedObjective.value = null
             modifiedReward.value = null
             rewards.value = arrayListOf()
+            storedNotifications.value = arrayListOf()
             Log.d(TAG, "init: creating new quest")
         }
         else
@@ -73,6 +71,14 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
                 }
             }
         }
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                notificationId = globalVariableData.getVariableWithName("NotificationId")
+                Log.d(TAG, "global variable retrieved: $notificationId")
+                // todo check for and clear out old notifications
+            }
+        }
+
     }
 
     private fun onDataLoaded(quest: Quest?)
@@ -90,22 +96,27 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         modifiedObjective.postValue(null)
         modifiedReward.postValue(null)
         rewards.postValue(currentQuest?.rewards)
+        storedNotifications.postValue(currentQuest?.notifications)
 
         isDataLoaded = true
+        Log.d(TAG, "onDataLoaded complete")
     }
 
     // -------------------------------------------------------------------- //
     // ------------------------ database updates -------------------------- //
-    fun onSaveQuest()
-    {
-        viewModelScope.launch {
-            if(title.value != "") {
+    fun onSaveQuest() : Boolean {
+        return if(title.value != "") {
+            viewModelScope.launch {
                 if (isNewQuest) insert()
                 else update()
 
                 _navigateToQuestsViewModel.value = true // navigate back to the quests screen
             }
-            else Toast.makeText(getApplication(), "Title is empty!", Toast.LENGTH_SHORT).show()
+            true
+        }
+        else {
+            Toast.makeText(getApplication(), "Title is empty!", Toast.LENGTH_SHORT).show()
+            false
         }
     }
 
@@ -130,25 +141,37 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             Log.d(TAG, "Quest ID: " + currentQuest!!.id)
             Log.d(TAG, "quest description: " + currentQuest!!.description)
             Log.d(TAG, "quest rewards: " + currentQuest!!.rewards)
+            Log.d(TAG, "quest notifications: " + currentQuest!!.notifications)
 
             _currentQuest!!.title = title.value.toString()
             _currentQuest!!.description = description.value.toString()
             _currentQuest!!.difficulty = difficulty.value!!
             _currentQuest!!.objectives = objectives.value!!
             _currentQuest!!.rewards = rewards.value!!
+            _currentQuest!!.notifications = storedNotifications.value!!
             database.updateQuest(_currentQuest!!)
         }
     }
 
     private suspend fun insert() {
         withContext(Dispatchers.IO){
-            val newQuest = Quest(title.value.toString(), description.value.toString(), objectives = objectives.value!!, difficulty = difficulty.value!!, rewards = rewards.value!!)
+            val newQuest = Quest(
+                title.value.toString(), 
+                description.value.toString(),
+                objectives = objectives.value!!,
+                difficulty = difficulty.value!!,
+                rewards = rewards.value!!,
+                notifications = storedNotifications.value!!
+            )
             database.insertQuest(newQuest)
+            globalVariableData.updateVariable(notificationId!!)
 
             Log.d(TAG, "Newly made quest title: " + newQuest.title)
             Log.d(TAG, "Newly made quest description: " + newQuest.description)
             Log.d(TAG, "Newly made quest difficulty: " + newQuest.difficulty)
             Log.d(TAG, "Newly made quest id: " + newQuest.id)
+            Log.d(TAG, "Newly made quest rewards: " + newQuest.rewards)
+            Log.d(TAG, "Newly made quest notifications: " + newQuest.notifications)
             Log.d(TAG, "Quest made on: " + newQuest.dateCreated)
         }
     }
@@ -239,20 +262,38 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         }
     }
 
-    // ------------------- date/time picker -------------------- //
+    // ------------------- notifications -------------------- //
 
-    fun onSetNotificationDate(year: Int, month: Int, day: Int)
-    {
-        //Set a notification in days specified
-
+    fun onAddStoredNotification(storedNotification: StoredNotification){
+        Log.d(TAG,"onAddStoredNotification: $storedNotification")
+        storedNotifications.value!!.add(storedNotification)
+        incrementId()
     }
 
-    fun onSetNotificationTime()
-    {
-        //Set a notification for the time specified
-
+    fun onRemoveStoredNotification(storedNotification: StoredNotification){
+        Log.d(TAG,"onAddStoredNotification: $storedNotification")
+        storedNotifications.value!!.remove(storedNotification)
+        decrementId()
     }
 
+    fun getNextNotificationId() : Int
+    {
+        incrementId()
+        return notificationId!!.value
+    }
+
+    fun getNotificationId() : Int
+    {
+        return notificationId!!.value
+    }
+
+    private fun incrementId() {
+        notificationId!!.value++
+    }
+
+    private fun decrementId() {
+        notificationId!!.value--
+    }
 
     // ------------------------ navigation ----------------------- //
     private val _navigateToQuestsViewModel = MutableLiveData<Boolean>()

@@ -15,12 +15,18 @@
  */
 package com.example.questlogalpha
 
-import android.app.*
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.example.questlogalpha.data.StoredAction
+import com.example.questlogalpha.data.StoredIntent
+import com.example.questlogalpha.data.StoredPendingIntent
+
 
 /**
  * Simplifies common [android.app.Notification] tasks.
@@ -62,7 +68,6 @@ object NotificationUtil {
         snoozeIntent.action = NotificationIntentService.ACTION_SNOOZE
         snoozeIntent.putExtra(NotificationIntentService.NOTIFICATION_ID, NotificationIntentService.NotificationId)
 
-        //val snoozePendingIntent = PendingIntent.getBroadcast(context, 0, snoozeIntent, 0)
         val snoozePendingIntent = PendingIntent.getService(context, 0, snoozeIntent, 0)
 
         return NotificationCompat.Action.Builder(
@@ -70,6 +75,15 @@ object NotificationUtil {
             "Snooze",
             snoozePendingIntent
         ).build()
+    }
+
+    fun createStoredSnoozeAction() : StoredAction {
+        val extras = HashMap<String, Int>()
+        extras[NotificationIntentService.NOTIFICATION_ID] = NotificationIntentService.NotificationId
+
+        val storedIntent = StoredIntent(NotificationIntentService.ACTION_SNOOZE, extras, NotificationIntentService.NotificationId)
+        val storedPendingIntent = StoredPendingIntent(0, storedIntent, 0)
+        return StoredAction(android.R.drawable.ic_popup_reminder, "Snooze", storedPendingIntent)
     }
 
     // Dismiss Action.

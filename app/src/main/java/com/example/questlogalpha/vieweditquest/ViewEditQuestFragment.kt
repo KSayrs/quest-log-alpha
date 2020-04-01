@@ -1,9 +1,6 @@
 package com.example.questlogalpha.vieweditquest
 
-import android.app.AlarmManager
-import android.app.Notification
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context.ALARM_SERVICE
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
@@ -19,6 +16,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -26,7 +24,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.questlogalpha.*
-import com.example.questlogalpha.data.QuestLogDatabase
+import com.example.questlogalpha.data.*
 import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
 import com.example.questlogalpha.databinding.QuestObjectiveViewBinding
 import com.example.questlogalpha.quests.AddRewardDialogFragment
@@ -52,11 +50,12 @@ class ViewEditQuestFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_view_edit_quest, container, false)
         val application = requireNotNull(this.activity).application
         val dataSource = QuestLogDatabase.getInstance(application).questLogDatabaseDao
+        val globalVariables = QuestLogDatabase.getInstance(application).globalVariableDatabaseDao
         val arguments = ViewEditQuestFragmentArgs.fromBundle(arguments)
 
         questId = arguments.questId
 
-        val viewModelFactory = ViewModelFactory(arguments.questId, dataSource, null, application)
+        val viewModelFactory = ViewModelFactory(arguments.questId, dataSource, null, globalVariables, application)
         val viewEditQuestViewModel =
             ViewModelProvider(this, viewModelFactory).get(ViewEditQuestViewModel::class.java)
 
@@ -156,8 +155,7 @@ class ViewEditQuestFragment : Fragment() {
                             objView.quest_objective_edit_text.isCursorVisible = false
                             objView.clearFocus()
 
-                            val imm =
-                                application.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
+                            val imm = application.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
                             imm!!.hideSoftInputFromWindow(activity?.currentFocus?.windowToken, 0)
 
                             binding.viewEditQuestTitleEditText.clearFocus()
@@ -224,25 +222,37 @@ class ViewEditQuestFragment : Fragment() {
                 timeDialog.show(childFragmentManager, "addTime")
             }
             timeDialog.onTimeSet = { hour, minute ->
-                Log.d(TAG, "Time picked: $hour:$minute ")
-
                 alarm.add(Calendar.HOUR_OF_DAY, (hour - alarm.get(Calendar.HOUR_OF_DAY)))
                 alarm.add(Calendar.MINUTE, (minute - alarm.get(Calendar.MINUTE)))
 
-                // thanks https://gist.github.com/BrandonSmith/6679223
-                scheduleNotification(getNotification(
-                    binding.viewEditQuestTitleEditText.text.toString(),
-                    binding.viewEditQuestDescriptionEditText.text.toString()),
-                    alarm.timeInMillis)
+                Log.d(TAG, "Time picked: $hour:$minute " +
+                        "\n timeInIMillis: ${alarm.timeInMillis}")
 
-                Log.d(TAG, "CurrentTime: ${System.currentTimeMillis()}")
-                Log.d(TAG, "Alarm set for ${alarm.timeInMillis}")
+                val textStoredNotification: StoredNotification = StoredNotification(channelId, id=viewEditQuestViewModel.getNotificationId())
 
-                // todo call viewmodel onSaveNotificationTime / onSetNotificationTime
+                textStoredNotification.channelId = channelId
+                textStoredNotification.notificationTime = alarm.timeInMillis
+                textStoredNotification.channelPriority = NotificationManager.IMPORTANCE_DEFAULT
+
+                val extras = HashMap<String, Int>()
+                val storedDismissIntent = StoredIntent(NotificationIntentService.ACTION_DISMISS, extras, viewEditQuestViewModel.getNotificationId())
+                val storedDismissPendingIntent = StoredPendingIntent(textStoredNotification.id, storedDismissIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+                val actionList = arrayListOf<StoredAction>()
+                actionList.add(NotificationUtil.createStoredSnoozeAction())
+                actionList.add(StoredAction(R.drawable.ic_scroll_quill, "Dismiss", storedDismissPendingIntent))
+
+                textStoredNotification.contentText = binding.viewEditQuestDescriptionEditText.text.toString()
+                textStoredNotification.contentTitle = binding.viewEditQuestTitleEditText.text.toString()
+                textStoredNotification.autoCancel = true
+                textStoredNotification.icon = R.drawable.ic_scroll_quill
+                textStoredNotification.actions = actionList
+
+                viewModel!!.onAddStoredNotification(textStoredNotification)
+                Log.d(TAG, "storedNotification: $textStoredNotification")
             }
             timeDialog.onDismiss = {
                 Log.d(TAG, "timeDialog dismissing")
-                // todo call viewModel onSaveNotificationTime / onSetNotificationTime
+                // todo set notification for just the day
             }
 
             dialog.show(childFragmentManager, "addDate")
@@ -299,7 +309,31 @@ class ViewEditQuestFragment : Fragment() {
         // save/delete quest
         if (id == R.id.action_done_editing) {
 
-            viewModel!!.onSaveQuest()
+            val notifications = arrayListOf<StoredNotification>()
+            notifications.addAll(viewModel!!.storedNotifications.value!!)
+            for (notification in notifications) {
+
+                // check for past alarms and remove them
+                if (notification.notificationTime == 1L || notification.id == -1) {
+                    Log.d(TAG, "*****************************************")
+                    Log.d(TAG, "storedNotification: notification ${notification.id} is not real. Delete it")
+                    viewModel!!.onRemoveStoredNotification(notification)
+                    continue
+                }
+
+                Log.d(TAG, "*****************************************")
+                Log.d(TAG, "storedNotification: $notification")
+                Log.d(TAG, "CurrentTime: ${System.currentTimeMillis()}")
+                Log.d(TAG, "Alarm set for ${notification.notificationTime}")
+
+                // thanks https://gist.github.com/BrandonSmith/6679223
+                scheduleNotification(getNotification(
+                    notification),
+                    notification.notificationTime,
+                    notification.id)
+            }
+
+            viewModel!!.onSaveQuest() // todo check for whether this succeeds or not, THEN build the notifications -- otherwise we'll have duplicate notifications popping up
         }
         if (id == R.id.action_abandon_quest) {
             viewModel!!.onDeleteQuest()
@@ -310,21 +344,24 @@ class ViewEditQuestFragment : Fragment() {
     // private
     // -------------------------------------------------------------------
 
-    /** Schedule a notification to happen later in time. */
-    private fun scheduleNotification(notification: Notification, notificationTime: Long)
+    /** Schedule a [notification] with [notificationId] to happen at [notificationTime] (milliseconds). */
+    private fun scheduleNotification(notification: Notification, notificationTime: Long, notificationId: Int)
     {
+        Log.d(TAG, "scheduleNotification ************************ ")
+        Log.d(TAG, " notificationid: $notificationId")
+        Log.d(TAG, " notification: $notification")
+        Log.d(TAG, " notificationTime: $notificationTime")
         val notificationIntent = Intent(context, NotificationReceiver::class.java)
-        notificationIntent.putExtra(NotificationIntentService.NOTIFICATION_ID, NotificationIntentService.NotificationId)
+        notificationIntent.putExtra(NotificationIntentService.NOTIFICATION_ID, notificationId)
         notificationIntent.putExtra(NotificationIntentService.NOTIFICATION, notification)
-        //val pendingIntent = PendingIntent.getService(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(context, notificationId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val alarmManager = context!!.getSystemService(ALARM_SERVICE) as AlarmManager?
         alarmManager!!.set(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent)
     }
 
-    /** Build and return a [Notification]. */
-    private fun getNotification(title:String, content: String) : Notification
+    /** Build and return a [Notification] out of a stored [notification]. */
+    private fun getNotification(notification: StoredNotification) : Notification
     {
         // build notification channel
         val notificationChannelId = NotificationUtil.createNotificationChannel(
@@ -341,26 +378,30 @@ class ViewEditQuestFragment : Fragment() {
         // builder.addExtras(NOTIFICATION_ID, number)
         // and then get it in the receiver.
 
-        val dismissIntent = Intent(context, NotificationIntentService::class.java)
-        dismissIntent.action = NotificationIntentService.ACTION_DISMISS
-        dismissIntent.putExtra(NotificationIntentService.NOTIFICATION_ID, NotificationIntentService.NotificationId)
-
-    //    val dismissPendingIntent = PendingIntent.getBroadcast(context, 0, dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT )
-        val dismissPendingIntent = PendingIntent.getService(context, 0, dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT )
-
         val builder = NotificationCompat.Builder(context!!, notificationChannelId!!)
-        builder.setContentTitle(title)
-        builder.setContentText(content)
-        builder.setSmallIcon(R.drawable.ic_scroll_quill)
-        builder.priority = NotificationCompat.PRIORITY_DEFAULT
-        builder.setAutoCancel(true)
-        builder.addAction(R.drawable.ic_scroll_quill, "Dismiss", dismissPendingIntent)
-        builder.addAction(
-            NotificationUtil.createSnoozeAction(context!!)
-        )
-     //  builder.addAction(
-     //      NotificationUtil.createDismissAction(context!!)
-     //  )
+
+        // iterate through actions and build them
+        for (action in notification.actions){
+            val intent = Intent(context, NotificationIntentService::class.java)
+            intent.action = action.intent.intent.action
+            intent.putExtra(NotificationIntentService.NOTIFICATION_ID, action.intent.intent.id)
+
+            val pendingIntent = PendingIntent.getService(context, action.intent.requestCode, intent, action.intent.flags)
+            builder.addAction(action.iconPath, action.title, pendingIntent)
+        }
+        builder.setContentTitle(notification.contentTitle)
+        builder.setContentText(notification.contentText)
+        builder.setSmallIcon(notification.icon)
+        builder.priority = notification.channelPriority
+        builder.setAutoCancel(notification.autoCancel)
+
+        Log.d(TAG, "getNotification ************************ ")
+        Log.d(TAG, " contentTitle: ${notification.contentTitle}")
+        Log.d(TAG, " contentText: ${notification.contentText}")
+        Log.d(TAG, " priority: ${notification.channelPriority}")
+        Log.d(TAG, " icon path: ${notification.icon}")
+        Log.d(TAG, "setAutoCancel: ${notification.autoCancel}")
+
         return builder.build()
     }
 
