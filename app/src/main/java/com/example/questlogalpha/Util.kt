@@ -1,6 +1,8 @@
 package com.example.questlogalpha
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.pow
@@ -84,8 +86,24 @@ fun round(value: Double, places: Int): Double {
 // todo add geometry formula
 
 class Util {
-    // -------------------------- log tag ------------------------------ //
+
     companion object {
+
+        /** Show a short toast */
+        fun showShortToast(context: Context, text: String) {
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+        }
+
+        /** Show a long toast */
+        fun showLongToast(context: Context, text: String) {
+            Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+        }
+
+        // -------------------------- log tag ------------------------------ //
         const val TAG: String = "KSLOG: Util.kt"
     }
+}
+
+fun Any.toast(context: Context, duration: Int = Toast.LENGTH_SHORT): Toast {
+    return Toast.makeText(context, this.toString(), duration).apply { show() }
 }
