@@ -143,7 +143,7 @@ class StoredNotificationArrayConverter {
     fun notificationToString(notifications: ArrayList<StoredNotification>): String? {
 
         if(notifications.size <= 0) {
-            Log.e(TAG, "Empty notification array passed! Empty object will be stored")
+            Log.d(TAG, "Empty notification array passed. Empty object will be stored")
             return "{}"
         }
 
