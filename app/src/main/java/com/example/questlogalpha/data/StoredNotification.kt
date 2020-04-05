@@ -16,6 +16,7 @@ data class StoredNotification(
     var channelPriority: Int = NotificationCompat.PRIORITY_DEFAULT,
     var contentTitle:String = "",
     var contentText:String = "",
+    var deleteIntent: StoredPendingIntent? = null,
     var icon:Int = R.drawable.ic_scroll_quill,
     var autoCancel:Boolean = false,
     var actions:ArrayList<StoredAction> = arrayListOf(),
@@ -23,6 +24,7 @@ data class StoredNotification(
     val id: Int = -1
 )
 
+/** POJO for holding stored action data for notifications. */
 data class StoredAction(
     var iconPath:Int,
     var title:String = "",
@@ -33,17 +35,43 @@ data class StoredAction(
     val id: String = UUID.randomUUID().toString()
 )
 
+/** POJO for holding pending intent data. */
 data class StoredPendingIntent(
     var requestCode:Int,
     var intent:StoredIntent,
     var flags:Int
-)
+) {
+    /** Converts a [StoredPendingIntent] to a [JSONObject]. */
+    fun toJSON() : JSONObject {
+        val pendingIntentObj: JSONObject = JSONObject(
+            """{"${StoredPendingIntent::requestCode.name}":${this.requestCode},
+                        |"${StoredPendingIntent::flags.name}":${this.flags}}""".trimMargin())
 
+        val intentExtras: JSONObject = JSONObject()
+        for((k,v) in this.intent.extras)
+        {
+            intentExtras.put(k, v)
+        }
+
+        // add intent to pending intent
+        pendingIntentObj.put(StoredPendingIntent::intent.name, JSONObject(
+            """{"${StoredIntent::action.name}":"${this.intent.action}",
+                        |"${StoredIntent::extras.name}": $intentExtras,
+                        |"${StoredIntent::id.name}": "${this.intent.id}"}""".trimMargin()
+        ))
+
+        return pendingIntentObj
+    }
+}
+
+/** POJO for holding intent data. */
 data class StoredIntent(
     var action:String = "",
     var extras:HashMap<String, Int>,
     val id: Int = -1
 )
+
+// -------------------------------------------------------------------------------------------------
 
 /** Converts our [StoredNotification] object and its sub-objects to and from a string that can be entered into and read from the database. */
 class StoredNotificationArrayConverter {
@@ -65,6 +93,7 @@ class StoredNotificationArrayConverter {
                 storedNotificationObject.getInt(StoredNotification::channelPriority.name),
                 storedNotificationObject.getString(StoredNotification::contentTitle.name),
                 storedNotificationObject.getString(StoredNotification::contentText.name),
+                storedNotificationObject.getStoredPendingIntent(StoredNotification::deleteIntent.name),
                 storedNotificationObject.getInt(StoredNotification::icon.name),
                 storedNotificationObject.getBoolean(StoredNotification::autoCancel.name),
                 id = id.toInt()
@@ -86,31 +115,14 @@ class StoredNotificationArrayConverter {
         val storedActions: ArrayList<StoredAction> = arrayListOf()
         for (actionId in actionsObject.keys()) {
             val actionObject = actionsObject.getJSONObject(actionId)
-            val pendingIntentObject = actionObject.getJSONObject(StoredAction::intent.name)
-            val intentObject = pendingIntentObject.getJSONObject(StoredPendingIntent::intent.name)
-            val extrasObject = intentObject.getJSONObject(StoredIntent::extras.name)
+            val pendingIntent = actionObject.getStoredPendingIntent(StoredAction::intent.name)
 
-            val extras: HashMap<String, Int> = HashMap()
-            for (extraString in extrasObject.keys()) {
-                extras[extraString] = extrasObject.getInt(extraString)
-            }
-
-            val intent = StoredIntent(
-                intentObject.getString(StoredIntent::action.name),
-                extras,
-                intentObject.getInt(StoredIntent::id.name)
-            )
-
-            val pendingIntent = StoredPendingIntent(
-                pendingIntentObject.getInt(StoredPendingIntent::requestCode.name),
-                intent,
-                pendingIntentObject.getInt(StoredPendingIntent::flags.name)
-            )
+            assert(pendingIntent != null) { "$TAG getStoredActions: Assert fail: pending intent is null" }
 
             val storedAction = StoredAction(
                 actionObject.getInt(StoredAction::iconPath.name),
                 actionObject.getString(StoredAction::title.name),
-                pendingIntent
+                pendingIntent!!
             )
 
             storedActions.add(storedAction)
@@ -159,6 +171,9 @@ class StoredNotificationArrayConverter {
             obj.put(StoredNotification::autoCancel.name, notification.autoCancel)
             obj.put(StoredNotification::notificationTime.name, notification.notificationTime)
 
+            if(notification.deleteIntent == null) obj.put(StoredNotification::deleteIntent.name, JSONObject("{}")) // we store an empty object because JSON really can't deal with nulls
+            else obj.put(StoredNotification::deleteIntent.name, notification.deleteIntent!!.toJSON())
+
             val actionsObject: JSONObject = JSONObject()
             for (action in notification.actions)
             {
@@ -167,22 +182,7 @@ class StoredNotificationArrayConverter {
                 actionObject.put(StoredAction::iconPath.name, action.iconPath)
                 actionObject.put(StoredAction::title.name, action.title)
 
-                val pendingIntentObj: JSONObject = JSONObject(
-                    """{"${StoredPendingIntent::requestCode.name}":${action.intent.requestCode},
-                        |"${StoredPendingIntent::flags.name}":${action.intent.flags}}""".trimMargin())
-
-                val intentExtras: JSONObject = JSONObject()
-                for((k,v) in action.intent.intent.extras)
-                {
-                    intentExtras.put(k, v)
-                }
-
-                // add intent to pending intent
-                pendingIntentObj.put(StoredPendingIntent::intent.name, JSONObject(
-                    """{"${StoredIntent::action.name}":"${action.intent.intent.action}",
-                        |"${StoredIntent::extras.name}": $intentExtras,
-                        |"${StoredIntent::id.name}": "${action.intent.intent.id}"}""".trimMargin()
-                ))
+                val pendingIntentObj: JSONObject = action.intent.toJSON()
 
                 actionObject.put(StoredAction::intent.name, pendingIntentObj)
                 actionsObject.put(action.id, actionObject)
@@ -203,3 +203,34 @@ class StoredNotificationArrayConverter {
     }
 }
 
+// -------------------------------------------------------------------------------------------------
+/**
+ * Gets a [StoredPendingIntent] from the [JSONObject] property [name].
+ *
+ * Extension for JSONObject.
+ * */
+fun JSONObject.getStoredPendingIntent(name: String) : StoredPendingIntent? {
+
+    val pendingIntentObject = this.getJSONObject(name)
+    if(pendingIntentObject == {}) return null
+
+    val intentObject = pendingIntentObject.getJSONObject(StoredPendingIntent::intent.name)
+    val extrasObject = intentObject.getJSONObject(StoredIntent::extras.name)
+
+    val extras: HashMap<String, Int> = HashMap()
+    for (extraString in extrasObject.keys()) {
+        extras[extraString] = extrasObject.getInt(extraString)
+    }
+
+    val intent = StoredIntent(
+        intentObject.getString(StoredIntent::action.name),
+        extras,
+        intentObject.getInt(StoredIntent::id.name)
+    )
+
+    return StoredPendingIntent(
+        pendingIntentObject.getInt(StoredPendingIntent::requestCode.name),
+        intent,
+        pendingIntentObject.getInt(StoredPendingIntent::flags.name)
+    )
+}

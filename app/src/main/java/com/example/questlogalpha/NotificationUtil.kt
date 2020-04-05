@@ -15,6 +15,7 @@
  */
 package com.example.questlogalpha
 
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -63,20 +64,6 @@ object NotificationUtil {
         }
     }
 
-    fun createSnoozeAction(context: Context) : NotificationCompat.Action {
-        val snoozeIntent = Intent(context, NotificationIntentService::class.java)
-        snoozeIntent.action = NotificationIntentService.ACTION_SNOOZE
-        snoozeIntent.putExtra(NotificationIntentService.NOTIFICATION_ID, NotificationIntentService.NotificationId)
-
-        val snoozePendingIntent = PendingIntent.getService(context, 0, snoozeIntent, 0)
-
-        return NotificationCompat.Action.Builder(
-            android.R.drawable.ic_popup_reminder,
-            "Snooze",
-            snoozePendingIntent
-        ).build()
-    }
-
     fun createStoredSnoozeAction() : StoredAction {
         val extras = HashMap<String, Int>()
         extras[NotificationIntentService.NOTIFICATION_ID] = NotificationIntentService.NotificationId
@@ -92,8 +79,7 @@ object NotificationUtil {
         dismissIntent.action = NotificationIntentService.ACTION_DISMISS
         dismissIntent.putExtra(NotificationIntentService.NOTIFICATION_ID, NotificationIntentService.NotificationId)
 
-       // val dismissPendingIntent = PendingIntent.getBroadcast(context, 0, dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT )
-        val dismissPendingIntent = PendingIntent.getService(context, 0, dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT )
+        val dismissPendingIntent = PendingIntent.getService(context, NotificationIntentService.NotificationId, dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT )
 
        // return  dismissPendingIntent
         return NotificationCompat.Action.Builder(
@@ -103,8 +89,17 @@ object NotificationUtil {
         ).build()
     }
 
-
+    /** Set an alarm using the data in [alarmData]. */
+    fun setAlarm(alarmManager: AlarmManager, alarmData: AlarmData)
+    {
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmData.notificationTime, alarmData.pendingIntent)
+    }
 
     // -------------------------- log tag ------------------------------ //
     private const val TAG:String = "KSLOG: NotificationUtil"
 }
+
+data class AlarmData(
+    var pendingIntent: PendingIntent,
+    var notificationTime: Long
+)

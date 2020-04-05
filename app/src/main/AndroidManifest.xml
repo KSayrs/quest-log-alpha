@@ -33,7 +33,8 @@
         </receiver>
         <service
                 android:name=".NotificationIntentService"
-                android:exported="false">
+                android:exported="false"
+                android:enabled="true">
         </service>
     </application>
 

@@ -26,16 +26,12 @@ class NotificationReceiver : BroadcastReceiver() {
         when (intent.action) {
             ACTION_DISMISS -> {
                 Log.d(TAG, "onReceive: ACTION_DISMISS")
-                handleActionDismiss(context, id)
             }
             ACTION_SNOOZE -> {
                 Log.d(TAG, "onReceive: ACTION_SNOOZE")
-
-                // todo handle action snooze
-                handleActionDismiss(context, id)
             }
             else -> {
-                Log.d(TAG, "onReceive: else")
+                Log.d(TAG, "onReceive: else: ${intent.action}")
                 val notification: Notification = intent.getParcelableExtra(NOTIFICATION)
                 val notificationManager = NotificationManagerCompat.from(context!!)
                 notificationManager.notify(id, notification)
@@ -43,20 +39,15 @@ class NotificationReceiver : BroadcastReceiver() {
         }
     }
 
-    /** Handles action Dismiss in the provided background thread. */
-    private fun handleActionDismiss(context: Context?, notificationId: Int) {
-        Log.d(TAG, "handleActionDismiss()")
-        val notificationManagerCompat = NotificationManagerCompat.from(context!!)
-        notificationManagerCompat.cancel(notificationId)
-    }
-
     companion object {
 
         const val NotificationId = 888
         var NOTIFICATION_ID = "notification-id"
         var NOTIFICATION = "notification"
-        val ACTION_DISMISS = "com.example.questlogalpha.handlers.action.DISMISS"
-        val ACTION_SNOOZE = "com.example.questlogalpha.handlers.action.SNOOZE"
+
+        // todo should these be deleted
+        const val ACTION_DISMISS = "com.example.questlogalpha.handlers.action.DISMISS"
+        const val ACTION_SNOOZE = "com.example.questlogalpha.handlers.action.SNOOZE"
 
         // -------------------------- log tag ------------------------------ //
         private const val TAG: String = "KSLOG: NotificationReceiver"

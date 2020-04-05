@@ -1,5 +1,6 @@
 package com.example.questlogalpha.vieweditquest
 
+import android.app.AlarmManager
 import android.app.Application
 import android.util.Log
 import android.view.View
@@ -9,10 +10,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.questlogalpha.AlarmData
+import com.example.questlogalpha.NotificationUtil
 import com.example.questlogalpha.data.*
 import com.example.questlogalpha.quests.Difficulty
 import com.example.questlogalpha.quests.QuestsDao
 import kotlinx.coroutines.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 /** ************************************************************************************************
  * [AndroidViewModel] for the [ViewEditQuestFragment] screen.
@@ -22,6 +27,11 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     val currentQuest : Quest? get() = _currentQuest
     private var _currentQuest : Quest ?= null
     val app = application
+
+    // we only need to get this id when it is a new quest, to pass along in an intent for notifications later
+    val id:LiveData<String>
+        get() = _id
+    private val _id = MutableLiveData<String>()
 
     // Two-way databinding, exposing MutableLiveData
     val title = MutableLiveData<String>()
@@ -51,6 +61,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         Log.d(TAG, "init: questId: $questId")
 
         if (isNewQuest) {
+            _id.value = UUID.randomUUID().toString()
             title.value = ""
             description.value = ""
             difficulty.value = Difficulty.MEDIUM
@@ -75,10 +86,8 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             withContext(Dispatchers.IO) {
                 notificationId = globalVariableData.getVariableWithName("NotificationId")
                 Log.d(TAG, "global variable retrieved: $notificationId")
-                // todo check for and clear out old notifications
             }
         }
-
     }
 
     private fun onDataLoaded(quest: Quest?)
@@ -104,17 +113,21 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
     // -------------------------------------------------------------------- //
     // ------------------------ database updates -------------------------- //
-    fun onSaveQuest() : Boolean {
+    fun onSaveQuest(alarmManager: AlarmManager? = null, alarms: ArrayList<AlarmData>? = null) : Boolean {
         return if(title.value != "") {
             viewModelScope.launch {
                 if (isNewQuest) insert()
                 else update()
 
-                _navigateToQuestsViewModel.value = true // navigate back to the quests screen
+                if(alarms != null && alarmManager != null) {
+                    for (alarm in alarms) NotificationUtil.setAlarm(alarmManager, alarm)
+                }
+
+                _navigateToQuestsViewModel.value = true
+                // navigate back to the quests screen
             }
             true
-        }
-        else {
+        } else {
             Toast.makeText(getApplication(), "Title is empty!", Toast.LENGTH_SHORT).show()
             false
         }
@@ -161,7 +174,8 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
                 objectives = objectives.value!!,
                 difficulty = difficulty.value!!,
                 rewards = rewards.value!!,
-                notifications = storedNotifications.value!!
+                notifications = storedNotifications.value!!,
+                id = _id.value!!
             )
             database.insertQuest(newQuest)
             globalVariableData.updateVariable(notificationId!!)
