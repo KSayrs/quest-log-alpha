@@ -29,4 +29,6 @@
     <string name="save">Save</string>
     <string name="skip">Skip</string>
     <string name="dismiss">Dismiss</string>
+    <string name="add_due_date">Set Date/Time</string>
+    <string name="remove_due_date">Remove Date/Time</string>
 </resources>

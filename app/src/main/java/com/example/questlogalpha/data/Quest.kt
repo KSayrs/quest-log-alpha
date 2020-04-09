@@ -57,8 +57,8 @@ data class Quest(
 
     // todo due date/complete by
     // todo come put with a better name for due date
- //   @ColumnInfo(name = "due_date")
- //   var dueDate: ZonedDateTime? = null
+    @ColumnInfo(name = "due_date")
+    var dueDate: ZonedDateTime? = null,
 
 
     // todo date available

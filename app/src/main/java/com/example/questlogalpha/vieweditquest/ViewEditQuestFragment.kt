@@ -28,7 +28,9 @@ import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
 import com.example.questlogalpha.databinding.QuestObjectiveViewBinding
 import com.example.questlogalpha.quests.AddRewardDialogFragment
 import com.example.questlogalpha.quests.Difficulty
+import kotlinx.android.synthetic.main.fragment_view_edit_quest.*
 import kotlinx.android.synthetic.main.quest_objective_view.view.*
+import java.time.ZonedDateTime
 
 /** ************************************************************************************************
  * [Fragment] to display all data relating to a quest.
@@ -227,7 +229,6 @@ class ViewEditQuestFragment : Fragment() {
                         "\n timeInIMillis: ${alarm.timeInMillis}")
 
                 if(System.currentTimeMillis() > alarm.timeInMillis) {
-                   // "Can't set an alarm for the past!".toast(context!!)
                     Util.showShortToast(context!!, "Can't set an alarm for the past!")
                     return@onTimeSet
                 }
@@ -294,6 +295,20 @@ class ViewEditQuestFragment : Fragment() {
         return binding.root
     }
 
+    // Show the navigation bar when we're on this fragment
+    override fun onResume() {
+        super.onResume()
+        Log.d("$TAG: onResume", " called")
+
+        val actionbar = (activity as AppCompatActivity).supportActionBar
+        if(actionbar == null){
+            Log.e(TAG, "onResume: supportActionBar is null.")
+        }
+        else {
+            if(!actionbar.isShowing) actionbar.show()
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         activity!!.menuInflater.inflate(R.menu.menu_actionbar, menu)
@@ -301,6 +316,18 @@ class ViewEditQuestFragment : Fragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         if (questId == "") menu.removeItem(R.id.action_abandon_quest)
+        if (viewModel == null) Log.e(TAG, "onPrepareOptionsMenu: viewmodel is not ready yet")
+        else {
+            if (viewModel!!.date.value != null) {
+                menu.findItem(R.id.action_add_due_date).isVisible = false
+                menu.findItem(R.id.action_remove_due_date).isVisible = true
+            }
+            else {
+                menu.findItem(R.id.action_remove_due_date).isVisible = false
+                menu.findItem(R.id.action_add_due_date).isVisible = true
+            }
+        }
+
         super.onPrepareOptionsMenu(menu)
     }
 
@@ -354,6 +381,16 @@ class ViewEditQuestFragment : Fragment() {
         }
         if (id == R.id.action_abandon_quest) {
             viewModel!!.onDeleteQuest()
+        }
+        // add/delete due date
+        if (id == R.id.action_add_due_date) {
+            // todo bring up calendar
+
+
+            viewModel!!.onSetDate(ZonedDateTime.now())
+        }
+        if (id == R.id.action_remove_due_date) {
+            viewModel!!.onRemoveDate()
         }
         return super.onOptionsItemSelected(item)
     }

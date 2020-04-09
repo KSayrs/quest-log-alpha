@@ -12,4 +12,12 @@
     <item android:id="@+id/action_abandon_quest"
             android:title="@string/abandon"
             app:showAsAction="never" />
+
+    <item android:id="@+id/action_add_due_date"
+            android:title="@string/add_due_date"
+            app:showAsAction="never" />
+
+    <item android:id="@+id/action_remove_due_date"
+            android:title="@string/remove_due_date"
+            app:showAsAction="never" />
 </menu>

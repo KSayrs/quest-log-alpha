@@ -16,6 +16,7 @@ import com.example.questlogalpha.data.*
 import com.example.questlogalpha.quests.Difficulty
 import com.example.questlogalpha.quests.QuestsDao
 import kotlinx.coroutines.*
+import java.time.ZonedDateTime
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -41,6 +42,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     val modifiedObjective = MutableLiveData<Objective>()
     val modifiedReward = MutableLiveData<SkillReward>()
     val rewards = MutableLiveData<ArrayList<SkillReward>>()
+    val date = MutableLiveData<ZonedDateTime>()
     val storedNotifications = MutableLiveData<ArrayList<StoredNotification>>()
 
     // todo observe this and wait to show items until this is complete
@@ -50,9 +52,9 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     private var isNewQuest: Boolean = true
     private var isDataLoaded = false
     private var notificationId:GlobalVariable? = null
-    val skillRewards = arrayListOf<Skill>()
+    private val skillRewards = arrayListOf<Skill>()
 
-    var toast = Toast.makeText(getApplication(), "Item Selected", Toast.LENGTH_SHORT)
+    private var toast = Toast.makeText(getApplication(), "Item Selected", Toast.LENGTH_SHORT)
 
     // init happens after the fragment's onCreateView
     init {
@@ -69,6 +71,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             modifiedObjective.value = null
             modifiedReward.value = null
             rewards.value = arrayListOf()
+            date.value = null
             storedNotifications.value = arrayListOf()
             Log.d(TAG, "init: creating new quest")
         }
@@ -105,6 +108,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         modifiedObjective.postValue(null)
         modifiedReward.postValue(null)
         rewards.postValue(currentQuest?.rewards)
+        date.postValue(currentQuest?.dueDate)
         storedNotifications.postValue(currentQuest?.notifications)
 
         isDataLoaded = true
@@ -154,6 +158,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             Log.d(TAG, "Quest ID: " + currentQuest!!.id)
             Log.d(TAG, "quest description: " + currentQuest!!.description)
             Log.d(TAG, "quest rewards: " + currentQuest!!.rewards)
+            Log.d(TAG, "quest due date: " + currentQuest!!.dueDate)
             Log.d(TAG, "quest notifications: " + currentQuest!!.notifications)
 
             _currentQuest!!.title = title.value.toString()
@@ -161,6 +166,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             _currentQuest!!.difficulty = difficulty.value!!
             _currentQuest!!.objectives = objectives.value!!
             _currentQuest!!.rewards = rewards.value!!
+            _currentQuest!!.dueDate = date.value!!
             _currentQuest!!.notifications = storedNotifications.value!!
             database.updateQuest(_currentQuest!!)
         }
@@ -175,6 +181,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
                 difficulty = difficulty.value!!,
                 rewards = rewards.value!!,
                 notifications = storedNotifications.value!!,
+                dueDate = date.value,
                 id = _id.value!!
             )
             database.insertQuest(newQuest)
@@ -185,6 +192,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             Log.d(TAG, "Newly made quest difficulty: " + newQuest.difficulty)
             Log.d(TAG, "Newly made quest id: " + newQuest.id)
             Log.d(TAG, "Newly made quest rewards: " + newQuest.rewards)
+            Log.d(TAG, "Newly made quest due date: " + newQuest.dueDate)
             Log.d(TAG, "Newly made quest notifications: " + newQuest.notifications)
             Log.d(TAG, "Quest made on: " + newQuest.dateCreated)
         }
@@ -276,28 +284,35 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         }
     }
 
+    // ------------------- date -------------------- //
+    fun onSetDate(newDate: ZonedDateTime) {
+        date.value = newDate
+    }
+
+    fun onRemoveDate() {
+        date.value = null
+    }
+
     // ------------------- notifications -------------------- //
 
-    fun onAddStoredNotification(storedNotification: StoredNotification){
+    fun onAddStoredNotification(storedNotification: StoredNotification) {
         Log.d(TAG,"onAddStoredNotification: $storedNotification")
         storedNotifications.value!!.add(storedNotification)
         incrementId()
     }
 
-    fun onRemoveStoredNotification(storedNotification: StoredNotification){
+    fun onRemoveStoredNotification(storedNotification: StoredNotification) {
         Log.d(TAG,"onAddStoredNotification: $storedNotification")
         storedNotifications.value!!.remove(storedNotification)
         decrementId()
     }
 
-    fun getNextNotificationId() : Int
-    {
+    fun getNextNotificationId() : Int {
         incrementId()
         return notificationId!!.value
     }
 
-    fun getNotificationId() : Int
-    {
+    fun getNotificationId() : Int {
         return notificationId!!.value
     }
 
