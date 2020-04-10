@@ -30,7 +30,11 @@ import com.example.questlogalpha.quests.AddRewardDialogFragment
 import com.example.questlogalpha.quests.Difficulty
 import kotlinx.android.synthetic.main.fragment_view_edit_quest.*
 import kotlinx.android.synthetic.main.quest_objective_view.view.*
+import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.util.*
+import kotlin.collections.HashMap
+import kotlin.math.abs
 
 /** ************************************************************************************************
  * [Fragment] to display all data relating to a quest.
@@ -40,6 +44,7 @@ class ViewEditQuestFragment : Fragment() {
     private var viewModel: ViewEditQuestViewModel? = null
 
     private var questId: String = ""
+    private var bind: FragmentViewEditQuestBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +53,7 @@ class ViewEditQuestFragment : Fragment() {
     ): View? {
 
         val binding: FragmentViewEditQuestBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_view_edit_quest, container, false)
+        bind = binding
         val application = requireNotNull(this.activity).application
         val dataSource = QuestLogDatabase.getInstance(application).questLogDatabaseDao
         val globalVariables = QuestLogDatabase.getInstance(application).globalVariableDatabaseDao
@@ -93,6 +99,22 @@ class ViewEditQuestFragment : Fragment() {
                 spinner.setSelection(viewEditQuestViewModel.difficulty.value!!.ordinal)
             } else {
                 spinner.setSelection(Difficulty.MEDIUM.ordinal)
+            }
+        }
+
+        // update date on load
+        viewEditQuestViewModel.date.observeOnce {
+            if(viewEditQuestViewModel.date.value != null) {
+                val date = viewEditQuestViewModel.date.value!!
+                val calendar: Calendar = Calendar.getInstance()
+                val years = date.year - calendar.get(Calendar.YEAR)
+                val months = date.monthValue - calendar.get(Calendar.MONTH)
+                val days = date.dayOfMonth - calendar.get(Calendar.DATE)
+                val hours = date.hour - calendar.get(Calendar.HOUR_OF_DAY)
+                val minutes = date.minute - calendar.get(Calendar.MINUTE)
+
+                val text = buildCountdownText(years, months, days, hours, minutes)
+                binding.viewEditQuestBookmarkText.text = text
             }
         }
 
@@ -384,10 +406,58 @@ class ViewEditQuestFragment : Fragment() {
         }
         // add/delete due date
         if (id == R.id.action_add_due_date) {
-            // todo bring up calendar
+            val dialog = DatePickerDialogFragment()
+            val timeDialog = TimePickerDialogFragment(true)
 
+            val calendar: Calendar = Calendar.getInstance()
+            val differenceCalendar: Calendar = Calendar.getInstance()
 
-            viewModel!!.onSetDate(ZonedDateTime.now())
+            var years = 0
+            var months = 0
+            var days = 0
+            var hours = 0
+            var minutes = 0
+
+            dialog.onDateSet = { year, month, day ->
+                Log.d(TAG, "Date picked: $year $month $day")
+
+                years = year - calendar.get(Calendar.YEAR)
+                months = month - calendar.get(Calendar.MONTH)
+                days = day - calendar.get(Calendar.DATE)
+
+                calendar.set(Calendar.YEAR, year)
+                calendar.set(Calendar.MONTH, month)
+                calendar.set(Calendar.DATE, day)
+
+                timeDialog.show(childFragmentManager, "addTime")
+            }
+
+            // don't check for the past because sometimes we want to purposefully acknowledge a quest is overdue
+            timeDialog.onTimeSet = { hour, minute ->
+                hours = hour - differenceCalendar.get(Calendar.HOUR_OF_DAY)
+                minutes = minute - differenceCalendar.get(Calendar.MINUTE)
+
+                calendar.set(Calendar.HOUR_OF_DAY, hour)
+                calendar.set(Calendar.MINUTE, minute)
+
+                viewModel!!.onSetDate(ZonedDateTime.of(
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DATE),
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
+                    0, // we're not getting that specific lol
+                    0,
+                    ZoneId.systemDefault()
+                ))
+
+                if(bind != null) {
+                    val text = buildCountdownText(years, months, days, hours, minutes)
+                    bind!!.viewEditQuestBookmarkText.text = text
+                }
+                else Log.e(TAG, "bind is null!")
+            }
+            dialog.show(childFragmentManager, "addDate")
         }
         if (id == R.id.action_remove_due_date) {
             viewModel!!.onRemoveDate()
@@ -397,6 +467,33 @@ class ViewEditQuestFragment : Fragment() {
 
     // private
     // -------------------------------------------------------------------
+
+    /** Formats the display string for the due date. */
+    private fun buildCountdownText(years: Int, months: Int, days: Int, hours: Int, minutes: Int): String {
+        var hitNegative = false
+        var text = ""
+
+        if(years != 0) {
+            if(years < 0) hitNegative = true
+            text += "${years}y "
+        }
+        if(months != 0) {
+            text += "${if(hitNegative){abs(months)} else {months}}m "
+            if(months < 0 && !hitNegative) hitNegative = true
+        }
+        if(days != 0) {
+            text += "${if(hitNegative){abs(days)} else {days}}d "
+            if(days < 0 && !hitNegative) hitNegative = true
+        }
+        if(hours != 0) {
+            text += "${if(hitNegative){abs(hours)} else {hours}}h "
+            if(hours < 0 && !hitNegative) hitNegative = true
+        }
+        if(minutes != 0) {
+            text += "${if(hitNegative){abs(minutes)} else {minutes}}m "
+        }
+        return text
+    }
 
     /** Schedule a [notification] with [notificationId] to happen at [notificationTime] (milliseconds). */
     private fun scheduleNotification(notification: Notification, notificationTime: Long, notificationId: Int) : PendingIntent

@@ -10,7 +10,9 @@ import android.widget.TimePicker
 import androidx.fragment.app.DialogFragment
 import com.example.questlogalpha.R
 
-/** [TimePickerDialog] that defaults to the current time. Used for setting the time for familiar reminders. */
+/** [TimePickerDialog] that defaults to the current time. Used for setting the time for familiar reminders.
+ *
+ * If [followsDatePicker] is true, the dialog will show an additional "skip" button. */
 class TimePickerDialogFragment(private val followsDatePicker: Boolean = false) : DialogFragment(), TimePickerDialog.OnTimeSetListener {
 
     /** Do something with the time chosen by the user. */

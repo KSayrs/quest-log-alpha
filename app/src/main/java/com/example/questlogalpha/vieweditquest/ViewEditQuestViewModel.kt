@@ -166,7 +166,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             _currentQuest!!.difficulty = difficulty.value!!
             _currentQuest!!.objectives = objectives.value!!
             _currentQuest!!.rewards = rewards.value!!
-            _currentQuest!!.dueDate = date.value!!
+            _currentQuest!!.dueDate = date.value
             _currentQuest!!.notifications = storedNotifications.value!!
             database.updateQuest(_currentQuest!!)
         }
@@ -287,6 +287,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     // ------------------- date -------------------- //
     fun onSetDate(newDate: ZonedDateTime) {
         date.value = newDate
+        Log.d(TAG, "newDate: $newDate")
     }
 
     fun onRemoveDate() {
