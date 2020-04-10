@@ -257,7 +257,6 @@ class ViewEditQuestFragment : Fragment() {
 
                 val textStoredNotification: StoredNotification = StoredNotification(channelId, id=viewEditQuestViewModel.getNotificationId())
 
-                textStoredNotification.channelId = channelId
                 textStoredNotification.notificationTime = alarm.timeInMillis
                 textStoredNotification.channelPriority = NotificationManager.IMPORTANCE_DEFAULT
 
@@ -476,6 +475,10 @@ class ViewEditQuestFragment : Fragment() {
         if(years != 0) {
             if(years < 0) hitNegative = true
             text += "${years}y "
+            if(text.length >= 8) {
+                text =  text.substring(0,7) + "+y"
+                return text
+            }
         }
         if(months != 0) {
             text += "${if(hitNegative){abs(months)} else {months}}m "
@@ -492,6 +495,20 @@ class ViewEditQuestFragment : Fragment() {
         if(minutes != 0) {
             text += "${if(hitNegative){abs(minutes)} else {minutes}}m "
         }
+
+        if(text.length > 8) {
+            val substrings = text.split(" ")
+            var currentLength = 0
+            for(substring in substrings) {
+                if(substring.length + currentLength + 1 <= 8) {  // +1 for the space at the end that's removed for delimiting
+                    currentLength += substring.length + 1;
+                } else {
+                    return text.substring(0, currentLength)
+                }
+            }
+            return text
+        }
+
         return text
     }
 
