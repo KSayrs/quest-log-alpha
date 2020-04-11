@@ -40,7 +40,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     val difficulty = MutableLiveData<Difficulty>()
     val objectives = MutableLiveData<ArrayList<Objective>>()
     val modifiedObjective = MutableLiveData<Objective>()
-    val modifiedReward = MutableLiveData<SkillReward>()
     val rewards = MutableLiveData<ArrayList<SkillReward>>()
     val date = MutableLiveData<ZonedDateTime>()
     val storedNotifications = MutableLiveData<ArrayList<StoredNotification>>()
@@ -69,7 +68,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             difficulty.value = Difficulty.MEDIUM
             objectives.value = arrayListOf()
             modifiedObjective.value = null
-            modifiedReward.value = null
             rewards.value = arrayListOf()
             date.value = null
             storedNotifications.value = arrayListOf()
@@ -106,7 +104,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         difficulty.postValue(currentQuest?.difficulty)
         objectives.postValue(currentQuest?.objectives)
         modifiedObjective.postValue(null)
-        modifiedReward.postValue(null)
         rewards.postValue(currentQuest?.rewards)
         date.postValue(currentQuest?.dueDate)
         storedNotifications.postValue(currentQuest?.notifications)
@@ -264,7 +261,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         Log.d(TAG, "onAddReward(): ${skill.name}, $amount")
         val newReward = SkillReward(skill.id, amount, skill.name)
         rewards.value!!.add(newReward)
-        modifiedReward.value = newReward
         skillRewards.add(skill)
     }
 
@@ -280,7 +276,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         }
         if(skillToRemove != null) {
             skillRewards.remove(skillToRemove)
-            modifiedReward.value = null
         }
     }
 

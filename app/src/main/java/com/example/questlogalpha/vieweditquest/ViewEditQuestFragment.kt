@@ -46,6 +46,7 @@ class ViewEditQuestFragment : Fragment() {
     private var questId: String = ""
     private var bind: FragmentViewEditQuestBinding? = null
     private var nAdapter: NotificationsAdapter? = null
+    private var rAdapter: RewardsAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,6 +86,7 @@ class ViewEditQuestFragment : Fragment() {
             viewModel!!.onRemoveReward(it)
         }
         binding.rewardsList.adapter = rewardsAdapter
+        rAdapter = rewardsAdapter
 
         // set up notification adapter
         val notificationsAdapter = NotificationsAdapter()
@@ -223,23 +225,12 @@ class ViewEditQuestFragment : Fragment() {
             rewardsAdapter.data = viewEditQuestViewModel.rewards.value!!
         })
 
-        viewEditQuestViewModel.modifiedReward.observe(viewLifecycleOwner, Observer {
-            if (viewEditQuestViewModel.rewards.value == null) {
-                Log.w(
-                    TAG,
-                    "viewEditQuestViewModel.rewards is null. Ending observation (modifiedReward) early."
-                )
-                return@Observer
-            }
-
-            rewardsAdapter.data = viewEditQuestViewModel.rewards.value!!
-        })
-
         // add reward button
         binding.addRewardsButton.setOnClickListener {
             val dialog = AddRewardDialogFragment()
             dialog.onPositiveButtonClicked = {
                 viewEditQuestViewModel.onPositiveButtonClicked(it)
+                rAdapter!!.notifyDataSetChanged()
             }
             dialog.show(childFragmentManager, "addRewards")
         }
