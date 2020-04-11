@@ -45,6 +45,7 @@ class ViewEditQuestFragment : Fragment() {
 
     private var questId: String = ""
     private var bind: FragmentViewEditQuestBinding? = null
+    private var nAdapter: NotificationsAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,8 +63,7 @@ class ViewEditQuestFragment : Fragment() {
         questId = arguments.questId
 
         val viewModelFactory = ViewModelFactory(arguments.questId, dataSource, null, globalVariables, application)
-        val viewEditQuestViewModel =
-            ViewModelProvider(this, viewModelFactory).get(ViewEditQuestViewModel::class.java)
+        val viewEditQuestViewModel = ViewModelProvider(this, viewModelFactory).get(ViewEditQuestViewModel::class.java)
 
         viewModel = viewEditQuestViewModel
 
@@ -85,6 +85,11 @@ class ViewEditQuestFragment : Fragment() {
             viewModel!!.onRemoveReward(it)
         }
         binding.rewardsList.adapter = rewardsAdapter
+
+        // set up notification adapter
+        val notificationsAdapter = NotificationsAdapter()
+        nAdapter = notificationsAdapter
+        binding.familiarNotificationsList.adapter = notificationsAdapter
 
         // show the action bar on this page
         val actionbar = (activity as AppCompatActivity).supportActionBar
@@ -191,6 +196,18 @@ class ViewEditQuestFragment : Fragment() {
             }
         })
 
+        // populate notifications
+        viewEditQuestViewModel.storedNotifications.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                notificationsAdapter.data = it
+                notificationsAdapter.onItemRemoved = {
+                    viewModel!!.onRemoveStoredNotification(it)
+                }
+                notificationsAdapter.questDueDate = viewEditQuestViewModel.date.value
+                Log.d(TAG, "observenotifications: notificationsAdapter.questDueDate: ${notificationsAdapter.questDueDate}")
+            }
+        })
+
         // we need to observe both of these because without the full list it won't initialize
         // and without the individual it won't add new ones
         viewEditQuestViewModel.rewards.observe(viewLifecycleOwner, Observer {
@@ -229,63 +246,7 @@ class ViewEditQuestFragment : Fragment() {
 
         // add notification button
         binding.addFamiliarNotificationButton.setOnClickListener {
-            val dialog = DatePickerDialogFragment()
-            val timeDialog = TimePickerDialogFragment(true)
-
-            val alarm: Calendar = Calendar.getInstance()
-
-            dialog.onDateSet = { year, month, day ->
-                Log.d(TAG, "Date picked: $year $month $day")
-
-                alarm.add(Calendar.YEAR, (year - alarm.get(Calendar.YEAR)))
-                alarm.add(Calendar.MONTH, (month - alarm.get(Calendar.MONTH)))
-                alarm.add(Calendar.DATE, (day - alarm.get(Calendar.DATE)))
-
-                timeDialog.show(childFragmentManager, "addTime")
-            }
-            timeDialog.onTimeSet = onTimeSet@{ hour, minute ->
-                alarm.add(Calendar.HOUR_OF_DAY, (hour - alarm.get(Calendar.HOUR_OF_DAY)))
-                alarm.add(Calendar.MINUTE, (minute - alarm.get(Calendar.MINUTE)))
-
-                Log.d(TAG, "Time picked: $hour:$minute " +
-                        "\n timeInIMillis: ${alarm.timeInMillis}")
-
-                if(System.currentTimeMillis() > alarm.timeInMillis) {
-                    Util.showShortToast(context!!, "Can't set an alarm for the past!")
-                    return@onTimeSet
-                }
-
-                val textStoredNotification: StoredNotification = StoredNotification(channelId, id=viewEditQuestViewModel.getNotificationId())
-
-                textStoredNotification.notificationTime = alarm.timeInMillis
-                textStoredNotification.channelPriority = NotificationManager.IMPORTANCE_DEFAULT
-
-                val extras = HashMap<String, Int>()
-                val storedDismissIntent = StoredIntent(NotificationIntentService.ACTION_DISMISS, extras, viewEditQuestViewModel.getNotificationId())
-                val storedDismissPendingIntent = StoredPendingIntent(textStoredNotification.id, storedDismissIntent, PendingIntent.FLAG_CANCEL_CURRENT)
-                val actionList = arrayListOf<StoredAction>()
-                actionList.add(NotificationUtil.createStoredSnoozeAction())
-
-                actionList.add(StoredAction(R.drawable.ic_scroll_quill, getString(R.string.dismiss), storedDismissPendingIntent))
-
-                textStoredNotification.contentText = binding.viewEditQuestDescriptionEditText.text.toString()
-                textStoredNotification.contentTitle = binding.viewEditQuestTitleEditText.text.toString()
-                textStoredNotification.autoCancel = false
-                textStoredNotification.icon = R.drawable.ic_scroll_quill
-                textStoredNotification.actions = actionList
-
-                val storedDeleteIntent = StoredIntent(NotificationIntentService.ACTION_DISMISS_SWIPE, extras, viewEditQuestViewModel.getNextNotificationId())
-                val storedDeletePendingIntent = StoredPendingIntent(textStoredNotification.id, storedDeleteIntent, PendingIntent.FLAG_CANCEL_CURRENT)
-                textStoredNotification.deleteIntent = storedDeletePendingIntent
-
-                viewModel!!.onAddStoredNotification(textStoredNotification)
-            }
-            timeDialog.onDismiss = {
-                Log.d(TAG, "timeDialog dismissing")
-                // todo set notification for just the day
-            }
-
-            dialog.show(childFragmentManager, "addDate")
+            handleAddNotificationTapped()
         }
 
         // navigation
@@ -405,41 +366,55 @@ class ViewEditQuestFragment : Fragment() {
         }
         // add/delete due date
         if (id == R.id.action_add_due_date) {
-            val dialog = DatePickerDialogFragment()
-            val timeDialog = TimePickerDialogFragment(true)
+            handleAddDueDate()
+        }
+        if (id == R.id.action_remove_due_date) {
+            viewModel!!.onRemoveDate()
+            nAdapter!!.notifyDataSetChanged()
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
-            val calendar: Calendar = Calendar.getInstance()
-            val differenceCalendar: Calendar = Calendar.getInstance()
+    // private
+    // -------------------------------------------------------------------
 
-            var years = 0
-            var months = 0
-            var days = 0
-            var hours = 0
-            var minutes = 0
+    private fun handleAddDueDate() {
+        val dialog = DatePickerDialogFragment()
+        val timeDialog = TimePickerDialogFragment(true)
 
-            dialog.onDateSet = { year, month, day ->
-                Log.d(TAG, "Date picked: $year $month $day")
+        val calendar: Calendar = Calendar.getInstance()
+        val differenceCalendar: Calendar = Calendar.getInstance()
 
-                years = year - calendar.get(Calendar.YEAR)
-                months = month - calendar.get(Calendar.MONTH)
-                days = day - calendar.get(Calendar.DATE)
+        var years = 0
+        var months = 0
+        var days = 0
+        var hours = 0
+        var minutes = 0
 
-                calendar.set(Calendar.YEAR, year)
-                calendar.set(Calendar.MONTH, month)
-                calendar.set(Calendar.DATE, day)
+        dialog.onDateSet = { year, month, day ->
+            Log.d(TAG, "handleAddDueDate: Date picked: $year $month $day")
 
-                timeDialog.show(childFragmentManager, "addTime")
-            }
+            years = year - calendar.get(Calendar.YEAR)
+            months = month - calendar.get(Calendar.MONTH)
+            days = day - calendar.get(Calendar.DATE)
 
-            // don't check for the past because sometimes we want to purposefully acknowledge a quest is overdue
-            timeDialog.onTimeSet = { hour, minute ->
-                hours = hour - differenceCalendar.get(Calendar.HOUR_OF_DAY)
-                minutes = minute - differenceCalendar.get(Calendar.MINUTE)
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DATE, day)
 
-                calendar.set(Calendar.HOUR_OF_DAY, hour)
-                calendar.set(Calendar.MINUTE, minute)
+            timeDialog.show(childFragmentManager, "addTime")
+        }
 
-                viewModel!!.onSetDate(ZonedDateTime.of(
+        // don't check for the past because sometimes we want to purposefully acknowledge a quest is overdue
+        timeDialog.onTimeSet = { hour, minute ->
+            hours = hour - differenceCalendar.get(Calendar.HOUR_OF_DAY)
+            minutes = minute - differenceCalendar.get(Calendar.MINUTE)
+
+            calendar.set(Calendar.HOUR_OF_DAY, hour)
+            calendar.set(Calendar.MINUTE, minute)
+
+            viewModel!!.onSetDate(
+                ZonedDateTime.of(
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DATE),
@@ -448,31 +423,93 @@ class ViewEditQuestFragment : Fragment() {
                     0, // we're not getting that specific lol
                     0,
                     ZoneId.systemDefault()
-                ))
+                )
+            )
 
-                if(bind != null) {
-                    val text = buildCountdownText(years, months, days, hours, minutes)
-                    bind!!.viewEditQuestBookmarkText.text = text
-                }
-                else Log.e(TAG, "bind is null!")
+            nAdapter!!.questDueDate = viewModel!!.date.value
+
+            if (bind != null) {
+                val text = buildCountdownText(years, months, days, hours, minutes)
+                bind!!.viewEditQuestBookmarkText.text = text
             }
-            dialog.show(childFragmentManager, "addDate")
+            else Log.e(TAG, "handleAddDueDate: bind is null!")
         }
-        if (id == R.id.action_remove_due_date) {
-            viewModel!!.onRemoveDate()
-        }
-        return super.onOptionsItemSelected(item)
+        dialog.show(childFragmentManager, "addDate")
     }
 
-    // private
-    // -------------------------------------------------------------------
+    /** Show a dialog for picking date and time, then build a notification based on that. */
+    private fun handleAddNotificationTapped() {
+        val dialog = DatePickerDialogFragment()
+        val timeDialog = TimePickerDialogFragment(true)
+
+        val alarm: Calendar = Calendar.getInstance()
+
+        dialog.onDateSet = { year, month, day ->
+            Log.d(TAG, "Date picked: $year $month $day")
+
+            alarm.add(Calendar.YEAR, (year - alarm.get(Calendar.YEAR)))
+            alarm.add(Calendar.MONTH, (month - alarm.get(Calendar.MONTH)))
+            alarm.add(Calendar.DATE, (day - alarm.get(Calendar.DATE)))
+
+            timeDialog.show(childFragmentManager, "addTime")
+        }
+        timeDialog.onTimeSet = onTimeSet@{ hour, minute ->
+            alarm.add(Calendar.HOUR_OF_DAY, (hour - alarm.get(Calendar.HOUR_OF_DAY)))
+            alarm.add(Calendar.MINUTE, (minute - alarm.get(Calendar.MINUTE)))
+
+            Log.d(
+                TAG, "Time picked: $hour:$minute " +
+                        "\n timeInIMillis: ${alarm.timeInMillis}"
+            )
+
+            if (System.currentTimeMillis() > alarm.timeInMillis) {
+                Util.showShortToast(context!!, "Can't set an alarm for the past!")
+                return@onTimeSet
+            }
+
+            val textStoredNotification: StoredNotification = StoredNotification(channelId, id = viewModel!!.getNotificationId())
+
+            textStoredNotification.notificationTime = alarm.timeInMillis
+            textStoredNotification.channelPriority = NotificationManager.IMPORTANCE_DEFAULT
+
+            val extras = HashMap<String, Int>()
+            val storedDismissIntent = StoredIntent(NotificationIntentService.ACTION_DISMISS, extras, viewModel!!.getNotificationId())
+            val storedDismissPendingIntent = StoredPendingIntent(textStoredNotification.id, storedDismissIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+            val actionList = arrayListOf<StoredAction>()
+            actionList.add(NotificationUtil.createStoredSnoozeAction())
+
+            actionList.add(StoredAction(R.drawable.ic_scroll_quill, getString(R.string.dismiss), storedDismissPendingIntent))
+
+            textStoredNotification.contentText = bind!!.viewEditQuestDescriptionEditText.text.toString()
+            textStoredNotification.contentTitle = bind!!.viewEditQuestTitleEditText.text.toString()
+            textStoredNotification.autoCancel = false
+            textStoredNotification.icon = R.drawable.ic_scroll_quill
+            textStoredNotification.actions = actionList
+
+            val storedDeleteIntent =
+                StoredIntent(NotificationIntentService.ACTION_DISMISS_SWIPE, extras, viewModel!!.getNextNotificationId())
+            val storedDeletePendingIntent = StoredPendingIntent(textStoredNotification.id, storedDeleteIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+            textStoredNotification.deleteIntent = storedDeletePendingIntent
+
+            viewModel!!.onAddStoredNotification(textStoredNotification)
+            nAdapter!!.notifyDataSetChanged()
+        }
+        timeDialog.onDismiss = {
+            Log.d(TAG, "timeDialog dismissing")
+            // todo set notification for just the day
+        }
+
+        dialog.show(childFragmentManager, "addDate")
+    }
 
     /** Formats the display string for the due date. */
     private fun buildCountdownText(years: Int, months: Int, days: Int, hours: Int, minutes: Int): String {
         var hitNegative = false
+        var isFirst = true
         var text = ""
 
         if(years != 0) {
+            isFirst = false
             if(years < 0) hitNegative = true
             text += "${years}y "
             if(text.length >= 8) {
@@ -481,19 +518,22 @@ class ViewEditQuestFragment : Fragment() {
             }
         }
         if(months != 0) {
-            text += "${if(hitNegative){abs(months)} else {months}}m "
+            text += "${if(hitNegative || !isFirst){abs(months)} else {months}}m "
             if(months < 0 && !hitNegative) hitNegative = true
+            if(isFirst) isFirst = false
         }
         if(days != 0) {
-            text += "${if(hitNegative){abs(days)} else {days}}d "
+            text += "${if(hitNegative || !isFirst){abs(days)} else {days}}d "
             if(days < 0 && !hitNegative) hitNegative = true
+            if(isFirst) isFirst = false
         }
         if(hours != 0) {
-            text += "${if(hitNegative){abs(hours)} else {hours}}h "
+            text += "${if(hitNegative || !isFirst){abs(hours)} else {hours}}h "
             if(hours < 0 && !hitNegative) hitNegative = true
+            if(isFirst) isFirst = false
         }
         if(minutes != 0) {
-            text += "${if(hitNegative){abs(minutes)} else {minutes}}m "
+            text += "${if(hitNegative || !isFirst){abs(minutes)} else {minutes}}m "
         }
 
         if(text.length > 8) {
@@ -583,6 +623,7 @@ class ViewEditQuestFragment : Fragment() {
         return builder.build()
     }
 
+    /** Make and return an [Intent] from a [storedPendingIntent]s data. */
     private fun makeGenericIntent(storedPendingIntent: StoredPendingIntent?): Intent? {
         if(storedPendingIntent == null) return null
         val intent = Intent(context, NotificationIntentService::class.java)

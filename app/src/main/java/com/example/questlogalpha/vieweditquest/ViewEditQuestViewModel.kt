@@ -292,6 +292,13 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
     fun onRemoveDate() {
         date.value = null
+        val length = storedNotifications.value!!.size - 1
+        Log.d(TAG,"length: $length")
+        for(i in 0 until length) {
+            onRemoveStoredNotification(storedNotifications.value!![i])
+            decrementId()
+        }
+        storedNotifications.value!!.clear()
     }
 
     // ------------------- notifications -------------------- //
@@ -303,7 +310,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     }
 
     fun onRemoveStoredNotification(storedNotification: StoredNotification) {
-        Log.d(TAG,"onAddStoredNotification: $storedNotification")
+        Log.d(TAG,"onRemoveStoredNotification: $storedNotification")
         storedNotifications.value!!.remove(storedNotification)
         decrementId()
     }
