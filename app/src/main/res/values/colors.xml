@@ -6,4 +6,5 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorTertiary">#B6B6B6</color>
     <color name="highlightColor">#EDEDED</color>
+    <color name="colorUnfocusText">#828282</color>
 </resources>

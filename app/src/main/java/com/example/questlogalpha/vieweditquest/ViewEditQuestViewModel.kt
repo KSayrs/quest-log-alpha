@@ -50,7 +50,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
     private var isNewQuest: Boolean = true
     private var isDataLoaded = false
-    private var notificationId:GlobalVariable? = null
+    private var notificationId: GlobalVariable? = null
     private val skillRewards = arrayListOf<Skill>()
 
     private var toast = Toast.makeText(getApplication(), "Item Selected", Toast.LENGTH_SHORT)
@@ -165,7 +165,11 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             _currentQuest!!.rewards = rewards.value!!
             _currentQuest!!.dueDate = date.value
             _currentQuest!!.notifications = storedNotifications.value!!
+
+            Log.d(TAG, "update: storedNotifications.value!!" + storedNotifications.value!!)
+
             database.updateQuest(_currentQuest!!)
+            globalVariableData.updateVariable(notificationId!!)
         }
     }
 
@@ -213,18 +217,16 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
 
     // ---------------- spinner handlers ---------------- //
     override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
-        difficulty.value = parent.getItemAtPosition(pos) as Difficulty? //Difficulty.valueOf(parent.getItemAtPosition(pos).toString())
+        difficulty.value = parent.getItemAtPosition(pos) as Difficulty?
 
         toast.setText(parent.getItemAtPosition(pos).toString() + " selected")
         toast.show()
     }
 
-    // todo figure out if can delete
     override fun onNothingSelected(parent: AdapterView<*>) {
         toast.setText("nothing selected")
         toast.show()
-        // Another interface callback
-        // do nothing?
+        // do nothing
     }
 
     // ---------------- objective handlers ---------------- //
@@ -291,7 +293,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         Log.d(TAG,"length: $length")
         for(i in 0 until length) {
             onRemoveStoredNotification(storedNotifications.value!![i])
-            decrementId()
+         //   decrementId()
         }
         storedNotifications.value!!.clear()
     }
@@ -307,7 +309,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     fun onRemoveStoredNotification(storedNotification: StoredNotification) {
         Log.d(TAG,"onRemoveStoredNotification: $storedNotification")
         storedNotifications.value!!.remove(storedNotification)
-        decrementId()
+       // decrementId()
     }
 
     fun getNextNotificationId() : Int {

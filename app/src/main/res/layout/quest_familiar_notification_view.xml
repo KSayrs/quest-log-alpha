@@ -36,14 +36,14 @@
                 android:id="@+id/open_indicator"
 
                 android:layout_marginLeft="6dp"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="14dp"
+                android:layout_height="12dp"
                 android:textAlignment="textStart"
                 android:tint="@color/colorAccent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/alert_time_text"
                 app:layout_constraintTop_toTopOf="@+id/alert_time_text"
-                app:srcCompat="@android:drawable/ic_media_play" />
+                app:srcCompat="@drawable/ic_spinner_indicator" />
 
         <ImageView
                 android:id="@+id/delete_alert_icon"

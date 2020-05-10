@@ -27,6 +27,8 @@ import androidx.core.app.NotificationCompat
 import com.example.questlogalpha.data.StoredAction
 import com.example.questlogalpha.data.StoredIntent
 import com.example.questlogalpha.data.StoredPendingIntent
+import java.time.*
+import kotlin.math.abs
 
 
 /**
@@ -89,11 +91,88 @@ object NotificationUtil {
         ).build()
     }
 
+    /** Formats the display string for the reminder time.
+     * Set [handleMonthOffset] to true is there has been a conversion to and from an Instant after using the date picker.
+     * The date pickers increments months differently, so there is an offset to be accounted for. */
+    fun formatNotificationText(dueDate: ZonedDateTime, notificationTime: ZonedDateTime, handleMonthOffset: Boolean = false): String {
+
+        Log.d(TAG, "formatNotificationText: dueDate: $dueDate")
+        Log.d(TAG, "formatNotificationText: notificationTime: $notificationTime")
+
+        val offset = notificationTime.minusMonths(1)
+
+        var remainingTime = dueDate.toInstant().epochSecond - offset.toInstant().epochSecond
+
+        val weeksDifference = remainingTime / SECONDS_PER_WEEK
+        Log.d(TAG, "weeksDifference: + $weeksDifference")
+
+        if(weeksDifference >= 1) { remainingTime %= SECONDS_PER_WEEK }
+
+        val daysDifference = remainingTime / SECONDS_PER_DAY
+        Log.d(TAG, "daysInDifference: + $daysDifference")
+
+        if(daysDifference >= 1) { remainingTime %= SECONDS_PER_DAY }
+
+        val hoursDifference = remainingTime / SECONDS_PER_HOUR
+        Log.d(TAG, "hoursDifference: + $hoursDifference")
+
+        if(hoursDifference >= 1) { remainingTime %= SECONDS_PER_HOUR }
+
+        val minutesDifference = remainingTime / SECONDS_PER_MINUTE
+        Log.d(TAG, "minutesDifference: + $minutesDifference")
+
+       return buildText(0, weeksDifference, daysDifference, hoursDifference, minutesDifference)
+    }
+
+    /** Builds the display string for the custom notification time. */
+    private fun buildText(years: Int, weeks: Long, days: Long, hours: Long, minutes: Long): String {
+        var text = ""
+
+        if(years != 0) {
+            text += "${abs(years)}y "
+        }
+        if(weeks != 0L) {
+            text += "${abs(weeks)}m "
+        }
+        if(days != 0L) {
+            text += "${abs(days)}d "
+        }
+        if(hours != 0L) {
+            text += "${abs(hours)}h "
+        }
+        if(minutes != 0L) {
+            text += "${abs(minutes)}m "
+        }
+
+        if(text == "") { text = "At date/time" }
+        else text += " before"
+
+        //  if(text.length > 8) {
+        //      val substrings = text.split(" ")
+        //      var currentLength = 0
+        //      for(substring in substrings) {
+        //          if(substring.length + currentLength + 1 <= 8) {  // +1 for the space at the end that's removed for delimiting
+        //              currentLength += substring.length + 1;
+        //          } else {
+        //              return text.substring(0, currentLength)
+        //          }
+        //      }
+        //      return text
+        //  }
+
+        return text
+    }
+
     /** Set an alarm using the data in [alarmData]. */
     fun setAlarm(alarmManager: AlarmManager, alarmData: AlarmData)
     {
         alarmManager.set(AlarmManager.RTC_WAKEUP, alarmData.notificationTime, alarmData.pendingIntent)
     }
+
+    private const val SECONDS_PER_WEEK:Long = 604800
+    private const val SECONDS_PER_DAY:Long = 86400
+    private const val SECONDS_PER_HOUR:Long = 3600
+    private const val SECONDS_PER_MINUTE:Long = 60
 
     // -------------------------- log tag ------------------------------ //
     private const val TAG:String = "KSLOG: NotificationUtil"
