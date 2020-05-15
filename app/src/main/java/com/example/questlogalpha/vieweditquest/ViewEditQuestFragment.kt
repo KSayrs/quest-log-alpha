@@ -236,6 +236,11 @@ class ViewEditQuestFragment : Fragment() {
 
         // add notification button
         binding.addFamiliarNotificationButton.setOnClickListener {
+            if(viewModel!!.date.value == null) {
+                Util.showShortToast(context!!, "Set a due date first!")
+                return@setOnClickListener
+            }
+
             val notificationDialogFragment = PickNotificationTimeDialogFragment()
             notificationDialogFragment.questDueDate = viewModel!!.date.value
             Log.d(TAG, "System: ${System.currentTimeMillis()} | Quest: ${viewModel!!.date.value!!.toInstant().toEpochMilli()}")
@@ -352,40 +357,48 @@ class ViewEditQuestFragment : Fragment() {
         // save/delete quest
         if (id == R.id.action_done_editing) {
 
-            val notifications = arrayListOf<StoredNotification>()
-            notifications.addAll(viewModel!!.storedNotifications.value!!)
-            val alarms = arrayListOf<AlarmData>()
-            for (notification in notifications) {
+            if(viewModel!!.date.value != null) {
+                val notifications = arrayListOf<StoredNotification>()
+                notifications.addAll(viewModel!!.storedNotifications.value!!)
+                val alarms = arrayListOf<AlarmData>()
+                for (notification in notifications) {
 
-                // check for past alarms and remove them
-                if (notification.notificationTime == 1L || notification.id == -1) {
+                    // check for past alarms and remove them
+                    if (notification.notificationTime == 1L || notification.id == -1) {
+                        Log.d(TAG, "*****************************************")
+                        Log.d(TAG, "storedNotification: notification ${notification.id} is invalid. Deleting it")
+                        viewModel!!.onRemoveStoredNotification(notification)
+                        continue
+                    }
+                    if (System.currentTimeMillis() > notification.notificationTime) {
+                        Log.d(TAG, "storedNotification: notification ${notification.id} is in the past. Deleting it")
+                        viewModel!!.onRemoveStoredNotification(notification)
+                        continue
+                    }
+
                     Log.d(TAG, "*****************************************")
-                    Log.d(TAG, "storedNotification: notification ${notification.id} is invalid. Deleting it")
-                    viewModel!!.onRemoveStoredNotification(notification)
-                    continue
+                    Log.d(TAG, "storedNotification: $notification")
+                    Log.d(TAG, "CurrentTime: ${System.currentTimeMillis()}")
+                    Log.d(TAG, "Alarm set for ${notification.notificationTime}")
+
+                    // thanks https://gist.github.com/BrandonSmith/6679223
+                    if (questId == "") questId = viewModel!!.id.value!!
+                    val pendingIntent = scheduleNotification(
+                        getNotification(
+                            notification
+                        ),
+                        notification.notificationTime,
+                        notification.id
+                    )
+
+                    alarms.add(AlarmData(pendingIntent, notification.notificationTime))
                 }
-                if(System.currentTimeMillis() > notification.notificationTime) {
-                    Log.d(TAG, "storedNotification: notification ${notification.id} is in the past. Deleting it")
-                    viewModel!!.onRemoveStoredNotification(notification)
-                    continue
-                }
 
-                Log.d(TAG, "*****************************************")
-                Log.d(TAG, "storedNotification: $notification")
-                Log.d(TAG, "CurrentTime: ${System.currentTimeMillis()}")
-                Log.d(TAG, "Alarm set for ${notification.notificationTime}")
-
-                // thanks https://gist.github.com/BrandonSmith/6679223
-                if(questId == "") questId = viewModel!!.id.value!!
-                val pendingIntent = scheduleNotification(getNotification(
-                    notification),
-                    notification.notificationTime,
-                    notification.id)
-
-                alarms.add(AlarmData(pendingIntent, notification.notificationTime))
+                viewModel!!.onSaveQuest(context!!.getSystemService(ALARM_SERVICE) as AlarmManager?, alarms)
             }
-
-            viewModel!!.onSaveQuest(context!!.getSystemService(ALARM_SERVICE) as AlarmManager?, alarms)
+            else {
+                viewModel!!.onSaveQuest()
+            }
         }
         if (id == R.id.action_abandon_quest) {
             viewModel!!.onDeleteQuest()
