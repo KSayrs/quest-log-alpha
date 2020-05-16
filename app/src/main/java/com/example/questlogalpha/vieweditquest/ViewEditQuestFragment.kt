@@ -109,18 +109,7 @@ class ViewEditQuestFragment : Fragment() {
 
         // update date on load
         viewEditQuestViewModel.date.observeOnce {
-            if(viewEditQuestViewModel.date.value != null) {
-                val date = viewEditQuestViewModel.date.value!!
-                val calendar: Calendar = Calendar.getInstance()
-                val years = date.year - calendar.get(Calendar.YEAR)
-                val months = date.monthValue - calendar.get(Calendar.MONTH)
-                val days = date.dayOfMonth - calendar.get(Calendar.DATE)
-                val hours = date.hour - calendar.get(Calendar.HOUR_OF_DAY)
-                val minutes = date.minute - calendar.get(Calendar.MINUTE)
-
-                val text = buildCountdownText(years, months, days, hours, minutes)
-                binding.viewEditQuestBookmarkText.text = text
-            }
+            setDueDate()
         }
 
         // add/update objectives
@@ -422,20 +411,9 @@ class ViewEditQuestFragment : Fragment() {
         val timeDialog = TimePickerDialogFragment(true)
 
         val calendar: Calendar = Calendar.getInstance()
-        val differenceCalendar: Calendar = Calendar.getInstance()
-
-        var years = 0
-        var months = 0
-        var days = 0
-        var hours = 0
-        var minutes = 0
 
         dialog.onDateSet = { year, month, day ->
             Log.d(TAG, "handleAddDueDate: Date picked: $year $month $day")
-
-            years = year - calendar.get(Calendar.YEAR)
-            months = month - calendar.get(Calendar.MONTH)
-            days = day - calendar.get(Calendar.DATE)
 
             calendar.set(Calendar.YEAR, year)
             calendar.set(Calendar.MONTH, month)
@@ -446,16 +424,13 @@ class ViewEditQuestFragment : Fragment() {
 
         // don't check for the past because sometimes we want to purposefully acknowledge a quest is overdue
         timeDialog.onTimeSet = { hour, minute ->
-            hours = hour - differenceCalendar.get(Calendar.HOUR_OF_DAY)
-            minutes = minute - differenceCalendar.get(Calendar.MINUTE)
-
             calendar.set(Calendar.HOUR_OF_DAY, hour)
             calendar.set(Calendar.MINUTE, minute)
 
             viewModel!!.onSetDate(
                 ZonedDateTime.of(
                     calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH), // handling weird offset
+                    calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DATE),
                     calendar.get(Calendar.HOUR_OF_DAY),
                     calendar.get(Calendar.MINUTE),
@@ -468,22 +443,50 @@ class ViewEditQuestFragment : Fragment() {
             Log.d(TAG, "onTimeSet: duedate: ${viewModel!!.date.value} | now: ${ZonedDateTime.now()}")
             nAdapter!!.questDueDate = viewModel!!.date.value
 
-            if (bind != null) {
-                val text = buildCountdownText(years, months, days, hours, minutes)
-                bind!!.viewEditQuestBookmarkText.text = text
-            }
-            else Log.e(TAG, "handleAddDueDate: bind is null!")
+            setDueDate()
         }
         dialog.show(childFragmentManager, "addDate")
     }
 
-    /** Formats the display string for the due date. */
-    private fun buildCountdownText(years: Int, months: Int, days: Int, hours: Int, minutes: Int): String {
+    /** Set the text for the due date flag */
+    private fun setDueDate() {
+        if(viewModel!!.date.value != null) {
+            val offset = viewModel!!.date.value!!.plusMonths(1)
+            var remainingTime = offset.toEpochSecond() - ZonedDateTime.now().toEpochSecond()
+
+            val weeksDifference = remainingTime / NotificationUtil.SECONDS_PER_WEEK
+            Log.d(TAG, "weeksDifference: + $weeksDifference")
+
+            if(weeksDifference >= 1) { remainingTime %= NotificationUtil.SECONDS_PER_WEEK  }
+
+            val daysDifference = remainingTime / NotificationUtil.SECONDS_PER_DAY
+            Log.d(TAG, "daysInDifference: + $daysDifference")
+
+            if(daysDifference >= 1) { remainingTime %= NotificationUtil.SECONDS_PER_DAY }
+
+            val hoursDifference = remainingTime / NotificationUtil.SECONDS_PER_HOUR
+            Log.d(TAG, "hoursDifference: + $hoursDifference")
+
+            if(hoursDifference >= 1) { remainingTime %= NotificationUtil.SECONDS_PER_HOUR  }
+
+            val minutesDifference = remainingTime / NotificationUtil.SECONDS_PER_MINUTE
+            Log.d(TAG, "minutesDifference: + $minutesDifference")
+
+            val text = buildCountdownText(0, 0, weeksDifference, daysDifference, hoursDifference, minutesDifference)
+            bind!!.viewEditQuestBookmarkText.text = text
+        }
+        else {
+            Log.e(TAG, "viewModel!!.date.value is null -- cannot set due date flag")
+        }
+    }
+
+    /** Formats the display string for dates as such: 99y 99m 99w 99d 99h 99m */
+    private fun buildCountdownText(years: Long, months: Long, weeks: Long, days: Long, hours: Long, minutes: Long): String {
         var hitNegative = false
         var isFirst = true
         var text = ""
 
-        if(years != 0) {
+        if(years != 0L) {
             isFirst = false
             if(years < 0) hitNegative = true
             text += "${years}y "
@@ -492,22 +495,27 @@ class ViewEditQuestFragment : Fragment() {
                 return text
             }
         }
-        if(months != 0) {
+        if(months != 0L) {
             text += "${if(hitNegative || !isFirst){abs(months)} else {months}}m "
             if(months < 0 && !hitNegative) hitNegative = true
             if(isFirst) isFirst = false
         }
-        if(days != 0) {
+        if(weeks != 0L) {
+            text += "${if(hitNegative || !isFirst){abs(weeks)} else {weeks}}w "
+            if(weeks < 0 && !hitNegative) hitNegative = true
+            if(isFirst) isFirst = false
+        }
+        if(days != 0L) {
             text += "${if(hitNegative || !isFirst){abs(days)} else {days}}d "
             if(days < 0 && !hitNegative) hitNegative = true
             if(isFirst) isFirst = false
         }
-        if(hours != 0) {
+        if(hours != 0L) {
             text += "${if(hitNegative || !isFirst){abs(hours)} else {hours}}h "
             if(hours < 0 && !hitNegative) hitNegative = true
             if(isFirst) isFirst = false
         }
-        if(minutes != 0) {
+        if(minutes != 0L) {
             text += "${if(hitNegative || !isFirst){abs(minutes)} else {minutes}}m "
         }
 

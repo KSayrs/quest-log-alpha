@@ -132,7 +132,7 @@ object NotificationUtil {
             text += "${abs(years)}y "
         }
         if(weeks != 0L) {
-            text += "${abs(weeks)}m "
+            text += "${abs(weeks)}w "
         }
         if(days != 0L) {
             text += "${abs(days)}d "
@@ -169,10 +169,10 @@ object NotificationUtil {
         alarmManager.set(AlarmManager.RTC_WAKEUP, alarmData.notificationTime, alarmData.pendingIntent)
     }
 
-    private const val SECONDS_PER_WEEK:Long = 604800
-    private const val SECONDS_PER_DAY:Long = 86400
-    private const val SECONDS_PER_HOUR:Long = 3600
-    private const val SECONDS_PER_MINUTE:Long = 60
+    const val SECONDS_PER_WEEK:Long = 604800
+    const val SECONDS_PER_DAY:Long = 86400
+    const val SECONDS_PER_HOUR:Long = 3600
+    const val SECONDS_PER_MINUTE:Long = 60
 
     // -------------------------- log tag ------------------------------ //
     private const val TAG:String = "KSLOG: NotificationUtil"
