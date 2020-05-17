@@ -28,6 +28,7 @@ import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
 import com.example.questlogalpha.databinding.QuestObjectiveViewBinding
 import com.example.questlogalpha.quests.AddRewardDialogFragment
 import com.example.questlogalpha.quests.Difficulty
+import kotlinx.android.synthetic.main.fragment_view_edit_quest.view.*
 import kotlinx.android.synthetic.main.quest_objective_view.view.*
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -181,6 +182,17 @@ class ViewEditQuestFragment : Fragment() {
                         }
                     }
                     false
+                }
+
+                // if this is a new objective we just added, focus it
+                if(viewEditQuestViewModel.isNewObjective && viewEditQuestViewModel.modifiedObjective != null) {
+                    objView.quest_objective_edit_text.isFocusableInTouchMode = true
+                    objView.quest_objective_edit_text.requestFocus()
+                    val imm = application.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
+                    imm!!.showSoftInput(
+                        objView.quest_objective_edit_text,
+                        InputMethodManager.SHOW_IMPLICIT
+                    )
                 }
             }
         })

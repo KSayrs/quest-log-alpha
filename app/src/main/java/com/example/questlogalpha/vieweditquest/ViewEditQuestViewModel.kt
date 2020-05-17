@@ -28,6 +28,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     val currentQuest : Quest? get() = _currentQuest
     private var _currentQuest : Quest ?= null
     val app = application
+    var isNewObjective:Boolean = false // dumb hack
 
     // we only need to get this id when it is a new quest, to pass along in an intent for notifications later
     val id:LiveData<String>
@@ -236,17 +237,20 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     }
 
     fun onObjectiveDeleted(objective: Objective) {
+        isNewObjective = false
         objectives.value?.remove(objective)
         Toast.makeText(getApplication(), "Objective removed", Toast.LENGTH_SHORT).show()
         modifiedObjective.value = null
     }
 
     fun onObjectiveEdit(objective: Objective, objectiveText: String) {
+        isNewObjective = false
         objective.description = objectiveText
         modifiedObjective.value = objective
     }
 
     fun onAddObjective(){
+        isNewObjective = true
         val newObjective = Objective()
         objectives.value!!.add(newObjective)
         modifiedObjective.value = newObjective
