@@ -151,14 +151,7 @@ class ViewEditQuestFragment : Fragment() {
                 }
 
                 objView.edit_objective_icon.setOnClickListener {
-                    objView.quest_objective_edit_text.isFocusableInTouchMode = true
-                    objView.quest_objective_edit_text.requestFocus()
-                    val imm =
-                        application.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
-                    imm!!.showSoftInput(
-                        objView.quest_objective_edit_text,
-                        InputMethodManager.SHOW_IMPLICIT
-                    )
+                    objView.quest_objective_edit_text.focus(application)
                 }
 
                 objView.quest_objective_edit_text.setOnEditorActionListener { _, actionId, _ ->
@@ -186,13 +179,7 @@ class ViewEditQuestFragment : Fragment() {
 
                 // if this is a new objective we just added, focus it
                 if(viewEditQuestViewModel.isNewObjective && viewEditQuestViewModel.modifiedObjective != null) {
-                    objView.quest_objective_edit_text.isFocusableInTouchMode = true
-                    objView.quest_objective_edit_text.requestFocus()
-                    val imm = application.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
-                    imm!!.showSoftInput(
-                        objView.quest_objective_edit_text,
-                        InputMethodManager.SHOW_IMPLICIT
-                    )
+                    objView.quest_objective_edit_text.focus(application)
                 }
             }
         })
