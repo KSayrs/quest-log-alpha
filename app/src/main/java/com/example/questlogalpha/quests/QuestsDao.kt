@@ -5,13 +5,13 @@ package com.example.questlogalpha.quests
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.questlogalpha.data.Quest
+import com.example.questlogalpha.data.StoredNotification
 
 /**
  * Data Access Object for the quests table.
  */
-
 @Dao
-interface QuestsDao {
+interface  QuestsDao {
     /**
      * Select all quests from the quests table.
      *
@@ -21,36 +21,27 @@ interface QuestsDao {
     fun getAllQuests(): LiveData<List<Quest>>
 
     /**
-     * Select a quest by id.
-     *
-     * @param questId the quest id.
-     * @return the quest with questId.
+     * Select a [Quest] by [questId].
      */
     @Query("SELECT * FROM quest_table WHERE id = :questId")
     fun getQuestById(questId: String): Quest?
 
     /**
-     * Insert a quest into the database. If the quest already exists, replace it.
-     *
-     * @param quest the quest to be inserted.
+     * Insert a [quest] into the database. If the quest already exists, replace it.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertQuest(quest: Quest)
 
     /**
-     * Update a quest.
+     * Update a [quest].
      *
-     * @param quest quest to be updated
      * @return the number of quests updated. This should always be 1.
      */
     @Update
     fun updateQuest(quest: Quest): Int
 
     /**
-     * Update the complete status of a quest
-     *
-     * @param questId    id of the quest
-     * @param completed status to be updated
+     * Update the [completed] status of a quest with a given [questId]
      */
     @Query("UPDATE quest_table SET completed = :completed WHERE id = :questId")
     fun updateCompleted(questId: String, completed: Boolean)
@@ -65,7 +56,7 @@ interface QuestsDao {
  //   suspend fun setCompletionDate(questId: String, dateCompleted: ZonedDateTime)
 
     /**
-     * Delete a quest by id.
+     * Delete a quest by [questId].
      *
      * @return the number of quests deleted. This should always be 1.
      */
@@ -86,4 +77,11 @@ interface QuestsDao {
      */
     @Query("DELETE FROM quest_table WHERE completed = 1")
     fun deleteCompletedQuests(): Int
+
+    /**
+     * Set the notification data for a quest with a given [questId].
+     * @param notifications - array list of [StoredNotification]s
+     */
+    @Query("UPDATE quest_table SET notifications = :notifications WHERE id = :questId")
+    fun setNotifications(questId: String, notifications: ArrayList<StoredNotification>)
 }

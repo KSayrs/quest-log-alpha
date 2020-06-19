@@ -47,7 +47,7 @@ class QuestsFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val dataSource = QuestLogDatabase.getInstance(application).questLogDatabaseDao
         val skillsDataSource = QuestLogDatabase.getInstance(application).skillsDatabaseDao
-        val viewModelFactory = ViewModelFactory("", dataSource, skillsDataSource, application)
+        val viewModelFactory = ViewModelFactory("", dataSource, skillsDataSource, null, application)
 
         val questsViewModel = ViewModelProvider(this, viewModelFactory).get(QuestsViewModel::class.java)
         val skillsViewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)

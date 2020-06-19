@@ -7,6 +7,7 @@
         <variable
                 name="viewEditQuestViewModel"
                 type="com.example.questlogalpha.vieweditquest.ViewEditQuestViewModel" />
+        <import type="android.view.View"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -33,10 +34,57 @@
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/view_edit_quest_bookmark"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- =================== Bookmark =================== -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/view_edit_quest_bookmark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="@{viewEditQuestViewModel.date != null ? View.VISIBLE : View.GONE}"
+                app:layout_constraintTop_toTopOf="@+id/view_edit_quest_title_edit_text"
+                app:layout_constraintBottom_toBottomOf="@+id/view_edit_quest_title_edit_text" >
+
+            <ImageView
+                    android:id="@+id/view_edit_quest_bookmark_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:tint="@color/colorAccent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_bookmark_end" />
+
+            <ImageView
+                    android:id="@+id/view_edit_quest_clock_icon"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginStart="12dp"
+                    android:adjustViewBounds="true"
+                    app:layout_constraintBottom_toBottomOf="@+id/view_edit_quest_bookmark_date"
+                    app:layout_constraintStart_toStartOf="@+id/view_edit_quest_bookmark_date"
+                    app:layout_constraintTop_toTopOf="@+id/view_edit_quest_bookmark_date"
+                    app:srcCompat="@drawable/ic_clock" />
+
+            <TextView
+                    android:id="@+id/view_edit_quest_bookmark_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:00:00"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorWhite"
+                    app:layout_constraintBottom_toBottomOf="@+id/view_edit_quest_bookmark_date"
+                    app:layout_constraintStart_toEndOf="@+id/view_edit_quest_clock_icon"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/view_edit_quest_bookmark_date" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- =================== Description =================== -->
         <EditText
                 android:id="@+id/view_edit_quest_description_edit_text"
                 android:layout_width="0dp"
@@ -118,9 +166,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/rewards_list_wrapper"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintHeight_default="wrap"
-                app:layout_constraintHeight_max="80dp"
+                android:layout_height="wrap_content"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintHeight_max="120dp"
                 app:layout_constraintTop_toBottomOf="@+id/rewards_header_layout"
                 >
 
@@ -174,6 +222,23 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:layout_editor_absoluteX="16dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/familiar_notifications_list_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintHeight_max="200dp"
+                app:layout_constraintTop_toBottomOf="@+id/familiar_notifications_header_layout"
+                >
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/familiar_notifications_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager = "androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,6 +16,7 @@ package com.example.questlogalpha.data
  * limitations under the License.
  */
 
+import android.app.Notification
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -39,16 +40,12 @@ import kotlin.collections.ArrayList
  */
 @Entity(tableName = "quest_table")
 data class Quest(
-    @ColumnInfo
-    var title: String,
-
-    @ColumnInfo
-    var description: String = "",
+    @ColumnInfo var title: String,
+    @ColumnInfo var description: String = "",
 
     @ColumnInfo(name = "rewards") var rewards: ArrayList<SkillReward> = arrayListOf(),
 
-    // todo notifications
-  //  @ColumnInfo var notifications: ArrayList<Notification> = arrayListOf(),
+    @ColumnInfo var notifications: ArrayList<StoredNotification> = arrayListOf(),
 
     @ColumnInfo
     var completed: Boolean = false,
@@ -60,8 +57,9 @@ data class Quest(
 
     // todo due date/complete by
     // todo come put with a better name for due date
- //   @ColumnInfo(name = "due_date")
- //   var dueDate: ZonedDateTime? = null,
+    @ColumnInfo(name = "due_date")
+    var dueDate: ZonedDateTime? = null,
+
 
     // todo date available
  //   @ColumnInfo(name = "date_available")

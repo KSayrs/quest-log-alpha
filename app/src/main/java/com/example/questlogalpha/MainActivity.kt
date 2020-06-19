@@ -2,10 +2,6 @@ package com.example.questlogalpha
 
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
@@ -20,7 +16,7 @@ class MainActivity : AppCompatActivity() {
             actionBar?.hide()
         }
         if(supportActionBar == null){
-            Log.e("MainActivity.kt: onCreate: ", "supportActionBar is null.")
+            Log.e("$TAG: onCreate: ", "supportActionBar is null.")
         }
         else {
             supportActionBar?.hide()
@@ -30,10 +26,10 @@ class MainActivity : AppCompatActivity() {
     // Hide the navigation bar when we're on this activity
     override fun onResume() {
         super.onResume()
-        Log.d("MainActivity.kt: onResume", " called")
+        Log.d("$TAG: onResume", " called")
 
         if(supportActionBar == null){
-            Log.e("MainActivity.kt: onResume: ", "supportActionBar is null.")
+            Log.e(TAG, "onResume: supportActionBar is null.")
         }
         else {
             if(supportActionBar!!.isShowing) supportActionBar!!.hide()
@@ -45,5 +41,10 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    // -------------------------- log tag ------------------------------ //
+    companion object {
+        const val TAG: String = "KSLOG: MainActivity"
     }
 }

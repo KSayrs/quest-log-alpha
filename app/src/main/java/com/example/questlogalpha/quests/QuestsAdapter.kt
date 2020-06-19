@@ -28,7 +28,6 @@ import com.example.questlogalpha.skills.SkillsViewModel
  * A ViewHolder holds a view for the [RecyclerView] as well as providing additional information
  * to the RecyclerView such as where on the screen it was last drawn during scrolling.
  *
- * // todo move this class elsewhere
  * // todo implement this a different way, maybe with an interface and/or a separate handler for the on-click so that the adapter doesn't require a reference to the viewModel.
  */
 class QuestItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.ViewHolder(constraintLayout)
@@ -131,7 +130,7 @@ class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
     }
 
     private fun removeStrikeThough1(tv: TextView) {
-        // todo implement
+        // todo implement removeStrikeThough1
     }
 
     // -------------------------- log tag ------------------------------ //

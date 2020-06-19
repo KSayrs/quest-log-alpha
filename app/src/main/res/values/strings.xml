@@ -1,4 +1,9 @@
 <resources>
+    <!-- Notification channels -->
+    <string name="familiar_quest_reminders">Quest Notifications</string>
+    <string name="familiar_quest_reminders_description">If this is turned off, familiar notifications that are set will not activate.</string>
+
+    <!-- In-app strings -->
     <string name="app_name">Quest Log Alpha</string>
     <string name="timeline">Timeline</string>
     <string name="quests">Quests</string>
@@ -22,4 +27,33 @@
     <string name="add_skill">Add Skill</string>
     <string name="edit_skill">Edit Skill</string>
     <string name="save">Save</string>
+    <string name="skip">Skip</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="add_due_date">Set Date/Time</string>
+    <string name="remove_due_date">Remove Date/Time</string>
+    <string name="before">before</string>
+    <string name="at_time_due">At Time Due</string>
+    <string name="set_custom_time">Set Custom Time</string>
+
+    <!-- Spinners -->
+
+    <string-array name="minutes_array">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+        <item>45</item>
+    </string-array>
+
+    <string-array name="increment_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
 </resources>

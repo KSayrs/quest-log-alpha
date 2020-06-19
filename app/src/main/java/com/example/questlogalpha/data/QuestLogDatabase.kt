@@ -10,17 +10,20 @@ import com.example.questlogalpha.quests.QuestsDao
 import androidx.sqlite.db.SupportSQLiteDatabase
 import android.icu.lang.UCharacter.GraphemeClusterBreak.V
 import android.os.AsyncTask.execute
+import android.provider.Settings
+import android.util.Log
 import com.example.questlogalpha.personnage.SkillsDao
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
 
-@Database(entities = [Quest::class, Skill::class], version = 1, exportSchema = false)
-@TypeConverters(DifficultyConverter::class, ZonedDateTimeConverter::class, SkillTypeConverter::class, RewardArrayConverter::class, ObjectiveArrayConverter::class)
+@Database(entities = [Quest::class, Skill::class, GlobalVariable::class], version = 1, exportSchema = false)
+@TypeConverters(DifficultyConverter::class, ZonedDateTimeConverter::class, SkillTypeConverter::class, RewardArrayConverter::class, ObjectiveArrayConverter::class, StoredNotificationArrayConverter::class)
 abstract class QuestLogDatabase : RoomDatabase() {
 
     abstract val questLogDatabaseDao: QuestsDao
     abstract val skillsDatabaseDao: SkillsDao
+    abstract val globalVariableDatabaseDao: GlobalVariablesDao
 
     companion object {
 
@@ -37,12 +40,18 @@ abstract class QuestLogDatabase : RoomDatabase() {
                         QuestLogDatabase::class.java,
                         "quest_log_history_database"
                     ).fallbackToDestructiveMigration()
-                   //.addCallback(object : RoomDatabase.Callback(){
-                   //    override fun onCreate(db: SupportSQLiteDatabase) {
+                   .addCallback(object : RoomDatabase.Callback(){
+                       override fun onCreate(db: SupportSQLiteDatabase) {
+                           Log.d("KSLOG", "Database onCreate() override")
 
-                   //        // todo pre-populate skills
+                           Executors.newSingleThreadExecutor().execute {
+                               Log.d("KSLOG", "Executing thread")
+                               getInstance(context).globalVariableDatabaseDao.insertVariable(
+                                   GlobalVariable("NotificationId", 100)
+                               )
+                           }
 
-
+                           //        // todo pre-populate skills
                    //        // new thread for inserting stuff
 
                    //     //  Executors.newSingleThreadScheduledExecutor().execute(Runnable {
@@ -52,10 +61,10 @@ abstract class QuestLogDatabase : RoomDatabase() {
                    //     //  })
 
 
-                   //        super.onCreate(db)
+                           super.onCreate(db)
 
-                   //    }
-                   //})
+                       }
+                   })
                         .build()
                     INSTANCE = instance
                 }

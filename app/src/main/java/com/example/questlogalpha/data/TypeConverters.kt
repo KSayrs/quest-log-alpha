@@ -15,12 +15,13 @@ class ZonedDateTimeConverter {
     private val formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
 
     @TypeConverter
-    fun stringToZonedDateTime(value: String): ZonedDateTime = value.let {
-        return formatter.parse(value, ZonedDateTime::from)
+    fun stringToZonedDateTime(value: String?): ZonedDateTime? = value.let {
+        return if(it != null) formatter.parse(value, ZonedDateTime::from)
+        else null
     }
 
     @TypeConverter
-    fun zonedDateTimeToString(date: ZonedDateTime): String? {
-        return date.format(formatter)
+    fun zonedDateTimeToString(date: ZonedDateTime?): String? {
+        return date?.format(formatter)
     }
 }

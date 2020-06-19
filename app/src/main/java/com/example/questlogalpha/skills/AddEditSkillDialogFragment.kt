@@ -1,12 +1,16 @@
 package com.example.questlogalpha.skills
 
 import android.app.AlertDialog
+import android.app.Application
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
@@ -16,8 +20,10 @@ import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.Quest
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.data.Skill
+import com.example.questlogalpha.focus
 import com.example.questlogalpha.quests.QuestsViewModel
 import com.example.questlogalpha.setClearFocusOnDone
+import kotlinx.android.synthetic.main.dialog_fragment_add_edit_skill.*
 import kotlinx.android.synthetic.main.dialog_fragment_add_edit_skill.view.*
 
 /** ************************************************************************************************
@@ -39,7 +45,7 @@ class AddEditSkillDialogFragment(chosenSkill: Skill? = null) : DialogFragment() 
         dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_fragment_add_edit_skill, null, false)
         val dataSource = QuestLogDatabase.getInstance(activity!!.application).skillsDatabaseDao
         val questsDataSource = QuestLogDatabase.getInstance(activity!!.application).questLogDatabaseDao
-        val viewModelFactory = ViewModelFactory("", questsDataSource, dataSource, activity!!.application)
+        val viewModelFactory = ViewModelFactory("", questsDataSource, dataSource, null, activity!!.application)
 
         questsViewModel = ViewModelProvider(this, viewModelFactory).get(QuestsViewModel::class.java)
         viewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)
@@ -70,12 +76,9 @@ class AddEditSkillDialogFragment(chosenSkill: Skill? = null) : DialogFragment() 
             }
         })
 
-        dialogView!!.new_skill_name.setClearFocusOnDone()
-
         // make Dialog
         val acceptMessage:String = if(this.skill == null) getString(R.string.add) else getString(R.string.save)
-
-        return AlertDialog.Builder(activity)
+        val builder = AlertDialog.Builder(activity)
             .setView(dialogView)
             .setPositiveButton(acceptMessage,
                 DialogInterface.OnClickListener { _, _ ->
@@ -94,6 +97,13 @@ class AddEditSkillDialogFragment(chosenSkill: Skill? = null) : DialogFragment() 
                     Toast.makeText(context, "Canceled", Toast.LENGTH_SHORT).show()
                 })
             .create()
+
+        // if it's a new skill, focus the text
+        if(this.skill == null) {
+            builder.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+            dialogView!!.new_skill_name.focus(activity!!.application)
+        }
+        return builder
     }
 
    // The EditText appears to have an issue with resetting text in onCreateView. So the solution here is to reset the text in onResume.
