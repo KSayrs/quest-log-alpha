@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.DialogFragmentAddRewardBinding
+import com.example.questlogalpha.skills.AddEditSkillDialogFragment
 import com.example.questlogalpha.skills.SkillsAdapter
 import com.example.questlogalpha.skills.SkillsViewModel
 import kotlinx.android.synthetic.main.dialog_fragment_add_reward.view.*
@@ -33,6 +35,8 @@ class AddRewardDialogFragment : DialogFragment() {
 
     var onPositiveButtonClicked: ((dictionary: Map<String, Any>) -> Unit)? = null
 
+    private var listUpdated = false
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_fragment_add_reward, null, false)
         val binding : DialogFragmentAddRewardBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_fragment_add_reward, null, false)
@@ -42,15 +46,9 @@ class AddRewardDialogFragment : DialogFragment() {
         val viewModelFactory = ViewModelFactory("", null, dataSource, null, activity!!.application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)
 
-        viewModel!!.skills.observe(this, Observer {
-            it?.let {
-                adapter!!.data = it
-                Log.d(TAG, "it: $it")
-            }
-        })
-
         adapter = SkillsAdapter()
 
+        // set up recyclerview
         val mRecyclerView = dialogView!!.skills_list
         mRecyclerView.layoutManager = LinearLayoutManager(context)
         mRecyclerView.adapter = adapter
@@ -61,6 +59,33 @@ class AddRewardDialogFragment : DialogFragment() {
 
         adapter!!.onSelectionChange = { view ->
             view.background = ColorDrawable(Color.TRANSPARENT)
+        }
+
+        adapter!!.onViewAttached = { view ->
+            if(listUpdated) {
+                view.background = ColorDrawable(resources.getColor(R.color.highlightColor, null))
+                adapter!!.overrideLastClicked(view)
+            }
+        }
+
+        // observe skills
+        viewModel!!.skills.observe(this, Observer {
+            it?.let {
+                adapter!!.data = it
+                Log.d(TAG, "it: $it")
+            }
+        })
+
+        // set up "add new" button
+        dialogView!!.add_new_reward_button.setOnClickListener {
+            val addSkillDialog = AddEditSkillDialogFragment()
+
+            addSkillDialog.onPositiveButtonClicked = { skill ->
+                adapter!!.chosenSkill = skill
+                listUpdated = true
+            }
+
+            addSkillDialog.show(childFragmentManager, "addSkillFromRewardScreen")
         }
 
         return AlertDialog.Builder(activity)

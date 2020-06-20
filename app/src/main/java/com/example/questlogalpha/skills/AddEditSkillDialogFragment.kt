@@ -1,16 +1,13 @@
 package com.example.questlogalpha.skills
 
 import android.app.AlertDialog
-import android.app.Application
 import android.app.Dialog
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
@@ -22,8 +19,6 @@ import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.data.Skill
 import com.example.questlogalpha.focus
 import com.example.questlogalpha.quests.QuestsViewModel
-import com.example.questlogalpha.setClearFocusOnDone
-import kotlinx.android.synthetic.main.dialog_fragment_add_edit_skill.*
 import kotlinx.android.synthetic.main.dialog_fragment_add_edit_skill.view.*
 
 /** ************************************************************************************************
@@ -34,6 +29,8 @@ class AddEditSkillDialogFragment(chosenSkill: Skill? = null) : DialogFragment() 
     var adapter : SkillsAdapter? = null
     var dialogView : View? = null
     val skill = chosenSkill
+
+    var onPositiveButtonClicked: ((skill: Skill) -> Unit)? = null
 
     private var questsViewModel: QuestsViewModel? = null
     private var quests: List<Quest>? = null
@@ -85,10 +82,12 @@ class AddEditSkillDialogFragment(chosenSkill: Skill? = null) : DialogFragment() 
                     if(this.skill == null) {
                         val newSkill = Skill(dialogView!!.new_skill_name.text.toString())
                         viewModel!!.onAddNewSkill(newSkill)
+                        onPositiveButtonClicked?.invoke(newSkill)
                     }
                     else {
                         this.skill.name = dialogView!!.new_skill_name.text.toString()
                         viewModel!!.onEditSkill(this.skill)
+                        onPositiveButtonClicked?.invoke(this.skill)
                     }
                 })
             .setNegativeButton(

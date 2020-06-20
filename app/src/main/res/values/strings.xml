@@ -34,6 +34,8 @@
     <string name="before">before</string>
     <string name="at_time_due">At Time Due</string>
     <string name="set_custom_time">Set Custom Time</string>
+    <string name="add_new">Add New</string>
+    <string name="reward_amount">Reward Amount:</string>
 
     <!-- Spinners -->
 
