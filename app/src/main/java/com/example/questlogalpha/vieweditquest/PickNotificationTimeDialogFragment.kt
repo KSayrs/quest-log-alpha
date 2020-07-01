@@ -13,18 +13,15 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
-import com.example.questlogalpha.NotificationUtil
+import com.example.questlogalpha.notifications.NotificationUtil
 import com.example.questlogalpha.R
 import com.example.questlogalpha.Util
 import com.example.questlogalpha.databinding.DialogFragmentPickNotificationTimeBinding
-import java.security.acl.Group
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import kotlin.math.abs
 
 class PickNotificationTimeDialogFragment : DialogFragment(), AdapterView.OnItemSelectedListener {
 

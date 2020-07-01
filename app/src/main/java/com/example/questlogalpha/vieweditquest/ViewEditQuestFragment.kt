@@ -26,9 +26,12 @@ import com.example.questlogalpha.*
 import com.example.questlogalpha.data.*
 import com.example.questlogalpha.databinding.FragmentViewEditQuestBinding
 import com.example.questlogalpha.databinding.QuestObjectiveViewBinding
+import com.example.questlogalpha.notifications.AlarmData
+import com.example.questlogalpha.notifications.NotificationIntentService
+import com.example.questlogalpha.notifications.NotificationReceiver
+import com.example.questlogalpha.notifications.NotificationUtil
 import com.example.questlogalpha.quests.AddRewardDialogFragment
 import com.example.questlogalpha.quests.Difficulty
-import kotlinx.android.synthetic.main.fragment_view_edit_quest.view.*
 import kotlinx.android.synthetic.main.quest_objective_view.view.*
 import java.time.ZoneId
 import java.time.ZonedDateTime

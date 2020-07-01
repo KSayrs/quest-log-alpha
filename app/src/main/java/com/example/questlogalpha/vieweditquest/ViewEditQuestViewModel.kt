@@ -10,8 +10,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.questlogalpha.AlarmData
-import com.example.questlogalpha.NotificationUtil
+import com.example.questlogalpha.notifications.AlarmData
+import com.example.questlogalpha.notifications.NotificationUtil
 import com.example.questlogalpha.data.*
 import com.example.questlogalpha.quests.Difficulty
 import com.example.questlogalpha.quests.QuestsDao

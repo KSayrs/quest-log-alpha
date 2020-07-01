@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.questlogalpha.NotificationUtil
+import com.example.questlogalpha.notifications.NotificationUtil
 import com.example.questlogalpha.R
 import com.example.questlogalpha.data.StoredNotification
 import com.example.questlogalpha.databinding.QuestFamiliarNotificationViewBinding

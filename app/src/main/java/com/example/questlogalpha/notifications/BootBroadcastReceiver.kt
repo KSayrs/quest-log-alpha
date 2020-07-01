@@ -1,4 +1,4 @@
-package com.example.questlogalpha
+package com.example.questlogalpha.notifications
 
 import android.content.BroadcastReceiver
 import android.content.Context

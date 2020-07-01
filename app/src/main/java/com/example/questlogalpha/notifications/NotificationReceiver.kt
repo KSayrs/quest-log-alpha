@@ -1,4 +1,4 @@
-package com.example.questlogalpha
+package com.example.questlogalpha.notifications
 
 import android.app.Notification
 import android.content.BroadcastReceiver
@@ -18,7 +18,10 @@ class NotificationReceiver : BroadcastReceiver() {
             return
         }
 
-        val id = intent.getIntExtra(NOTIFICATION_ID, NotificationId)
+        val id = intent.getIntExtra(
+            NOTIFICATION_ID,
+            NotificationId
+        )
 
         Log.d(TAG, "id: $id")
         Log.d(TAG, "intent URI" + intent.toUri(0))

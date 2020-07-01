@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.questlogalpha
+package com.example.questlogalpha.notifications
 
 import android.app.AlarmManager
 import android.app.NotificationChannel
@@ -24,6 +24,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.example.questlogalpha.R
 import com.example.questlogalpha.data.StoredAction
 import com.example.questlogalpha.data.StoredIntent
 import com.example.questlogalpha.data.StoredPendingIntent
@@ -106,22 +107,31 @@ object NotificationUtil {
         val weeksDifference = remainingTime / SECONDS_PER_WEEK
         Log.d(TAG, "weeksDifference: + $weeksDifference")
 
-        if(weeksDifference >= 1) { remainingTime %= SECONDS_PER_WEEK }
+        if(weeksDifference >= 1) { remainingTime %= SECONDS_PER_WEEK
+        }
 
         val daysDifference = remainingTime / SECONDS_PER_DAY
         Log.d(TAG, "daysInDifference: + $daysDifference")
 
-        if(daysDifference >= 1) { remainingTime %= SECONDS_PER_DAY }
+        if(daysDifference >= 1) { remainingTime %= SECONDS_PER_DAY
+        }
 
         val hoursDifference = remainingTime / SECONDS_PER_HOUR
         Log.d(TAG, "hoursDifference: + $hoursDifference")
 
-        if(hoursDifference >= 1) { remainingTime %= SECONDS_PER_HOUR }
+        if(hoursDifference >= 1) { remainingTime %= SECONDS_PER_HOUR
+        }
 
         val minutesDifference = remainingTime / SECONDS_PER_MINUTE
         Log.d(TAG, "minutesDifference: + $minutesDifference")
 
-       return buildText(0, weeksDifference, daysDifference, hoursDifference, minutesDifference)
+       return buildText(
+           0,
+           weeksDifference,
+           daysDifference,
+           hoursDifference,
+           minutesDifference
+       )
     }
 
     /** Builds the display string for the custom notification time. */
