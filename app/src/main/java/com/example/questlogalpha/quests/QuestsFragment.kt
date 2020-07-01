@@ -52,7 +52,8 @@ class QuestsFragment : Fragment() {
         val questsViewModel = ViewModelProvider(this, viewModelFactory).get(QuestsViewModel::class.java)
         val skillsViewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)
 
-        val adapter = QuestsAdapter()
+        val adapter = QuestsAdapter(childFragmentManager)
+
         binding.questList.adapter = adapter
 
         binding.questsViewModel = questsViewModel
@@ -106,8 +107,8 @@ class QuestsFragment : Fragment() {
 
         return binding.root
     }
-    // -------------------------- log tag ------------------------------ //
 
+    // -------------------------- log tag ------------------------------ //
     companion object {
         const val TAG: String = "KSLOG: QuestsFragment"
     }

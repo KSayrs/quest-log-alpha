@@ -51,6 +51,21 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
         }
     }
 
+    // ----------------------- set quest icon -------------------------- //
+    fun onSetQuestIcon(questId: String, iconResourceId: Int){
+        uiScope.launch {
+            Log.d("$TAG onSetQuestIcon", "iconResourceId: $iconResourceId")
+            setQuestIcon(questId, iconResourceId)
+        }
+    }
+
+    private suspend fun setQuestIcon(questId: String, iconResourceId: Int)
+    {
+        withContext(Dispatchers.IO) {
+            database.updateIcon(questId, iconResourceId)
+        }
+    }
+
     // ----------------------- complete quest -------------------------- //
     fun onSetQuestCompletion(questId: String, completed: Boolean){
         uiScope.launch {

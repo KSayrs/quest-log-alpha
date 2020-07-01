@@ -179,6 +179,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             val newQuest = Quest(
                 title.value.toString(), 
                 description.value.toString(),
+                icon = 0,
                 objectives = objectives.value!!,
                 difficulty = difficulty.value!!,
                 rewards = rewards.value!!,

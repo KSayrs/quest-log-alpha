@@ -4,6 +4,7 @@
 * */
 package com.example.questlogalpha.data
 
+import android.util.Log
 import androidx.room.TypeConverter
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -23,5 +24,19 @@ class ZonedDateTimeConverter {
     @TypeConverter
     fun zonedDateTimeToString(date: ZonedDateTime?): String? {
         return date?.format(formatter)
+    }
+}
+
+class ListConverter {
+    @TypeConverter
+    fun stringToListOfStrings(value: String?): List<String>? {
+        Log.d("KSLOG: ListConverter: value: ", (value?.split(',')).toString())
+        return value?.split(',')
+    }
+
+    @TypeConverter
+    fun listOfStringsToString(value: List<String>): String {
+        Log.d("KSLOG: ListConverter: value: ", value.toString())
+        return value.toString()
     }
 }

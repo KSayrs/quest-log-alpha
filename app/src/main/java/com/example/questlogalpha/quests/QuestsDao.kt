@@ -46,6 +46,12 @@ interface  QuestsDao {
     @Query("UPDATE quest_table SET completed = :completed WHERE id = :questId")
     fun updateCompleted(questId: String, completed: Boolean)
 
+    /**
+     * Update the [iconResourceId] of a quest with a given [questId]
+     */
+    @Query("UPDATE quest_table SET icon = :iconResourceId WHERE id = :questId")
+    fun updateIcon(questId: String, iconResourceId: Int)
+
  //   /**
  //    * Set completion date for a quest.
  //    *

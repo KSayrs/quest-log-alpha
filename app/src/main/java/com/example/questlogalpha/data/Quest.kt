@@ -31,6 +31,7 @@ import kotlin.collections.ArrayList
  *
  * @param title           title of the quest
  * @param description     description for the quest
+ * @param icon            icon resource id for the quest
  * @param completed       is the quest complete
  * @param visible         is the quest visible by default in the recyclerView
  * @param difficulty      difficulty of the quest
@@ -43,36 +44,31 @@ data class Quest(
     @ColumnInfo var title: String,
     @ColumnInfo var description: String = "",
 
+    @ColumnInfo var icon: Int = 0,
+
     @ColumnInfo(name = "rewards") var rewards: ArrayList<SkillReward> = arrayListOf(),
 
     @ColumnInfo var notifications: ArrayList<StoredNotification> = arrayListOf(),
 
-    @ColumnInfo
-    var completed: Boolean = false,
+    @ColumnInfo var completed: Boolean = false,
 
     //- Quests that aren't available until a future date are hidden.
     //- When a quest becomes available, a notification is sent, silently.
-    @ColumnInfo
-    var visible: Boolean = true,
+    @ColumnInfo var visible: Boolean = true,
 
-    // todo due date/complete by
     // todo come put with a better name for due date
-    @ColumnInfo(name = "due_date")
-    var dueDate: ZonedDateTime? = null,
+    @ColumnInfo(name = "due_date") var dueDate: ZonedDateTime? = null,
 
 
     // todo date available
  //   @ColumnInfo(name = "date_available")
  //   var dateAvailable: ZonedDateTime? = null,
 
-    @ColumnInfo
-    var difficulty: Difficulty = Difficulty.MEDIUM,
+    @ColumnInfo var difficulty: Difficulty = Difficulty.MEDIUM,
 
-    @ColumnInfo
-    var objectives: ArrayList<Objective> = arrayListOf(),
+    @ColumnInfo var objectives: ArrayList<Objective> = arrayListOf(),
 
-    @ColumnInfo
-    var questLine: String = "",
+    @ColumnInfo var questLine: String = "",
 
     // ------------------- BI for stats ---------------------- //
     @ColumnInfo(name="times_completed") var timesCompleted: Int = 0,
