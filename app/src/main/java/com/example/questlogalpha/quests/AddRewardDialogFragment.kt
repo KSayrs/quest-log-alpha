@@ -43,7 +43,7 @@ class AddRewardDialogFragment : DialogFragment() {
         binding.lifecycleOwner = this
 
         val dataSource = QuestLogDatabase.getInstance(activity!!.application).skillsDatabaseDao
-        val viewModelFactory = ViewModelFactory("", null, dataSource, null, activity!!.application)
+        val viewModelFactory = ViewModelFactory("", null, dataSource, null, application = activity!!.application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)
 
         adapter = SkillsAdapter()

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.questlogalpha.data.IconsDao
 import com.example.questlogalpha.data.Quest
 import kotlinx.coroutines.*
 
@@ -11,7 +12,7 @@ import kotlinx.coroutines.*
 /** ************************************************************************************************
  * [ViewModel] for the list of quests.
  * ********************************************************************************************** */
-class QuestsViewModel (val database: QuestsDao) : ViewModel() {
+class QuestsViewModel (val database: QuestsDao, val iconDatabase: IconsDao) : ViewModel() {
 
     private var viewModelJob = Job()
 
@@ -25,6 +26,7 @@ class QuestsViewModel (val database: QuestsDao) : ViewModel() {
     private val _navigateToViewEditQuest = MutableLiveData<String?>()
 
     val quests = database.getAllQuests()
+    val icons = iconDatabase.getAllIcons()
 
     /** When true immediately navigate back to the [com.example.questlogalpha.vieweditquest.ViewEditQuestFragment] */
     val navigateToViewEditQuest: LiveData<String?>

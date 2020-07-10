@@ -65,7 +65,7 @@ class ViewEditQuestFragment : Fragment() {
 
         questId = arguments.questId
 
-        val viewModelFactory = ViewModelFactory(arguments.questId, dataSource, null, globalVariables, application)
+        val viewModelFactory = ViewModelFactory(arguments.questId, dataSource, null, globalVariables, application = application)
         val viewEditQuestViewModel = ViewModelProvider(this, viewModelFactory).get(ViewEditQuestViewModel::class.java)
 
         viewModel = viewEditQuestViewModel

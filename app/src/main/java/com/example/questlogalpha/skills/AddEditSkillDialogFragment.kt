@@ -42,7 +42,7 @@ class AddEditSkillDialogFragment(chosenSkill: Skill? = null) : DialogFragment() 
         dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_fragment_add_edit_skill, null, false)
         val dataSource = QuestLogDatabase.getInstance(activity!!.application).skillsDatabaseDao
         val questsDataSource = QuestLogDatabase.getInstance(activity!!.application).questLogDatabaseDao
-        val viewModelFactory = ViewModelFactory("", questsDataSource, dataSource, null, activity!!.application)
+        val viewModelFactory = ViewModelFactory("", questsDataSource, dataSource, null, application = activity!!.application)
 
         questsViewModel = ViewModelProvider(this, viewModelFactory).get(QuestsViewModel::class.java)
         viewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)

@@ -55,7 +55,7 @@ class QuestsAdapter(private val childFragmentManager: FragmentManager): Recycler
         val item = data[position]
         holder.constraintLayout.quest_title.text = item.title
         holder.constraintLayout.quest_description.text = item.description
-        if(item.icon !=0) {
+        if(item.icon != 0) {
             holder.constraintLayout.quest_icon.setImageResource(item.icon)
         }
 

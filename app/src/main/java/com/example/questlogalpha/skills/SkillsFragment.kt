@@ -43,7 +43,7 @@ class SkillsFragment : Fragment() {
         val binding: FragmentSkillsBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_skills, container, false)
         val application = requireNotNull(this.activity).application
         val dataSource = QuestLogDatabase.getInstance(application).skillsDatabaseDao
-        val viewModelFactory = ViewModelFactory("", null, dataSource, null, application)
+        val viewModelFactory = ViewModelFactory("", null, dataSource, null, application =  application)
         val skillsViewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)
         val adapter = SkillsAdapter()
         binding.skillList.adapter = adapter

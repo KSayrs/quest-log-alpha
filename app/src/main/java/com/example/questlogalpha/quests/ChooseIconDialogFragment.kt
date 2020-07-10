@@ -4,19 +4,24 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.questlogalpha.R
 import com.example.questlogalpha.Util
+import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.Icon
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.DialogFragmentSelectIconBinding
 import com.example.questlogalpha.databinding.IconItemViewBinding
+import com.example.questlogalpha.skills.SkillsViewModel
 import kotlinx.android.synthetic.main.icon_item_view.view.*
 
 /** ************************************************************************************************
@@ -30,6 +35,9 @@ class ChooseIconDialogFragment : DialogFragment() {
         val binding: DialogFragmentSelectIconBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_fragment_select_icon, null, false)
         binding.lifecycleOwner = this
         val dataSource = QuestLogDatabase.getInstance(activity!!.application).iconsDatabaseDao
+        val questsDataSource = QuestLogDatabase.getInstance(activity!!.application).questLogDatabaseDao
+        val viewModelFactory = ViewModelFactory("", questsDataSource, iconsDataSource = dataSource, application = activity!!.application)
+        val viewModel = ViewModelProvider(this, viewModelFactory).get(QuestsViewModel::class.java)
 
         // set up recyclerview
         val mRecyclerView = binding.iconGrid
@@ -37,12 +45,13 @@ class ChooseIconDialogFragment : DialogFragment() {
         val adapter = IconsAdapter()
         mRecyclerView.adapter = adapter
 
-        // todo replace with proper viewmodel call
-        adapter.data = listOf(
-            Icon(R.drawable.ic_scroll_quill, listOf("tag")),
-            Icon(R.drawable.ic_cog, listOf("tag")),
-            Icon(R.drawable.ic_clock, listOf("tag"))
-        )
+        // observe icons
+        viewModel.icons.observe(this, Observer {
+            it?.let {
+                adapter.data = it
+                Log.d(AddRewardDialogFragment.TAG, "it: $it")
+            }
+        })
 
         // there's almost certainly a better way to do this than just making delegates call delegates but it's alpha and it works
         adapter.onIconTapped = { onIconTapped?.invoke(it) }
