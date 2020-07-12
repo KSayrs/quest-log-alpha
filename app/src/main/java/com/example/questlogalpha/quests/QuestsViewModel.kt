@@ -1,9 +1,11 @@
 package com.example.questlogalpha.quests
 
 import android.util.Log
+import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.questlogalpha.data.Icon
 import com.example.questlogalpha.data.IconsDao
 import com.example.questlogalpha.data.Quest
 import kotlinx.coroutines.*
@@ -53,31 +55,39 @@ class QuestsViewModel (val database: QuestsDao, val iconDatabase: IconsDao) : Vi
         }
     }
 
+    // ---------------------- search for icon -------------------------- //
+    fun onIconSearch(desc: String) : LiveData<List<Icon>> {
+        return searchIcons(desc)
+    }
+
+    @WorkerThread
+    fun searchIcons(desc : String) : LiveData<List<Icon>>{
+        return iconDatabase.searchIcons(desc)
+    }
+
     // ----------------------- set quest icon -------------------------- //
-    fun onSetQuestIcon(questId: String, iconResourceId: Int){
+    fun onSetQuestIcon(questId: String, iconResourceId: Int) {
         uiScope.launch {
             Log.d("$TAG onSetQuestIcon", "iconResourceId: $iconResourceId")
             setQuestIcon(questId, iconResourceId)
         }
     }
 
-    private suspend fun setQuestIcon(questId: String, iconResourceId: Int)
-    {
+    private suspend fun setQuestIcon(questId: String, iconResourceId: Int) {
         withContext(Dispatchers.IO) {
             database.updateIcon(questId, iconResourceId)
         }
     }
 
     // ----------------------- complete quest -------------------------- //
-    fun onSetQuestCompletion(questId: String, completed: Boolean){
+    fun onSetQuestCompletion(questId: String, completed: Boolean) {
         uiScope.launch {
             Log.d("$TAG onCompleteQuest", "Completed: $completed")
             setQuestCompletion(questId, completed)
         }
     }
 
-    private suspend fun setQuestCompletion(questId: String, completed: Boolean)
-    {
+    private suspend fun setQuestCompletion(questId: String, completed: Boolean) {
         withContext(Dispatchers.IO) {
             database.updateCompleted(questId, completed)
         }

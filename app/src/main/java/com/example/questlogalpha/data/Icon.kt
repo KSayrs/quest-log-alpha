@@ -32,6 +32,10 @@ interface IconsDao {
     @Query("SELECT * FROM icons_table WHERE drawableResource = :drawableResource LIMIT 1")
     fun getIconWithResourceNumber(drawableResource: Int): Icon?
 
+    /** Search for an [Icon] by tag. */
+    @Query("SELECT * FROM icons_table WHERE tags LIKE '%' || :searchTerms || '%'")
+    fun searchIcons(searchTerms: String) : LiveData<List<Icon>>
+
     /** Insert an [Icon] into the database. If it already exists, replace it. */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertIcon(variable: Icon)

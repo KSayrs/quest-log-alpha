@@ -21,7 +21,6 @@ import com.example.questlogalpha.data.Icon
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.DialogFragmentSelectIconBinding
 import com.example.questlogalpha.databinding.IconItemViewBinding
-import com.example.questlogalpha.skills.SkillsViewModel
 import kotlinx.android.synthetic.main.icon_item_view.view.*
 
 /** ************************************************************************************************
@@ -51,6 +50,36 @@ class ChooseIconDialogFragment : DialogFragment() {
                 adapter.data = it
                 Log.d(AddRewardDialogFragment.TAG, "it: $it")
             }
+        })
+
+        // implement search logic
+        binding.iconSearchView.setOnQueryTextListener(object: androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    // observe icons, again I guess
+                    viewModel.onIconSearch(query).observe(this@ChooseIconDialogFragment, Observer { list ->
+                        list?.let {
+                            adapter.data = it
+                        }
+                    })
+                    adapter.notifyDataSetChanged()
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    // observe icons
+                    viewModel.searchIcons(newText).observe(this@ChooseIconDialogFragment, Observer { list ->
+                        list?.let {
+                            adapter.data = it
+                        }
+                    })
+                    adapter.notifyDataSetChanged()
+                }
+                return true
+            }
+
         })
 
         // there's almost certainly a better way to do this than just making delegates call delegates but it's alpha and it works
