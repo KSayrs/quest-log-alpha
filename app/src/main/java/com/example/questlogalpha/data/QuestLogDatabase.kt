@@ -50,6 +50,7 @@ abstract class QuestLogDatabase : RoomDatabase() {
                        override fun onCreate(db: SupportSQLiteDatabase) {
                            Log.d("KSLOG", "Database onCreate() override")
 
+                           // notification id
                            Executors.newSingleThreadExecutor().execute {
                                Log.d("KSLOG", "Executing thread 1")
                                getInstance(context).globalVariableDatabaseDao.insertVariable(
@@ -62,7 +63,6 @@ abstract class QuestLogDatabase : RoomDatabase() {
                                Log.d("KSLOG", "Executing thread 2")
 
                                val list = populateIconList()
-
                                for (icon in list)
                                {
                                    getInstance(context).iconsDatabaseDao.insertIcon(icon)
