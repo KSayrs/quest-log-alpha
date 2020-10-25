@@ -27,7 +27,11 @@ class QuestsViewModel (val database: QuestsDao, val iconDatabase: IconsDao) : Vi
 
     private val _navigateToViewEditQuest = MutableLiveData<String?>()
 
-    val quests = database.getAllQuests()
+    var viewingCompleted = MutableLiveData<Boolean>(false)
+        private set
+
+    var quests = database.getAllQuests()
+
     val icons = iconDatabase.getAllIcons()
 
     /** When true immediately navigate back to the [com.example.questlogalpha.vieweditquest.ViewEditQuestFragment] */
@@ -42,6 +46,8 @@ class QuestsViewModel (val database: QuestsDao, val iconDatabase: IconsDao) : Vi
     init {
         Log.d(TAG,"QuestsViewModel initiated")
     }
+
+    // ---------------------- create/edit quest (navigation) -------------------------- //
 
     fun onQuestCreate() {
         uiScope.launch {

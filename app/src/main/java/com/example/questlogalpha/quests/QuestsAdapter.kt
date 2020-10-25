@@ -40,7 +40,24 @@ class QuestItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.
 class QuestsAdapter(private val childFragmentManager: FragmentManager): RecyclerView.Adapter<QuestItemViewHolder>() {
     var data = listOf<Quest>()
         set(value) {
-            field = value
+
+            val filteredList = mutableListOf<Quest>()
+
+            if(viewModel != null) {
+                if (viewModel!!.viewingCompleted.value!!) {
+                    for (item in value) {
+                        if (item.completed) filteredList.add(item)
+                    }
+                }
+                else {
+                    for (item in value) {
+                        if (!item.completed) filteredList.add(item)
+                    }
+                }
+
+                field = filteredList
+            }
+            else field = value
             notifyDataSetChanged()
         }
 
@@ -61,7 +78,7 @@ class QuestsAdapter(private val childFragmentManager: FragmentManager): Recycler
 
         // set up condition-based styling
         // since incomplete is the default, we only need to restyle for completed quests
-        if(item.completed){
+        if(item.completed) {
             styleComplete(holder.constraintLayout.quest_title)
         }
     }

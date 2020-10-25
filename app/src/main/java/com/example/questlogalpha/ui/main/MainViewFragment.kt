@@ -1,6 +1,7 @@
 package com.example.questlogalpha.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,9 +21,10 @@ class MainViewFragment : Fragment() {
 
         binding.lifecycleOwner = this
 
-        // left/right scrolling. This activity probably won't actually need anything else.
-        // binding.viewPager.adapter = sectionsPagerAdapter
-        binding.viewPager.adapter = SectionsPagerAdapter(activity!!.applicationContext, childFragmentManager) // so far this one doesn't have the blank back problem
+        val toolbar = binding.title
+
+        // left/right scrolling. This fragment probably won't actually need anything else.
+        binding.viewPager.adapter = SectionsPagerAdapter(activity!!.applicationContext, childFragmentManager, toolbar) // so far this one doesn't have the blank back problem
         binding.tabs.setupWithViewPager(binding.viewPager)
 
         // set the quests list to be the default landing page
@@ -30,4 +32,5 @@ class MainViewFragment : Fragment() {
 
         return binding.root
     }
+
 }
