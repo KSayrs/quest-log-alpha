@@ -113,7 +113,7 @@ class ViewEditQuestFragment : Fragment() {
 
         // update date on load
         viewEditQuestViewModel.date.observeOnce {
-            setDueDate()
+            if(viewEditQuestViewModel.date.value != null) setDueDate()
         }
 
         // add/update objectives
