@@ -14,7 +14,7 @@ import com.example.questlogalpha.personnage.SkillsDao
 import java.util.concurrent.Executors
 
 
-@Database(entities = [Quest::class, Skill::class, GlobalVariable::class, Icon::class], version = 1, exportSchema = false)
+@Database(entities = [Quest::class, Skill::class, GlobalVariable::class, Icon::class, Familiar::class], version = 1, exportSchema = false)
 @TypeConverters(
     DifficultyConverter::class,
     ZonedDateTimeConverter::class,
@@ -30,6 +30,7 @@ abstract class QuestLogDatabase : RoomDatabase() {
     abstract val skillsDatabaseDao: SkillsDao
     abstract val globalVariableDatabaseDao: GlobalVariablesDao
     abstract val iconsDatabaseDao: IconsDao
+    abstract val familiarsDatabaseDao: FamiliarsDao
 
     companion object {
 
@@ -50,11 +51,15 @@ abstract class QuestLogDatabase : RoomDatabase() {
                        override fun onCreate(db: SupportSQLiteDatabase) {
                            Log.d("KSLOG", "Database onCreate() override")
 
-                           // notification id
+                           // notification id, default familiar
                            Executors.newSingleThreadExecutor().execute {
                                Log.d("KSLOG", "Executing thread 1")
                                getInstance(context).globalVariableDatabaseDao.insertVariable(
                                    GlobalVariable("NotificationId", 100)
+                               )
+
+                               getInstance(context).globalVariableDatabaseDao.insertVariable(
+                                   GlobalVariable("CurrentFamiliar", R.drawable.ic_familiar_cat)
                                )
                            }
 
@@ -63,20 +68,20 @@ abstract class QuestLogDatabase : RoomDatabase() {
                                Log.d("KSLOG", "Executing thread 2")
 
                                val list = populateIconList()
-                               for (icon in list)
-                               {
+                               for (icon in list) {
                                    getInstance(context).iconsDatabaseDao.insertIcon(icon)
                                }
                            }
 
-                           //        // todo pre-populate skills
-                   //        // new thread for inserting stuff
+                           // familiars
+                           Executors.newSingleThreadExecutor().execute {
+                               Log.d("KSLOG", "Executing thread 3")
 
-                   //     //  Executors.newSingleThreadScheduledExecutor().execute(Runnable {
-                   //     //      getInstance(context.applicationContext).skillsDatabaseDao.insertSkill(Skill("Fencing"))
-                   //     //      getInstance(context.applicationContext).skillsDatabaseDao.insertSkill(Skill("Dancing"))
-                   //     //      getInstance(context.applicationContext).skillsDatabaseDao.insertSkill(Skill("Reputation"))
-                   //     //  })
+                               val list = populateFamiliarList()
+                               for (familiar in list) {
+                                   getInstance(context).familiarsDatabaseDao.insertFamiliar(familiar)
+                               }
+                           }
 
                            super.onCreate(db)
                        }
@@ -126,6 +131,16 @@ abstract class QuestLogDatabase : RoomDatabase() {
             list.add(Icon(R.drawable.ic_wallet, listOf("wallet", "money")) )
             list.add(Icon(R.drawable.ic_stopwatch, listOf("stopwatch", "clock", "time")) )
             list.add(Icon(R.drawable.ic_stabbed_note, listOf("note", "parchment", "paper", "stabbed", "scroll")) )
+
+            return list
+        }
+
+        private fun populateFamiliarList() : ArrayList<Familiar> {
+            val list = arrayListOf<Familiar>()
+
+            list.add(Familiar(R.drawable.ic_familiar_cat))
+            list.add(Familiar(R.drawable.ic_familiar_owl))
+            list.add(Familiar(R.drawable.ic_familiar_spider))
 
             return list
         }

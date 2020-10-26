@@ -26,6 +26,16 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layoutManager = "androidx.recyclerview.widget.LinearLayoutManager"
                 />
+        <ImageView
+                android:id="@+id/current_familiar"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:tint="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="@id/fab"
+                app:layout_constraintEnd_toStartOf="@id/fab"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/fab"
+                app:srcCompat="?attr/actionModeSelectAllDrawable" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab"

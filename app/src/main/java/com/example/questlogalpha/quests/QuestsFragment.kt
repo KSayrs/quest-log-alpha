@@ -9,15 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
-import com.example.questlogalpha.data.Quest
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentQuestsBinding
 import com.example.questlogalpha.skills.SkillsViewModel
 import com.example.questlogalpha.toast
 import com.example.questlogalpha.ui.main.MainViewFragmentDirections
+import kotlinx.coroutines.runBlocking
 
 
 /** ************************************************************************************************
@@ -73,7 +72,10 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
         val dataSource = QuestLogDatabase.getInstance(application).questLogDatabaseDao
         val skillsDataSource = QuestLogDatabase.getInstance(application).skillsDatabaseDao
         val iconsDataSource = QuestLogDatabase.getInstance(application).iconsDatabaseDao
-        val viewModelFactory = ViewModelFactory("", dataSource, skillsDataSource, null, iconsDataSource, application = application)
+        val globalVariables = QuestLogDatabase.getInstance(application).globalVariableDatabaseDao
+        val familiarsDataSource = QuestLogDatabase.getInstance(application).familiarsDatabaseDao
+
+        val viewModelFactory = ViewModelFactory("", dataSource, skillsDataSource, globalVariables, iconsDataSource, application = application)
 
         val questsViewModel = ViewModelProvider(this, viewModelFactory).get(QuestsViewModel::class.java)
         val skillsViewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)
@@ -125,8 +127,15 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
 
             true
         }
-
         setHasOptionsMenu(true)
+
+        // set current familiar icon
+        questsViewModel.currentFamiliar.observe(viewLifecycleOwner, Observer {
+            Log.d(TAG, "observing current familiar")
+            if(questsViewModel.currentFamiliar.value != null) {
+                binding.currentFamiliar.setImageResource(runBlocking { questsViewModel.currentFamiliar.value!! })
+            }
+        })
 
         // Add an Observer on the state variable for Navigating when add quest button is pressed.
         questsViewModel.navigateToViewEditQuest.observe(viewLifecycleOwner, Observer { questId ->
