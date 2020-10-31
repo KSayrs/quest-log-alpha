@@ -43,8 +43,9 @@ class AddEditSkillDialogFragment(chosenSkill: Skill? = null) : DialogFragment() 
         val dataSource = QuestLogDatabase.getInstance(activity!!.application).skillsDatabaseDao
         val questsDataSource = QuestLogDatabase.getInstance(activity!!.application).questLogDatabaseDao
         val iconsDataSource = QuestLogDatabase.getInstance(activity!!.application).iconsDatabaseDao
+        val familiarsDataSource = QuestLogDatabase.getInstance(activity!!.application).familiarsDatabaseDao
         val globalVariables = QuestLogDatabase.getInstance(activity!!.application).globalVariableDatabaseDao
-        val viewModelFactory = ViewModelFactory("", questsDataSource, dataSource, globalVariables, iconsDataSource = iconsDataSource, application = activity!!.application)
+        val viewModelFactory = ViewModelFactory("", questsDataSource, dataSource, familiarsDataSource, globalVariables, iconsDataSource = iconsDataSource, application = activity!!.application)
 
         questsViewModel = ViewModelProvider(this, viewModelFactory).get(QuestsViewModel::class.java)
         viewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)

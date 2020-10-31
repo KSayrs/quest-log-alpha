@@ -48,6 +48,14 @@ interface FamiliarsDao {
     fun getFamiliarByResourceId(drawableId: Int): List<Familiar>?
 
     /**
+     * Select all familiar images from the familiar table.
+     *
+     * @return all familiar drawable resource Ids.
+     */
+    @Query("SELECT drawable_resource FROM familiars_table")
+    fun getAllFamiliarImages(): LiveData<List<Int>>
+
+    /**
      * Insert a familiar into the database. If the familiar already exists, replace it.
      *
      * @param familiar the familiar to be inserted.

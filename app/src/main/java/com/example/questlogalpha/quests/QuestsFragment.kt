@@ -3,6 +3,7 @@ package com.example.questlogalpha.quests
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -13,10 +14,10 @@ import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentQuestsBinding
+import com.example.questlogalpha.observeOnce
 import com.example.questlogalpha.skills.SkillsViewModel
 import com.example.questlogalpha.toast
 import com.example.questlogalpha.ui.main.MainViewFragmentDirections
-import kotlinx.coroutines.runBlocking
 
 
 /** ************************************************************************************************
@@ -75,7 +76,7 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
         val globalVariables = QuestLogDatabase.getInstance(application).globalVariableDatabaseDao
         val familiarsDataSource = QuestLogDatabase.getInstance(application).familiarsDatabaseDao
 
-        val viewModelFactory = ViewModelFactory("", dataSource, skillsDataSource, globalVariables, iconsDataSource, application = application)
+        val viewModelFactory = ViewModelFactory("", dataSource, skillsDataSource, familiarsDataSource, globalVariables, iconsDataSource, application = application)
 
         val questsViewModel = ViewModelProvider(this, viewModelFactory).get(QuestsViewModel::class.java)
         val skillsViewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)
@@ -129,13 +130,23 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
         }
         setHasOptionsMenu(true)
 
-        // set current familiar icon
-        questsViewModel.currentFamiliar.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "observing current familiar")
-            if(questsViewModel.currentFamiliar.value != null) {
-                binding.currentFamiliar.setImageResource(runBlocking { questsViewModel.currentFamiliar.value!! })
+        val familiarSpinner: Spinner = binding.currentFamiliar
+        familiarSpinner.onItemSelectedListener = viewModel
+
+        // set the spinner data on load
+        questsViewModel.loaded.observe(viewLifecycleOwner, Observer {
+            Log.d(TAG, "loaded: it: $it")
+            if(it) {
+                val familiarAdapter = FamiliarSpinnerAdapter(
+                    context!!,
+                    (questsViewModel.familiarImages.value!!).toTypedArray()
+                )
+
+                familiarSpinner.adapter = familiarAdapter
+                familiarSpinner.setSelection(questsViewModel.getCurrentFamiliarOrdinal(familiarAdapter))
             }
         })
+
 
         // Add an Observer on the state variable for Navigating when add quest button is pressed.
         questsViewModel.navigateToViewEditQuest.observe(viewLifecycleOwner, Observer { questId ->
@@ -176,4 +187,5 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
     companion object {
         const val TAG: String = "KSLOG: QuestsFragment"
     }
+
 }

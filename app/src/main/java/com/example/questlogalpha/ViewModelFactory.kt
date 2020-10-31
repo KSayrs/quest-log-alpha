@@ -19,6 +19,7 @@ package com.example.questlogalpha
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.questlogalpha.data.FamiliarsDao
 import com.example.questlogalpha.data.GlobalVariablesDao
 import com.example.questlogalpha.data.IconsDao
 import com.example.questlogalpha.data.QuestLogDatabase
@@ -37,6 +38,7 @@ class ViewModelFactory constructor(
     private val questId: String,
     private val questsDataSource: QuestsDao? = null,
     private val skillsDataSource: SkillsDao? = null,
+    private val familiarsDataSource: FamiliarsDao? = null,
     private val globalVariableDataSource: GlobalVariablesDao? = null,
     private val iconsDataSource: IconsDao? = null,
     private val application: Application
@@ -46,7 +48,7 @@ class ViewModelFactory constructor(
         with(modelClass) {
             when {
                 isAssignableFrom(QuestsViewModel::class.java) ->
-                    QuestsViewModel(questsDataSource!!, iconsDataSource!!, globalVariableDataSource!!)
+                    QuestsViewModel(questsDataSource!!, iconsDataSource!!, globalVariableDataSource!!, familiarsDataSource!!)
                 isAssignableFrom(ViewEditQuestViewModel::class.java) ->
                     ViewEditQuestViewModel(questId, questsDataSource!!, globalVariableDataSource!!, application)
                 isAssignableFrom(SkillsViewModel::class.java) ->

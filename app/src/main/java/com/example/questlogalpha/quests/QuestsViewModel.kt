@@ -1,23 +1,23 @@
 package com.example.questlogalpha.quests
 
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import androidx.annotation.WorkerThread
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.questlogalpha.data.GlobalVariablesDao
-import com.example.questlogalpha.data.Icon
-import com.example.questlogalpha.data.IconsDao
-import com.example.questlogalpha.data.Quest
+import androidx.lifecycle.*
+import com.example.questlogalpha.data.*
 import kotlinx.coroutines.*
+import java.util.*
 
 // if you'll need application stuff, change this to inherit from AndroidViewModel
 /** ************************************************************************************************
  * [ViewModel] for the list of quests.
  * ********************************************************************************************** */
 @Suppress("DeferredResultUnused")
-class QuestsViewModel (val database: QuestsDao, val iconDatabase: IconsDao, val globalVariables: GlobalVariablesDao) : ViewModel() {
+class QuestsViewModel(val database: QuestsDao,
+                      val iconDatabase: IconsDao,
+                      val globalVariables: GlobalVariablesDao,
+                      val familiarDatabase: FamiliarsDao) : ViewModel(), AdapterView.OnItemSelectedListener {
 
     private var viewModelJob = Job()
 
@@ -35,7 +35,16 @@ class QuestsViewModel (val database: QuestsDao, val iconDatabase: IconsDao, val 
 
     var quests = database.getAllQuests()
 
-    val currentFamiliar = MutableLiveData<Int>()
+    val familiarImages = familiarDatabase.getAllFamiliarImages()
+    //val familiars = familiarDatabase.getAllFamiliars()
+
+    private val currentFamiliar = MutableLiveData<GlobalVariable>()
+    private val currentFamiliarOrdinal = MutableLiveData<Int>(0)
+
+    val familiarDataLoaded = MutableLiveData<Boolean>(false)
+
+    // ...because this is what we'll want to expose
+    val loaded = MediatorLiveData<Boolean>()
 
     val icons = iconDatabase.getAllIcons()
 
@@ -49,14 +58,24 @@ class QuestsViewModel (val database: QuestsDao, val iconDatabase: IconsDao, val 
     }
 
     init {
-        Log.d(TAG,"QuestsViewModel initiated")
+        Log.d(TAG, "QuestsViewModel initiated")
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val familiarIcon =  async { globalVariables.getVariableWithName("CurrentFamiliar")!!.value }
+                val familiarIcon =  async { globalVariables.getVariableWithName("CurrentFamiliar")!! }
 
                 val loadedFamiliar = familiarIcon.await()
                 async { currentFamiliar.postValue(loadedFamiliar) }
+            }
+        }
+
+        // merge the familiar loading data
+        loaded.addSource(familiarImages) { result ->
+            result?.let { loaded.value = result.isNotEmpty() && currentFamiliar.value != null }
+        }
+        loaded.addSource(currentFamiliar) { result ->
+            result?.let {
+                loaded.value = !familiarImages.value.isNullOrEmpty()
             }
         }
     }
@@ -81,7 +100,7 @@ class QuestsViewModel (val database: QuestsDao, val iconDatabase: IconsDao, val 
     }
 
     @WorkerThread
-    fun searchIcons(desc : String) : LiveData<List<Icon>>{
+    fun searchIcons(desc: String) : LiveData<List<Icon>>{
         return iconDatabase.searchIcons(desc)
     }
 
@@ -138,6 +157,35 @@ class QuestsViewModel (val database: QuestsDao, val iconDatabase: IconsDao, val 
         withContext(Dispatchers.IO) {
             database.updateQuest(quest)
         }
+    }
+
+    // -------------------------- familiar selection ------------------------------ //
+    override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+        val item = parent.getItemAtPosition(position) as Int
+        currentFamiliar.value!!.value = item // .value.value is kind of fun
+        currentFamiliarOrdinal.value = position
+
+        // update database
+        uiScope.launch {
+            withContext(Dispatchers.IO) {
+                globalVariables.updateVariable(currentFamiliar.value!!)
+            }
+        }
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        Log.e(TAG, "No familiar selected!")
+    }
+
+    fun getCurrentFamiliarOrdinal(adapter: FamiliarSpinnerAdapter) : Int {
+        for (i in 0 until adapter.count) {
+            val familiar: Int = adapter.getItem(i) as Int
+            if(familiar == currentFamiliar.value!!.value) {
+                return i
+            }
+        }
+        Log.e(TAG, "current familiar not found in adapter list!!")
+        return 0
     }
 
     // -------------------------- log tag ------------------------------ //

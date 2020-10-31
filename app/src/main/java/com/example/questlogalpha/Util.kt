@@ -1,7 +1,9 @@
 package com.example.questlogalpha
 
 import android.content.Context
+import android.content.res.Resources
 import android.util.Log
+import android.util.TypedValue
 import android.widget.Toast
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -97,6 +99,15 @@ class Util {
         /** Show a long toast */
         fun showLongToast(context: Context, text: String) {
             Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+        }
+
+        /**  Converts a [dp] value into its equivalent in px */
+        fun dpToPixels(dp: Float, resources: Resources) : Int {
+            return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp,
+                resources.displayMetrics
+            ).toInt()
         }
 
         // -------------------------- log tag ------------------------------ //

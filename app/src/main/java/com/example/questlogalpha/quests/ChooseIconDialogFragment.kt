@@ -36,7 +36,8 @@ class ChooseIconDialogFragment : DialogFragment() {
         val dataSource = QuestLogDatabase.getInstance(activity!!.application).iconsDatabaseDao
         val questsDataSource = QuestLogDatabase.getInstance(activity!!.application).questLogDatabaseDao
         val globalVariables = QuestLogDatabase.getInstance(activity!!.application).globalVariableDatabaseDao
-        val viewModelFactory = ViewModelFactory("", questsDataSource, globalVariableDataSource = globalVariables, iconsDataSource = dataSource, application = activity!!.application)
+        val familiarsDataSource = QuestLogDatabase.getInstance(activity!!.application).familiarsDatabaseDao
+        val viewModelFactory = ViewModelFactory("", questsDataSource, globalVariableDataSource = globalVariables, iconsDataSource = dataSource, familiarsDataSource = familiarsDataSource, application = activity!!.application)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(QuestsViewModel::class.java)
 
         // set up recyclerview
