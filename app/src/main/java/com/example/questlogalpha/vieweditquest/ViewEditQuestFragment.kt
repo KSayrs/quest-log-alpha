@@ -259,7 +259,7 @@ class ViewEditQuestFragment : Fragment() {
                 textStoredNotification.contentText = bind!!.viewEditQuestDescriptionEditText.text.toString()
                 textStoredNotification.contentTitle = bind!!.viewEditQuestTitleEditText.text.toString()
                 textStoredNotification.autoCancel = false
-                textStoredNotification.icon = R.drawable.ic_scroll_quill
+                textStoredNotification.icon = if (viewEditQuestViewModel.currentFamiliar.value != null) viewEditQuestViewModel.currentFamiliar.value!!.value else R.drawable.ic_scroll_quill
                 textStoredNotification.actions = actionList
 
                 val storedDeleteIntent = StoredIntent(NotificationIntentService.ACTION_DISMISS_SWIPE, extras, viewModel!!.getNextNotificationId())
