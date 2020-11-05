@@ -259,7 +259,8 @@ class ViewEditQuestFragment : Fragment() {
                 textStoredNotification.contentText = bind!!.viewEditQuestDescriptionEditText.text.toString()
                 textStoredNotification.contentTitle = bind!!.viewEditQuestTitleEditText.text.toString()
                 textStoredNotification.autoCancel = false
-                textStoredNotification.icon = if (viewEditQuestViewModel.currentFamiliar.value != null) viewEditQuestViewModel.currentFamiliar.value!!.value else R.drawable.ic_scroll_quill
+                textStoredNotification.icon = R.drawable.ic_scroll_quill
+                textStoredNotification.bigIcon = if (viewEditQuestViewModel.currentFamiliar.value != null) viewEditQuestViewModel.currentFamiliar.value!!.value else R.drawable.ic_scroll_quill
                 textStoredNotification.actions = actionList
 
                 val storedDeleteIntent = StoredIntent(NotificationIntentService.ACTION_DISMISS_SWIPE, extras, viewModel!!.getNextNotificationId())
@@ -581,6 +582,7 @@ class ViewEditQuestFragment : Fragment() {
         builder.setContentTitle(notification.contentTitle)
         builder.setContentText(notification.contentText)
         builder.setSmallIcon(notification.icon)
+        builder.setLargeIcon(Util.drawableToBitmap(resources.getDrawable(notification.bigIcon, null)))
         builder.priority = notification.channelPriority
         builder.setAutoCancel(notification.autoCancel)
 
@@ -601,6 +603,7 @@ class ViewEditQuestFragment : Fragment() {
             "\n contentText: ${notification.contentText}" +
             "\n priority: ${notification.channelPriority}" +
             "\n icon path: ${notification.icon}" +
+            "\n big icon path: ${notification.bigIcon}" +
             "\n setAutoCancel: ${notification.autoCancel}" +
             "\n deleteIntent: ${notification.deleteIntent}" +
             "\n actions: ${notification.actions}")
