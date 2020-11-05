@@ -100,7 +100,7 @@ object NotificationUtil {
         Log.d(TAG, "formatNotificationText: dueDate: $dueDate")
         Log.d(TAG, "formatNotificationText: notificationTime: $notificationTime")
 
-        val offset = notificationTime.minusMonths(1)
+        val offset = if(handleMonthOffset) notificationTime.minusMonths(1) else notificationTime
 
         var remainingTime = dueDate.toInstant().epochSecond - offset.toInstant().epochSecond
 

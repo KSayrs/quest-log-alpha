@@ -420,7 +420,7 @@ class ViewEditQuestFragment : Fragment() {
 
             calendar.set(Calendar.YEAR, year)
             calendar.set(Calendar.MONTH, month)
-            calendar.set(Calendar.DATE, day)
+            calendar.set(Calendar.DAY_OF_MONTH, day)
 
             timeDialog.show(childFragmentManager, "addTime")
         }
@@ -433,8 +433,8 @@ class ViewEditQuestFragment : Fragment() {
             viewModel!!.onSetDate(
                 ZonedDateTime.of(
                     calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DATE),
+                    calendar.get(Calendar.MONTH)+1,
+                    calendar.get(Calendar.DAY_OF_MONTH),
                     calendar.get(Calendar.HOUR_OF_DAY),
                     calendar.get(Calendar.MINUTE),
                     0, // we're not getting that specific lol
@@ -454,8 +454,8 @@ class ViewEditQuestFragment : Fragment() {
     /** Set the text for the due date flag */
     private fun setDueDate() {
         if(viewModel!!.date.value != null) {
-            val offset = viewModel!!.date.value!!.plusMonths(1)
-            var remainingTime = offset.toEpochSecond() - ZonedDateTime.now().toEpochSecond()
+            val offset = viewModel!!.date.value!!.minusDays(0)
+            var remainingTime = (viewModel!!.date.value!!).toEpochSecond() - ZonedDateTime.now().toEpochSecond()
 
             val weeksDifference = remainingTime / NotificationUtil.SECONDS_PER_WEEK
             Log.d(TAG, "weeksDifference: + $weeksDifference")

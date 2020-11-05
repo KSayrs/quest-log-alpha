@@ -91,7 +91,7 @@ class PickNotificationTimeDialogFragment : DialogFragment(), AdapterView.OnItemS
                         PickNotificationTimeDialogFragment.Group.TimeDue -> {
 
                             Log.d(TAG, "chosen time: ${questDueDate!!.toInstant().toEpochMilli()} | System: ${System.currentTimeMillis()}")
-                            val plusOffset = questDueDate!!.plusMonths(1L)
+                            val plusOffset = questDueDate!!.plusMonths(0)
                             onPositiveButtonClicked?.invoke(plusOffset!!.toInstant().toEpochMilli())
                         }
                         PickNotificationTimeDialogFragment.Group.Spinner -> {
@@ -189,7 +189,7 @@ class PickNotificationTimeDialogFragment : DialogFragment(), AdapterView.OnItemS
             Log.d(TAG, "alarm in millis: $chosenTime | System: ${System.currentTimeMillis()}")
             val millisToZoned = ZonedDateTime.ofInstant(Instant.ofEpochMilli(alarm.timeInMillis), ZoneId.systemDefault())
 
-            bind!!.customTime.text = NotificationUtil.formatNotificationText(questDueDate!!, millisToZoned, true)
+            bind!!.customTime.text = NotificationUtil.formatNotificationText(questDueDate!!, millisToZoned, false)
         }
 
         dialog.show(childFragmentManager, "whatever")

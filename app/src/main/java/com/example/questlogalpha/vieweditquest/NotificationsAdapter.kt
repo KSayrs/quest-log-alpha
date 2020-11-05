@@ -45,9 +45,9 @@ class NotificationsAdapter: RecyclerView.Adapter<NotificationItemViewHolder>() {
         val item = data[position]
         if(questDueDate == null) Log.e(TAG, "onBindViewHolder: questDueDate is null!!!")
         else {
-            Log.d(TAG, "Instant. ofEpochMilli(item.notificationTime): ${Instant.ofEpochMilli(item.notificationTime)}")
+            Log.d(TAG, "Instant. ofEpochMilli(item.notificationTime): ${Instant.ofEpochMilli(item.notificationTime).atZone(ZoneId.systemDefault())}")
             val millisToZoned = ZonedDateTime.ofInstant(Instant.ofEpochMilli(item.notificationTime), ZoneId.systemDefault())
-            holder.constraintLayout.alert_time_text.text = NotificationUtil.formatNotificationText(questDueDate!!, millisToZoned, true)
+            holder.constraintLayout.alert_time_text.text = NotificationUtil.formatNotificationText(questDueDate!!, millisToZoned, false)
         }
     }
 
