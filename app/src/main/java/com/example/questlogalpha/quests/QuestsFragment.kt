@@ -14,7 +14,6 @@ import com.example.questlogalpha.R
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.FragmentQuestsBinding
-import com.example.questlogalpha.observeOnce
 import com.example.questlogalpha.skills.SkillsViewModel
 import com.example.questlogalpha.toast
 import com.example.questlogalpha.ui.main.MainViewFragmentDirections
@@ -134,7 +133,7 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
         familiarSpinner.onItemSelectedListener = viewModel
 
         // set the spinner data on load
-        questsViewModel.loaded.observe(viewLifecycleOwner, Observer {
+        questsViewModel.familiarLoaded.observe(viewLifecycleOwner, Observer {
             Log.d(TAG, "loaded: it: $it")
             if(it) {
                 val familiarAdapter = FamiliarSpinnerAdapter(

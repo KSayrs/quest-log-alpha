@@ -7,7 +7,6 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.*
 import com.example.questlogalpha.data.*
 import kotlinx.coroutines.*
-import java.util.*
 
 // if you'll need application stuff, change this to inherit from AndroidViewModel
 /** ************************************************************************************************
@@ -36,15 +35,12 @@ class QuestsViewModel(val database: QuestsDao,
     var quests = database.getAllQuests()
 
     val familiarImages = familiarDatabase.getAllFamiliarImages()
-    //val familiars = familiarDatabase.getAllFamiliars()
 
     private val currentFamiliar = MutableLiveData<GlobalVariable>()
     private val currentFamiliarOrdinal = MutableLiveData<Int>(0)
 
-    val familiarDataLoaded = MutableLiveData<Boolean>(false)
-
     // ...because this is what we'll want to expose
-    val loaded = MediatorLiveData<Boolean>()
+    val familiarLoaded = MediatorLiveData<Boolean>()
 
     val icons = iconDatabase.getAllIcons()
 
@@ -70,12 +66,12 @@ class QuestsViewModel(val database: QuestsDao,
         }
 
         // merge the familiar loading data
-        loaded.addSource(familiarImages) { result ->
-            result?.let { loaded.value = result.isNotEmpty() && currentFamiliar.value != null }
+        familiarLoaded.addSource(familiarImages) { result ->
+            result?.let { familiarLoaded.value = result.isNotEmpty() && currentFamiliar.value != null }
         }
-        loaded.addSource(currentFamiliar) { result ->
+        familiarLoaded.addSource(currentFamiliar) { result ->
             result?.let {
-                loaded.value = !familiarImages.value.isNullOrEmpty()
+                familiarLoaded.value = !familiarImages.value.isNullOrEmpty()
             }
         }
     }
@@ -164,6 +160,25 @@ class QuestsViewModel(val database: QuestsDao,
         val item = parent.getItemAtPosition(position) as Int
         currentFamiliar.value!!.value = item // .value.value is kind of fun
         currentFamiliarOrdinal.value = position
+
+        // i hate this but this is the only thing that will work
+     // viewModelScope.launch {
+     //     withContext(Dispatchers.IO) {
+     //         val quests =  async { database.getAllQuests() }
+
+     //         val loadedQuests = quests.await()
+     //         if(loadedQuests.value != null) {
+     //             for (quest in loadedQuests.value!!) {
+     //                 if (quest.notifications.isNotEmpty()) {
+     //                     for (notification in quest.notifications) {
+     //                         notification.bigIcon = currentFamiliar.value!!.value
+     //                     }
+     //                 }
+     //                 database.updateQuest(quest)
+     //             }
+     //         }
+     //     }
+     // }
 
         // update database
         uiScope.launch {
