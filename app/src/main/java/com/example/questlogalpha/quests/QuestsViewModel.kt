@@ -168,8 +168,12 @@ class QuestsViewModel(application: Application,
     // -------------------------- familiar selection ------------------------------ //
     override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
         val item = parent.getItemAtPosition(position) as Int
+
+        if(currentFamiliar.value!!.value == item) return // don't update anything if it's the same
+
         currentFamiliar.value!!.value = item // .value.value is kind of fun
         currentFamiliarOrdinal.value = position
+
 
         // update alarms with new familiar icon
         uiScope.launch {
