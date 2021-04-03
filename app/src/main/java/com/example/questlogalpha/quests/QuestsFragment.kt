@@ -47,23 +47,23 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
     }
 
     // this has to be here for onPrepare to be called
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) { super.onCreateOptionsMenu(menu, inflater) }
+  // override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) { super.onCreateOptionsMenu(menu, inflater) }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        if (viewModel == null) Log.e(TAG, "onPrepareOptionsMenu: viewmodel is not ready yet")
-        else {
-            if (viewModel!!.viewingCompleted.value!!) {
-                if(!toolbar.menu.findItem(R.id.action_show_incomplete).isVisible) toolbar.menu.findItem(R.id.action_show_incomplete).isVisible = true
-                toolbar.menu.findItem(R.id.action_show_completed).isVisible = false
-            }
-            else {
-                toolbar.menu.findItem(R.id.action_show_incomplete).isVisible = false
-                if(!toolbar.menu.findItem(R.id.action_show_completed).isVisible) toolbar.menu.findItem(R.id.action_show_completed).isVisible = true
-            }
-        }
+  // override fun onPrepareOptionsMenu(menu: Menu) {
+  //     if (viewModel == null) Log.e(TAG, "onPrepareOptionsMenu: viewmodel is not ready yet")
+  //     else {
+  //         if (viewModel!!.viewingCompleted.value!!) {
+  //             if(!toolbar.menu.findItem(R.id.action_show_incomplete).isVisible) toolbar.menu.findItem(R.id.action_show_incomplete).isVisible = true
+  //             toolbar.menu.findItem(R.id.action_show_completed).isVisible = false
+  //         }
+  //         else {
+  //             toolbar.menu.findItem(R.id.action_show_incomplete).isVisible = false
+  //             if(!toolbar.menu.findItem(R.id.action_show_completed).isVisible) toolbar.menu.findItem(R.id.action_show_completed).isVisible = true
+  //         }
+  //     }
 
-        super.onPrepareOptionsMenu(menu)
-    }
+  //     super.onPrepareOptionsMenu(menu)
+  // }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -106,7 +106,7 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
         binding.lifecycleOwner = this
 
         // set up toolbar
-        toolbar.inflateMenu(R.menu.menu_questlist_actionbar)
+      //  toolbar.inflateMenu(R.menu.menu_questlist_actionbar)
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.action_show_incomplete -> {
