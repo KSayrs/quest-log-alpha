@@ -1,11 +1,17 @@
 package com.example.questlogalpha.quests
 
+import android.app.AlarmManager
+import android.app.Application
+import android.app.Notification
+import android.content.Context
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.*
 import com.example.questlogalpha.data.*
+import com.example.questlogalpha.notifications.AlarmData
+import com.example.questlogalpha.notifications.NotificationUtil
 import kotlinx.coroutines.*
 
 // if you'll need application stuff, change this to inherit from AndroidViewModel
@@ -13,10 +19,11 @@ import kotlinx.coroutines.*
  * [ViewModel] for the list of quests.
  * ********************************************************************************************** */
 @Suppress("DeferredResultUnused")
-class QuestsViewModel(val database: QuestsDao,
+class QuestsViewModel(application: Application,
+                      val database: QuestsDao,
                       val iconDatabase: IconsDao,
                       val globalVariables: GlobalVariablesDao,
-                      val familiarDatabase: FamiliarsDao) : ViewModel(), AdapterView.OnItemSelectedListener {
+                      val familiarDatabase: FamiliarsDao) : AndroidViewModel(application), AdapterView.OnItemSelectedListener {
 
     private var viewModelJob = Job()
 
@@ -29,10 +36,13 @@ class QuestsViewModel(val database: QuestsDao,
 
     private val _navigateToViewEditQuest = MutableLiveData<String?>()
 
+    private val context = getApplication<Application>().applicationContext
+
     var viewingCompleted = MutableLiveData<Boolean>(false)
         private set
 
     var quests = database.getAllQuests()
+    var questsFromFragment = listOf<Quest>()
 
     val familiarImages = familiarDatabase.getAllFamiliarImages()
 
@@ -161,24 +171,44 @@ class QuestsViewModel(val database: QuestsDao,
         currentFamiliar.value!!.value = item // .value.value is kind of fun
         currentFamiliarOrdinal.value = position
 
-        // i hate this but this is the only thing that will work
-     // viewModelScope.launch {
-     //     withContext(Dispatchers.IO) {
-     //         val quests =  async { database.getAllQuests() }
+        // update alarms with new familiar icon
+        uiScope.launch {
+            withContext(Dispatchers.IO) {
 
-     //         val loadedQuests = quests.await()
-     //         if(loadedQuests.value != null) {
-     //             for (quest in loadedQuests.value!!) {
-     //                 if (quest.notifications.isNotEmpty()) {
-     //                     for (notification in quest.notifications) {
-     //                         notification.bigIcon = currentFamiliar.value!!.value
-     //                     }
-     //                 }
-     //                 database.updateQuest(quest)
-     //             }
-     //         }
-     //     }
-     // }
+                val alarmManager = context!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+                if (questsFromFragment.isNotEmpty()) {
+                    Log.d(TAG, "iterate through quests")
+
+                    val alarms = arrayListOf<AlarmData>()
+                    for (quest in questsFromFragment) {
+
+                        Log.d(TAG, "iterating")
+                        if (quest.notifications.isNotEmpty()) {
+
+                            Log.d(TAG, "iterating has notifications")
+                            for (notification in quest.notifications) {
+                                notification.bigIcon = currentFamiliar.value!!.value
+                                val pendingIntent = NotificationUtil.scheduleNotification(
+                                    NotificationUtil.getNotification(
+                                        notification,
+                                        quest.id,
+                                        context
+                                    ),
+                                    notification.notificationTime,
+                                    notification.id,
+                                    quest.id,
+                                    context
+                                )
+
+                                alarms.add(AlarmData(pendingIntent, notification.notificationTime))
+                            }
+                        }
+                        for (alarm in alarms) NotificationUtil.setAlarm(alarmManager, alarm)
+                    }
+                }
+            }
+        }
 
         // update database
         uiScope.launch {

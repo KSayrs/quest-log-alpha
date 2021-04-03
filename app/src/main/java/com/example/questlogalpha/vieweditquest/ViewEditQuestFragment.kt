@@ -252,6 +252,7 @@ class ViewEditQuestFragment : Fragment() {
                 val storedDismissIntent = StoredIntent(NotificationIntentService.ACTION_DISMISS, extras, viewModel!!.getNotificationId())
                 val storedDismissPendingIntent = StoredPendingIntent(textStoredNotification.id, storedDismissIntent, PendingIntent.FLAG_CANCEL_CURRENT)
                 val actionList = arrayListOf<StoredAction>()
+
                 actionList.add(NotificationUtil.createStoredSnoozeAction())
 
                 actionList.add(StoredAction(R.drawable.ic_scroll_quill, getString(R.string.dismiss), storedDismissPendingIntent))
@@ -348,49 +349,7 @@ class ViewEditQuestFragment : Fragment() {
 
         // save/delete quest
         if (id == R.id.action_done_editing) {
-
-            if(viewModel!!.date.value != null) {
-                val notifications = arrayListOf<StoredNotification>()
-                notifications.addAll(viewModel!!.storedNotifications.value!!)
-                val alarms = arrayListOf<AlarmData>()
-                for (notification in notifications) {
-
-                    // check for past alarms and remove them
-                    if (notification.notificationTime == 1L || notification.id == -1) {
-                        Log.d(TAG, "*****************************************")
-                        Log.d(TAG, "storedNotification: notification ${notification.id} is invalid. Deleting it")
-                        viewModel!!.onRemoveStoredNotification(notification)
-                        continue
-                    }
-                    if (System.currentTimeMillis() > notification.notificationTime) {
-                        Log.d(TAG, "storedNotification: notification ${notification.id} is in the past. Deleting it")
-                        viewModel!!.onRemoveStoredNotification(notification)
-                        continue
-                    }
-
-                    Log.d(TAG, "*****************************************")
-                    Log.d(TAG, "storedNotification: $notification")
-                    Log.d(TAG, "CurrentTime: ${System.currentTimeMillis()}")
-                    Log.d(TAG, "Alarm set for ${notification.notificationTime}")
-
-                    // thanks https://gist.github.com/BrandonSmith/6679223
-                    if (questId == "") questId = viewModel!!.id.value!!
-                    val pendingIntent = scheduleNotification(
-                        getNotification(
-                            notification
-                        ),
-                        notification.notificationTime,
-                        notification.id
-                    )
-
-                    alarms.add(AlarmData(pendingIntent, notification.notificationTime))
-                }
-
-                viewModel!!.onSaveQuest(context!!.getSystemService(ALARM_SERVICE) as AlarmManager?, alarms)
-            }
-            else {
-                viewModel!!.onSaveQuest()
-            }
+            saveQuest()
         }
         if (id == R.id.action_abandon_quest) {
             viewModel!!.onDeleteQuest()
@@ -404,6 +363,53 @@ class ViewEditQuestFragment : Fragment() {
             nAdapter!!.notifyDataSetChanged()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun saveQuest() {
+        if(viewModel!!.date.value != null) {
+            val notifications = arrayListOf<StoredNotification>()
+            notifications.addAll(viewModel!!.storedNotifications.value!!)
+            val alarms = arrayListOf<AlarmData>()
+            for (notification in notifications) {
+
+                // check for past alarms and remove them
+                if (notification.notificationTime == 1L || notification.id == -1) {
+                    Log.d(TAG, "*****************************************")
+                    Log.d(TAG, "storedNotification: notification ${notification.id} is invalid. Deleting it")
+                    viewModel!!.onRemoveStoredNotification(notification)
+                    continue
+                }
+                if (System.currentTimeMillis() > notification.notificationTime) {
+                    Log.d(TAG, "storedNotification: notification ${notification.id} is in the past. Deleting it")
+                    viewModel!!.onRemoveStoredNotification(notification)
+                    continue
+                }
+
+                Log.d(TAG, "*****************************************")
+                Log.d(TAG, "storedNotification: $notification")
+                Log.d(TAG, "CurrentTime: ${System.currentTimeMillis()}")
+                Log.d(TAG, "Alarm set for ${notification.notificationTime}")
+
+                // thanks https://gist.github.com/BrandonSmith/6679223
+                if (questId == "") questId = viewModel!!.id.value!!
+                val pendingIntent = scheduleNotification(
+                    NotificationUtil.getNotification(
+                        notification,
+                        questId,
+                        context
+                    ),
+                    notification.notificationTime,
+                    notification.id
+                )
+
+                alarms.add(AlarmData(pendingIntent, notification.notificationTime))
+            }
+
+            viewModel!!.onSaveQuest(context!!.getSystemService(ALARM_SERVICE) as AlarmManager?, alarms)
+        }
+        else {
+            viewModel!!.onSaveQuest()
+        }
     }
 
     // private
@@ -550,65 +556,6 @@ class ViewEditQuestFragment : Fragment() {
         notificationIntent.putExtra(NotificationIntentService.NOTIFICATION, notification)
         notificationIntent.putExtra(NotificationIntentService.QUEST_ID, questId)
         return PendingIntent.getBroadcast(context, notificationId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-    }
-
-    /** Build and return a [Notification] out of a stored [notification]. */
-    private fun getNotification(notification: StoredNotification) : Notification
-    {
-        // build notification channel
-        val notificationChannelId = NotificationUtil.createNotificationChannel(
-            context!!,
-            channelId,
-            getString(R.string.familiar_quest_reminders),
-            getString(R.string.familiar_quest_reminders_description),
-            NotificationManager.IMPORTANCE_DEFAULT,
-            true,
-            Notification.VISIBILITY_PUBLIC
-        )
-
-        // to make a new notification id, add
-        // builder.addExtras(NOTIFICATION_ID, number)
-        // and then get it in the receiver.
-
-        val builder = NotificationCompat.Builder(context!!, notificationChannelId!!)
-
-        // iterate through actions and build them
-        for (action in notification.actions){
-            val intent = makeGenericIntent(action.intent)
-            assert(intent != null) { "intent for action ${action.id} is null" }
-            val pendingIntent = PendingIntent.getService(context, action.intent.requestCode, intent!!, action.intent.flags)
-            builder.addAction(action.iconPath, action.title, pendingIntent)
-        }
-        builder.setContentTitle(notification.contentTitle)
-        builder.setContentText(notification.contentText)
-        builder.setSmallIcon(notification.icon)
-        builder.setLargeIcon(Util.drawableToBitmap(resources.getDrawable(notification.bigIcon, null)))
-        builder.priority = notification.channelPriority
-        builder.setAutoCancel(notification.autoCancel)
-
-        // make the delete intent
-        val deleteIntent = makeGenericIntent(notification.deleteIntent)
-        if(deleteIntent != null) {
-            val deletePendingIntent = PendingIntent.getService(
-                context,
-                notification.deleteIntent!!.requestCode,
-                deleteIntent,
-                notification.deleteIntent!!.flags
-            )
-            builder.setDeleteIntent(deletePendingIntent)
-        }
-
-        Log.d(TAG, "getNotification ************************ " +
-            "\n contentTitle: ${notification.contentTitle}" +
-            "\n contentText: ${notification.contentText}" +
-            "\n priority: ${notification.channelPriority}" +
-            "\n icon path: ${notification.icon}" +
-            "\n big icon path: ${notification.bigIcon}" +
-            "\n setAutoCancel: ${notification.autoCancel}" +
-            "\n deleteIntent: ${notification.deleteIntent}" +
-            "\n actions: ${notification.actions}")
-
-        return builder.build()
     }
 
     /** Make and return an [Intent] from a [storedPendingIntent]s data. */

@@ -176,6 +176,7 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
         questsViewModel.quests.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.data = it
+                questsViewModel.questsFromFragment = it
             }
         })
 
