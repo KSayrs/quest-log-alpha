@@ -10,8 +10,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.questlogalpha.AlarmData
-import com.example.questlogalpha.NotificationUtil
+import com.example.questlogalpha.notifications.AlarmData
+import com.example.questlogalpha.notifications.NotificationUtil
 import com.example.questlogalpha.data.*
 import com.example.questlogalpha.quests.Difficulty
 import com.example.questlogalpha.quests.QuestsDao
@@ -44,6 +44,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     val rewards = MutableLiveData<ArrayList<SkillReward>>()
     val date = MutableLiveData<ZonedDateTime>()
     val storedNotifications = MutableLiveData<ArrayList<StoredNotification>>()
+    val currentFamiliar = MutableLiveData<GlobalVariable>()
 
     // todo observe this and wait to show items until this is complete
     private val _dataLoading = MutableLiveData<Boolean>()
@@ -61,6 +62,16 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
         isNewQuest = (questId == "")
         Log.d(TAG, "init: isNewQuest: $isNewQuest")
         Log.d(TAG, "init: questId: $questId")
+
+        // get current familiar
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val familiarIcon =  async { globalVariableData.getVariableWithName("CurrentFamiliar")!! }
+
+                val loadedFamiliar = familiarIcon.await()
+                async { currentFamiliar.postValue(loadedFamiliar) }
+            }
+        }
 
         if (isNewQuest) {
             _id.value = UUID.randomUUID().toString()
@@ -179,6 +190,7 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
             val newQuest = Quest(
                 title.value.toString(), 
                 description.value.toString(),
+                icon = 0,
                 objectives = objectives.value!!,
                 difficulty = difficulty.value!!,
                 rewards = rewards.value!!,

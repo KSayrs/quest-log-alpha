@@ -17,10 +17,12 @@ import android.util.Log
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentManager
 import com.example.questlogalpha.R
 import com.example.questlogalpha.data.SkillReward
 import com.example.questlogalpha.databinding.QuestItemViewBinding
 import com.example.questlogalpha.skills.SkillsViewModel
+import kotlinx.android.synthetic.main.icon_item_view.view.*
 
 /**
  * ViewHolder that holds a single [ConstraintLayout].
@@ -35,10 +37,27 @@ class QuestItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.
 /** ************************************************************************************************
  * A [RecyclerView.Adapter] for quests. Shows quest image, title, and description, as well as the option to edit or remove them.
  * ********************************************************************************************** */
-class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
+class QuestsAdapter(private val childFragmentManager: FragmentManager): RecyclerView.Adapter<QuestItemViewHolder>() {
     var data = listOf<Quest>()
         set(value) {
-            field = value
+
+            val filteredList = mutableListOf<Quest>()
+
+            if(viewModel != null) {
+                if (viewModel!!.viewingCompleted.value!!) {
+                    for (item in value) {
+                        if (item.completed) filteredList.add(item)
+                    }
+                }
+                else {
+                    for (item in value) {
+                        if (!item.completed) filteredList.add(item)
+                    }
+                }
+
+                field = filteredList
+            }
+            else field = value
             notifyDataSetChanged()
         }
 
@@ -53,10 +72,13 @@ class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
         val item = data[position]
         holder.constraintLayout.quest_title.text = item.title
         holder.constraintLayout.quest_description.text = item.description
+        if(item.icon != 0) {
+            holder.constraintLayout.quest_icon.setImageResource(item.icon)
+        }
 
         // set up condition-based styling
         // since incomplete is the default, we only need to restyle for completed quests
-        if(item.completed){
+        if(item.completed) {
             styleComplete(holder.constraintLayout.quest_title)
         }
     }
@@ -86,7 +108,6 @@ class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
         val oldColors: ColorStateList = binding.questTitle.textColors
         binding.questTitle.setOnClickListener {
             val pos = holder.adapterPosition
-
             onQuestTitleTapped?.invoke(data[pos])
 
             if(data[pos].completed){
@@ -98,9 +119,22 @@ class QuestsAdapter: RecyclerView.Adapter<QuestItemViewHolder>() {
             }
         }
 
+        binding.questIcon.setOnClickListener {
+            val pos = holder.adapterPosition
+            val dialog = ChooseIconDialogFragment()
+
+            // man this is silly
+            dialog.onIconTapped = {icon ->
+                viewModel?.onSetQuestIcon(data[pos].id, icon)
+                binding.questIcon.setImageResource(icon)
+                dialog.dismiss()
+            }
+
+            dialog.show(childFragmentManager, "chooseIcon")
+        }
+
         return holder
     }
-
 
     // ----------------------- styling functions ------------------- //
     private fun styleComplete(view: TextView){

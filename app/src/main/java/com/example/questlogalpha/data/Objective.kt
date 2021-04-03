@@ -19,7 +19,7 @@ class ObjectiveArrayConverter {
 
         for (id in obj.keys()) {
             val objObj = obj.getJSONObject(id)
-            val o = Objective(objObj.getString("description"), objObj.getBoolean("completed"), id)
+            val o = Objective(objObj.getString(descriptionTag), objObj.getBoolean(completedTag), id)
             objArray.add(o)
         }
 
@@ -45,8 +45,8 @@ class ObjectiveArrayConverter {
 
         for (objective in objectives) {
             val obj: JSONObject = JSONObject()
-            obj.put("description", objective.description)
-            obj.put("completed", objective.completed)
+            obj.put(descriptionTag, objective.description)
+            obj.put(completedTag, objective.completed)
 
             jsonObject.put(objective.id, obj)
         }
@@ -58,5 +58,7 @@ class ObjectiveArrayConverter {
     // -------------------------- log tag ------------------------------ //
     companion object {
         const val TAG: String = "KSLOG: Objective.kt"
+        private const val descriptionTag: String = "description"
+        private const val completedTag: String = "completed"
     }
 }

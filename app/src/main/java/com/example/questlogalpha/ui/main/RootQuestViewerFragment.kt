@@ -7,8 +7,8 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.questlogalpha.R
 import com.example.questlogalpha.quests.QuestsFragment
-import kotlinx.android.synthetic.main.root_quest_viewer_fragment.view.*
 
+// todo this is unused.... delete
 class RootQuestViewerFragment : Fragment() {
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
@@ -20,7 +20,7 @@ class RootQuestViewerFragment : Fragment() {
          * When this container fragment is created, we fill it with our first
          * "real" fragment
          */
-        transaction?.replace(R.id.root_quest_frame, QuestsFragment())
+      //  transaction?.replace(R.id.root_quest_frame, QuestsFragment())
 
         transaction?.commit()
 

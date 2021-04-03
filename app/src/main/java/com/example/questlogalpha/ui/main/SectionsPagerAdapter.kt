@@ -18,12 +18,12 @@ private val TAB_TITLES = arrayOf(
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  * ********************************************************************************************** */
-class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) : FragmentPagerAdapter(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class SectionsPagerAdapter(private val context: Context, fm: FragmentManager, private val toolbar: androidx.appcompat.widget.Toolbar) : FragmentPagerAdapter(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> PlaceholderFragment.newInstance(position + 1 )
-            1 -> QuestsFragment()
+            1 -> QuestsFragment(toolbar)
             2 -> SkillsFragment()
             else -> {
                 PlaceholderFragment.newInstance(position + 1 )

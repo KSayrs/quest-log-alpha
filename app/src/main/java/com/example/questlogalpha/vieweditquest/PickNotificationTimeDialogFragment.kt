@@ -13,18 +13,15 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
-import com.example.questlogalpha.NotificationUtil
+import com.example.questlogalpha.notifications.NotificationUtil
 import com.example.questlogalpha.R
 import com.example.questlogalpha.Util
 import com.example.questlogalpha.databinding.DialogFragmentPickNotificationTimeBinding
-import java.security.acl.Group
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import kotlin.math.abs
 
 class PickNotificationTimeDialogFragment : DialogFragment(), AdapterView.OnItemSelectedListener {
 
@@ -94,7 +91,7 @@ class PickNotificationTimeDialogFragment : DialogFragment(), AdapterView.OnItemS
                         PickNotificationTimeDialogFragment.Group.TimeDue -> {
 
                             Log.d(TAG, "chosen time: ${questDueDate!!.toInstant().toEpochMilli()} | System: ${System.currentTimeMillis()}")
-                            val plusOffset = questDueDate!!.plusMonths(1L)
+                            val plusOffset = questDueDate!!.plusMonths(0)
                             onPositiveButtonClicked?.invoke(plusOffset!!.toInstant().toEpochMilli())
                         }
                         PickNotificationTimeDialogFragment.Group.Spinner -> {
@@ -192,7 +189,7 @@ class PickNotificationTimeDialogFragment : DialogFragment(), AdapterView.OnItemS
             Log.d(TAG, "alarm in millis: $chosenTime | System: ${System.currentTimeMillis()}")
             val millisToZoned = ZonedDateTime.ofInstant(Instant.ofEpochMilli(alarm.timeInMillis), ZoneId.systemDefault())
 
-            bind!!.customTime.text = NotificationUtil.formatNotificationText(questDueDate!!, millisToZoned, true)
+            bind!!.customTime.text = NotificationUtil.formatNotificationText(questDueDate!!, millisToZoned, false)
         }
 
         dialog.show(childFragmentManager, "whatever")

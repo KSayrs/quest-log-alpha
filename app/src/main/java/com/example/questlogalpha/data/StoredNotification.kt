@@ -17,6 +17,7 @@ data class StoredNotification(
     var contentText:String = "",
     var deleteIntent: StoredPendingIntent? = null,
     var icon:Int = R.drawable.ic_scroll_quill,
+    var bigIcon:Int = R.drawable.ic_familiar_cat,
     var autoCancel:Boolean = false,
     var actions:ArrayList<StoredAction> = arrayListOf(),
     var notificationTime:Long = 1,
@@ -94,6 +95,7 @@ class StoredNotificationArrayConverter {
                 storedNotificationObject.getString(StoredNotification::contentText.name),
                 storedNotificationObject.getStoredPendingIntent(StoredNotification::deleteIntent.name),
                 storedNotificationObject.getInt(StoredNotification::icon.name),
+                storedNotificationObject.getInt(StoredNotification::bigIcon.name),
                 storedNotificationObject.getBoolean(StoredNotification::autoCancel.name),
                 id = id.toInt()
             )
@@ -167,6 +169,7 @@ class StoredNotificationArrayConverter {
             obj.put(StoredNotification::contentTitle.name, notification.contentTitle)
             obj.put(StoredNotification::contentText.name,  notification.contentText)
             obj.put(StoredNotification::icon.name, notification.icon)
+            obj.put(StoredNotification::bigIcon.name, notification.bigIcon)
             obj.put(StoredNotification::autoCancel.name, notification.autoCancel)
             obj.put(StoredNotification::notificationTime.name, notification.notificationTime)
 

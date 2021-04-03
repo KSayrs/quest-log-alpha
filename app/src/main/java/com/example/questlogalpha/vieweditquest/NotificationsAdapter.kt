@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.questlogalpha.NotificationUtil
+import com.example.questlogalpha.notifications.NotificationUtil
 import com.example.questlogalpha.R
 import com.example.questlogalpha.data.StoredNotification
 import com.example.questlogalpha.databinding.QuestFamiliarNotificationViewBinding
@@ -45,9 +45,9 @@ class NotificationsAdapter: RecyclerView.Adapter<NotificationItemViewHolder>() {
         val item = data[position]
         if(questDueDate == null) Log.e(TAG, "onBindViewHolder: questDueDate is null!!!")
         else {
-            Log.d(TAG, "Instant. ofEpochMilli(item.notificationTime): ${Instant.ofEpochMilli(item.notificationTime)}")
+            Log.d(TAG, "Instant. ofEpochMilli(item.notificationTime): ${Instant.ofEpochMilli(item.notificationTime).atZone(ZoneId.systemDefault())}")
             val millisToZoned = ZonedDateTime.ofInstant(Instant.ofEpochMilli(item.notificationTime), ZoneId.systemDefault())
-            holder.constraintLayout.alert_time_text.text = NotificationUtil.formatNotificationText(questDueDate!!, millisToZoned, true)
+            holder.constraintLayout.alert_time_text.text = NotificationUtil.formatNotificationText(questDueDate!!, millisToZoned, false)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.example.questlogalpha
+package com.example.questlogalpha.notifications
 
 import android.app.IntentService
 import android.app.Notification

@@ -21,14 +21,17 @@ class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
     var chosenSkill:Skill? = null // used for dialogs
     var onItemClick: ((Skill, View) -> Unit)? = null
     var onSelectionChange: ((View) -> Unit)? = null
+    var onViewAttached: ((View) -> Unit)? = null
 
-    private var lastClicked:View? = null;
+    private var lastClicked:View? = null
 
     var data = listOf<Skill>()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
+
+    // override --------------------------------------------------------------------------------
 
     override fun getItemCount() = data.size
 
@@ -37,6 +40,7 @@ class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
         val binding = DataBindingUtil.getBinding <SkillItemViewBinding>(holder.itemView)
         binding?.position = position
         binding?.skill = data[position]
+        onViewAttached?.invoke(binding!!.root)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillItemViewHolder {
@@ -49,15 +53,27 @@ class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
             chosenSkill = binding.skill
             onItemClick?.invoke(binding.skill!!, holder.itemView)
 
-            if(lastClicked == null) lastClicked = it
-            else if(lastClicked != it)
-            {
-                onSelectionChange?.invoke(lastClicked!!)
-                lastClicked = it
-            }
+            handleSelectionChange(it)
         }
 
         return holder
+    }
+
+    // public --------------------------------------------------------------------------------
+
+    /** Manually set [lastClicked] to a new view. */
+    fun overrideLastClicked(view: View) {
+        handleSelectionChange(view)
+    }
+
+    // private --------------------------------------------------------------------------------
+
+    private fun handleSelectionChange(view: View) {
+        if(lastClicked == null) lastClicked = view
+        else if(lastClicked != view) {
+            onSelectionChange?.invoke(lastClicked!!)
+            lastClicked = view
+        }
     }
 
     // -------------------------- log tag ------------------------------ //
