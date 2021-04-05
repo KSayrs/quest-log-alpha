@@ -208,7 +208,7 @@ object NotificationUtil {
         // builder.addExtras(NOTIFICATION_ID, number)
         // and then get it in the receiver.
 
-        val builder = NotificationCompat.Builder(context!!, notificationChannelId!!)
+        val builder = NotificationCompat.Builder(context, notificationChannelId!!)
 
         // iterate through actions and build them
         for (action in notification.actions) {

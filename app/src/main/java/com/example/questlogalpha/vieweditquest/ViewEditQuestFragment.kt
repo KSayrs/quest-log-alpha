@@ -460,7 +460,6 @@ class ViewEditQuestFragment : Fragment() {
     /** Set the text for the due date flag */
     private fun setDueDate() {
         if(viewModel!!.date.value != null) {
-            val offset = viewModel!!.date.value!!.minusDays(0)
             var remainingTime = (viewModel!!.date.value!!).toEpochSecond() - ZonedDateTime.now().toEpochSecond()
 
             val weeksDifference = remainingTime / NotificationUtil.SECONDS_PER_WEEK

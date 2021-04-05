@@ -146,7 +146,7 @@ class QuestsAdapter(private val childFragmentManager: FragmentManager): Recycler
     private fun animateStrikeThrough1(tv: TextView) {
         val ANIM_DURATION:Long = 250 //duration of animation in millis
         val length = tv.text.length
-        val x = object: CountDownTimer(ANIM_DURATION, ANIM_DURATION/length) {
+        object: CountDownTimer(ANIM_DURATION, ANIM_DURATION/length) {
 
             val span: Spannable = SpannableString(tv.text)
             val strikethroughSpan:StrikethroughSpan = StrikethroughSpan()

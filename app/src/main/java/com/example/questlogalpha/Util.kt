@@ -116,14 +116,12 @@ class Util {
 
         /**  Converts a [drawable] to a bitmap */
         fun drawableToBitmap(drawable: Drawable): Bitmap? {
-            var bitmap: Bitmap? = null
             if (drawable is BitmapDrawable) {
-                val bitmapDrawable = drawable
-                if (bitmapDrawable.bitmap != null) {
-                    return bitmapDrawable.bitmap
+                if (drawable.bitmap != null) {
+                    return drawable.bitmap
                 }
             }
-            bitmap = if (drawable.intrinsicWidth <= 0 || drawable.intrinsicHeight <= 0) {
+            val bitmap = if (drawable.intrinsicWidth <= 0 || drawable.intrinsicHeight <= 0) {
                 Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888) // Single color bitmap will be created of 1x1 pixel
             }
             else {
