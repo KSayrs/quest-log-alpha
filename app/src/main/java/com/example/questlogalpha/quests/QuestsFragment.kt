@@ -1,8 +1,12 @@
 package com.example.questlogalpha.quests
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -17,6 +21,7 @@ import com.example.questlogalpha.databinding.FragmentQuestsBinding
 import com.example.questlogalpha.skills.SkillsViewModel
 import com.example.questlogalpha.toast
 import com.example.questlogalpha.ui.main.MainViewFragmentDirections
+import com.example.questlogalpha.widget.QuestLogWidgetProvider
 
 
 /** ************************************************************************************************
@@ -75,7 +80,15 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
         val globalVariables = QuestLogDatabase.getInstance(application).globalVariableDatabaseDao
         val familiarsDataSource = QuestLogDatabase.getInstance(application).familiarsDatabaseDao
 
-        val viewModelFactory = ViewModelFactory("", dataSource, skillsDataSource, familiarsDataSource, globalVariables, iconsDataSource, application = application)
+        val viewModelFactory = ViewModelFactory(
+            "",
+            dataSource,
+            skillsDataSource,
+            familiarsDataSource,
+            globalVariables,
+            iconsDataSource,
+            application = application
+        )
 
         val questsViewModel = ViewModelProvider(this, viewModelFactory).get(QuestsViewModel::class.java)
         val skillsViewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)
@@ -135,7 +148,7 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
         // set the spinner data on load
         questsViewModel.familiarLoaded.observe(viewLifecycleOwner, Observer {
             Log.d(TAG, "loaded: it: $it")
-            if(it) {
+            if (it) {
                 val familiarAdapter = FamiliarSpinnerAdapter(
                     context!!,
                     (questsViewModel.familiarImages.value!!).toTypedArray()
@@ -177,6 +190,11 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
             it?.let {
                 adapter.data = it
                 questsViewModel.questsFromFragment = it
+                val appWidgetManager = AppWidgetManager.getInstance(context)
+                val appWidgetIds = appWidgetManager.getAppWidgetIds(
+                    ComponentName(context, QuestLogWidgetProvider::class.java)
+                )
+                appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.quest_list_widget)
             }
         })
 
