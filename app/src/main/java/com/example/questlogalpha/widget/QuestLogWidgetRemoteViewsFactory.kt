@@ -19,25 +19,20 @@ class QuestLogWidgetRemoteViewsFactory(context: Context?, intent: Intent) : Remo
     private var quests: List<Quest>? = null
     private var questsDao: QuestsDao? = null
     private var database: QuestLogDatabase? = null
+    private var columns: Int = -1
 
     init {
-
-        Log.d(TAG, "init : context: $context")
         this.context = context
         appWidgetId = intent.getIntExtra(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
         )
 
-
-
-        Log.d(TAG, "init : questsDao: $questsDao")
-        //updateWidgetListView()
+        this.columns = intent.getIntExtra(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, -1)
+        Log.d(TAG, "columns: ${this.columns}")
     }
 
     override fun onCreate() {
-        Log.d(TAG, "onCreate()")
-     //   updateWidgetListView()
         database = QuestLogDatabase.getInstance(context!!)
         questsDao = database!!.questLogDatabaseDao
     }
@@ -55,12 +50,26 @@ class QuestLogWidgetRemoteViewsFactory(context: Context?, intent: Intent) : Remo
     }
 
     override fun getViewAt(position: Int): RemoteViews {
-        Log.d(TAG, "getViewAt: WidgetCreatingView")
-        val remoteView = RemoteViews(
-            context!!.packageName,
-            R.layout.quest_widget_item_view
-        )
-        Log.d(TAG, "Loading: getViewAt: " + quests?.get(position)?.title)
+
+        // change list item layout based on width
+        val remoteView = when (columns) {
+            1 -> {
+                Log.d(TAG, "1 col view")
+                RemoteViews(
+                    context!!.packageName,
+                    R.layout.quest_widget_item_view_1col
+                )
+            }
+            else -> {
+                Log.d(TAG, "else view")
+                RemoteViews(
+                    context!!.packageName,
+                    R.layout.quest_widget_item_view
+                )
+            }
+        }
+
+        //Log.d(TAG, "Loading: getViewAt: " + quests?.get(position)?.title)
         remoteView.setTextViewText(R.id.quest_widget_item_title, quests?.get(position)?.title)
 
         return remoteView
