@@ -1,16 +1,15 @@
 package com.example.questlogalpha.widget
 
-import android.annotation.TargetApi
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.RemoteViews
+import android.widget.Toast
 import com.example.questlogalpha.MainActivity
 import com.example.questlogalpha.R
 import kotlin.math.ceil
@@ -23,13 +22,6 @@ class QuestLogWidgetProvider : AppWidgetProvider() {
         appWidgetIds.forEach { appWidgetId ->
 
             Log.d(TAG, "appwidgetid: " + appWidgetId)
-
-            // Create an Intent to launch MainActivity
-            val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java)
-                .let { intent ->
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    PendingIntent.getActivity(context, 0, intent, 0)
-                }
 
             // intent to populate view list adapter
             val intent = Intent(context, QuestLogWidgetService::class.java)
@@ -44,31 +36,47 @@ class QuestLogWidgetProvider : AppWidgetProvider() {
             val views: RemoteViews = RemoteViews(
                 context.packageName,
                 R.layout.questlog_appwidget_info
-            ).apply {
-                setOnClickPendingIntent(R.id.quest_widget_item_layout, pendingIntent)
-            }
+            )
 
             // set the adapter
             views.setRemoteAdapter(R.id.quest_list_widget, intent)
             views.setEmptyView(R.id.quest_list_widget, R.id.quest_list_widget_empty)
 
+            // clickIntent
+            val toastIntent = Intent(context, QuestLogWidgetProvider::class.java)
+            toastIntent.action = QuestLogWidgetRemoteViewsFactory.ACTION_OPEN_APP
+            toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            val toastPendingIntent = PendingIntent.getBroadcast(
+                context, 0, toastIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            views.setPendingIntentTemplate(R.id.quest_list_widget, toastPendingIntent)
 
             // Tell the AppWidgetManager to perform an update on the current app widget
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
     }
 
-    override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, newOptions: Bundle?) {
+    override fun onReceive(context: Context?, intent: Intent) {
+        Log.d(TAG, "onReceive")
+        val mgr = AppWidgetManager.getInstance(context)
+        if (intent.action == QuestLogWidgetRemoteViewsFactory.ACTION_OPEN_APP) {
+            Log.d(TAG, "Yes action si")
+            val launchMainActivityIntent = Intent(context, MainActivity::class.java)
+            launchMainActivityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            context?.startActivity(launchMainActivityIntent)
+        }
+        super.onReceive(context, intent)
+    }
 
+    override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, newOptions: Bundle?) {
 
         // See the dimensions and
         val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
 
-
         // Get min width and height.
         val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
         val minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
-
 
         // Obtain appropriate widget and update it.
         appWidgetManager.updateAppWidget(appWidgetId, getRemoteViews(context, minWidth, minHeight, appWidgetId))

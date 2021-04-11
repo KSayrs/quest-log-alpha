@@ -3,7 +3,7 @@ package com.example.questlogalpha.widget
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.os.AsyncTask
+import android.os.Bundle
 import android.util.Log
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService.RemoteViewsFactory
@@ -69,7 +69,16 @@ class QuestLogWidgetRemoteViewsFactory(context: Context?, intent: Intent) : Remo
             }
         }
 
-        //Log.d(TAG, "Loading: getViewAt: " + quests?.get(position)?.title)
+        // Next, we set a fill-intent which will be used to fill-in the pending intent template
+        // which is set on the collection view in StackWidgetProvider.
+        // Next, we set a fill-intent which will be used to fill-in the pending intent template
+        // which is set on the collection view in StackWidgetProvider.
+        val extras = Bundle()
+        extras.putInt(EXTRA_ITEM_POSITION, position)
+        val fillInIntent = Intent()
+        fillInIntent.putExtras(extras)
+        remoteView.setOnClickFillInIntent(R.id.quest_widget_item_layout, fillInIntent)
+
         remoteView.setTextViewText(R.id.quest_widget_item_title, quests?.get(position)?.title)
 
         return remoteView
@@ -104,5 +113,9 @@ class QuestLogWidgetRemoteViewsFactory(context: Context?, intent: Intent) : Remo
 
     companion object {
         const val TAG: String = "KSLOG: QuestLogWidgetRemoteViewsFactory"
+
+        const val ACTION_OPEN_APP = "ACTION_OPEN_APP"
+
+        const val EXTRA_ITEM_POSITION = "EXTRA_ITEM_POSITION"
     }
 }
