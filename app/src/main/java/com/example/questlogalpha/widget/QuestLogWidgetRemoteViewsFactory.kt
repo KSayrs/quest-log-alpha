@@ -71,14 +71,13 @@ class QuestLogWidgetRemoteViewsFactory(context: Context?, intent: Intent) : Remo
 
         // Next, we set a fill-intent which will be used to fill-in the pending intent template
         // which is set on the collection view in StackWidgetProvider.
-        // Next, we set a fill-intent which will be used to fill-in the pending intent template
-        // which is set on the collection view in StackWidgetProvider.
         val extras = Bundle()
         extras.putInt(EXTRA_ITEM_POSITION, position)
+        extras.putString("questId",  quests?.get(position)?.id)
+        Log.d(TAG, "questId: ${quests?.get(position)?.id}")
         val fillInIntent = Intent()
         fillInIntent.putExtras(extras)
         remoteView.setOnClickFillInIntent(R.id.quest_widget_item_layout, fillInIntent)
-
         remoteView.setTextViewText(R.id.quest_widget_item_title, quests?.get(position)?.title)
 
         return remoteView

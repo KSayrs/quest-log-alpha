@@ -3,6 +3,9 @@ package com.example.questlogalpha
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
+import com.example.questlogalpha.ui.main.MainViewFragmentDirections
+import com.example.questlogalpha.widget.QuestLogWidgetRemoteViewsFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,6 +35,24 @@ class MainActivity : AppCompatActivity() {
         }
         else {
             if(supportActionBar!!.isShowing) supportActionBar!!.hide()
+        }
+
+        if(intent.action == QuestLogWidgetRemoteViewsFactory.ACTION_OPEN_APP) {
+            Log.d(TAG, "intent came from widget (onResume)")
+            val questId = intent?.extras?.getString("questId")
+            if(questId != null) {
+                if (this.findNavController(R.id.nav_host_fragment).currentDestination?.id == R.id.mainViewFragment) {
+                    this.findNavController(R.id.nav_host_fragment).navigate(
+                        MainViewFragmentDirections.actionMainViewFragmentToViewEditQuestFragment(questId)
+                    )
+                }
+                else {
+                    Log.e(TAG, "Current destination is " + this.findNavController(R.id.nav_host_fragment).currentDestination?.label + " instead of R.id.mainViewFragment!")
+                }
+            }
+            else {
+                Log.e(TAG, "questID is null")
+            }
         }
     }
 

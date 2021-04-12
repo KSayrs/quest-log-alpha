@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.RemoteViews
-import android.widget.Toast
 import com.example.questlogalpha.MainActivity
 import com.example.questlogalpha.R
 import kotlin.math.ceil
@@ -61,9 +60,12 @@ class QuestLogWidgetProvider : AppWidgetProvider() {
         Log.d(TAG, "onReceive")
         val mgr = AppWidgetManager.getInstance(context)
         if (intent.action == QuestLogWidgetRemoteViewsFactory.ACTION_OPEN_APP) {
-            Log.d(TAG, "Yes action si")
+            Log.d(TAG, "ACTION_OPEN_APP")
             val launchMainActivityIntent = Intent(context, MainActivity::class.java)
-            launchMainActivityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            launchMainActivityIntent.action = QuestLogWidgetRemoteViewsFactory.ACTION_OPEN_APP
+            launchMainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            launchMainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            launchMainActivityIntent.putExtras(intent.extras!!)
             context?.startActivity(launchMainActivityIntent)
         }
         super.onReceive(context, intent)

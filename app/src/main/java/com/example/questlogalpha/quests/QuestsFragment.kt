@@ -190,6 +190,7 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
             it?.let {
                 adapter.data = it
                 questsViewModel.questsFromFragment = it
+                Log.d(TAG, "updating appWidget")
                 val appWidgetManager = AppWidgetManager.getInstance(context)
                 val appWidgetIds = appWidgetManager.getAppWidgetIds(
                     ComponentName(context!!, QuestLogWidgetProvider::class.java)
