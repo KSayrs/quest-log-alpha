@@ -37,6 +37,7 @@
     <string name="add_new">Add New</string>
     <string name="reward_amount">Reward Amount:</string>
     <string name="select_quest_icon">Select Quest Icon</string>
+    <string name="loading_title">Loading Title</string>
 
     <!-- Spinners -->
 

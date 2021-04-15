@@ -41,12 +41,12 @@ class QuestLogWidgetProvider : AppWidgetProvider() {
             views.setRemoteAdapter(R.id.quest_list_widget, intent)
             views.setEmptyView(R.id.quest_list_widget, R.id.quest_list_widget_empty)
 
-            // clickIntent
-            val toastIntent = Intent(context, QuestLogWidgetProvider::class.java)
-            toastIntent.action = QuestLogWidgetRemoteViewsFactory.ACTION_OPEN_APP
-            toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            // make widget items clickable
+            val clickIntent = Intent(context, QuestLogWidgetProvider::class.java)
+            clickIntent.action = QuestLogWidgetRemoteViewsFactory.ACTION_OPEN_APP
+            clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
             val toastPendingIntent = PendingIntent.getBroadcast(
-                context, 0, toastIntent,
+                context, 0, clickIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
             views.setPendingIntentTemplate(R.id.quest_list_widget, toastPendingIntent)

@@ -77,7 +77,9 @@ class QuestLogWidgetRemoteViewsFactory(context: Context?, intent: Intent) : Remo
         Log.d(TAG, "questId: ${quests?.get(position)?.id}")
         val fillInIntent = Intent()
         fillInIntent.putExtras(extras)
-        remoteView.setOnClickFillInIntent(R.id.quest_widget_item_layout, fillInIntent)
+        remoteView.setOnClickFillInIntent(R.id.quest_widget_item_edit_icon, fillInIntent)
+
+        // fill in data
         remoteView.setTextViewText(R.id.quest_widget_item_title, quests?.get(position)?.title)
 
         return remoteView
