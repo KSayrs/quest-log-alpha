@@ -49,7 +49,7 @@ class AddRewardDialogFragment : DialogFragment() {
 
         // set up toolbar
         val toolbar = binding.addRewardToolbar
-        toolbar.title = "Skills"
+        toolbar.title = getString(R.string.skills)
 
         // set up recyclerview
         val mRecyclerView = binding.skillsList

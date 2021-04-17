@@ -37,7 +37,7 @@
                         android:layout_height="wrap_content" android:id="@+id/quests" android:text="@string/quests"/>
                 <com.google.android.material.tabs.TabItem
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/skills" android:text="@string/skills"/>
+                        android:layout_height="wrap_content" android:id="@+id/skills" android:text="@string/personnage"/>
             </com.google.android.material.tabs.TabLayout>
         </com.google.android.material.appbar.AppBarLayout>
 

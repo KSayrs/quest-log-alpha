@@ -7,7 +7,8 @@
     <string name="app_name">Quest Log Alpha</string>
     <string name="timeline">Timeline</string>
     <string name="quests">Quests</string>
-    <string name="skills">Personnage</string>
+    <string name="personnage">Personnage</string>
+    <string name="skills">Skills</string>
 
     <string name="title_hint">Quest Title</string>
     <string name="rewards">Rewards</string>
