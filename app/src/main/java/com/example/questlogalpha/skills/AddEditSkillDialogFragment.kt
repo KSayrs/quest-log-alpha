@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -17,9 +18,9 @@ import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.Quest
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.data.Skill
+import com.example.questlogalpha.databinding.DialogFragmentAddEditSkillBinding
 import com.example.questlogalpha.focus
 import com.example.questlogalpha.quests.QuestsViewModel
-import kotlinx.android.synthetic.main.dialog_fragment_add_edit_skill.view.*
 
 /** ************************************************************************************************
  * The dialog fragment that pops up when adding or editing a [chosenSkill].
@@ -35,23 +36,28 @@ class AddEditSkillDialogFragment(chosenSkill: Skill? = null) : DialogFragment() 
     private var questsViewModel: QuestsViewModel? = null
     private var quests: List<Quest>? = null
 
+    private var _binding: DialogFragmentAddEditSkillBinding? = null
+    private val binding get() = _binding!!
+
     // public override functions
     // ---------------------------------------------------------------- //
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_fragment_add_edit_skill, null, false)
-        val dataSource = QuestLogDatabase.getInstance(activity!!.application).skillsDatabaseDao
-        val questsDataSource = QuestLogDatabase.getInstance(activity!!.application).questLogDatabaseDao
-        val iconsDataSource = QuestLogDatabase.getInstance(activity!!.application).iconsDatabaseDao
-        val familiarsDataSource = QuestLogDatabase.getInstance(activity!!.application).familiarsDatabaseDao
-        val globalVariables = QuestLogDatabase.getInstance(activity!!.application).globalVariableDatabaseDao
-        val viewModelFactory = ViewModelFactory("", questsDataSource, dataSource, familiarsDataSource, globalVariables, iconsDataSource = iconsDataSource, application = activity!!.application)
+        val layoutInflater = LayoutInflater.from(context)
+        _binding = DataBindingUtil.inflate(layoutInflater,R.layout.dialog_fragment_add_edit_skill, null, false)
+
+        val dataSource = QuestLogDatabase.getInstance(requireActivity().application).skillsDatabaseDao
+        val questsDataSource = QuestLogDatabase.getInstance(requireActivity().application).questLogDatabaseDao
+        val iconsDataSource = QuestLogDatabase.getInstance(requireActivity().application).iconsDatabaseDao
+        val familiarsDataSource = QuestLogDatabase.getInstance(requireActivity().application).familiarsDatabaseDao
+        val globalVariables = QuestLogDatabase.getInstance(requireActivity().application).globalVariableDatabaseDao
+        val viewModelFactory = ViewModelFactory("", questsDataSource, dataSource, familiarsDataSource, globalVariables, iconsDataSource = iconsDataSource, application = requireActivity().application)
 
         questsViewModel = ViewModelProvider(this, viewModelFactory).get(QuestsViewModel::class.java)
         viewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)
 
         // set up toolbar
-        val toolbar = dialogView!!.findViewById<androidx.appcompat.widget.Toolbar>(R.id.dialog_toolbar)
+        val toolbar = binding.dialogToolbar
         toolbar.title = if(this.skill == null) getString(R.string.add_skill) else getString(R.string.edit_skill)
 
         if(this.skill != null) {
@@ -79,16 +85,16 @@ class AddEditSkillDialogFragment(chosenSkill: Skill? = null) : DialogFragment() 
         // make Dialog
         val acceptMessage:String = if(this.skill == null) getString(R.string.add) else getString(R.string.save)
         val builder = AlertDialog.Builder(activity)
-            .setView(dialogView)
+            .setView(binding.root)
             .setPositiveButton(acceptMessage,
                 DialogInterface.OnClickListener { _, _ ->
                     if(this.skill == null) {
-                        val newSkill = Skill(dialogView!!.new_skill_name.text.toString())
+                        val newSkill = Skill(binding.newSkillName.text.toString())
                         viewModel!!.onAddNewSkill(newSkill)
                         onPositiveButtonClicked?.invoke(newSkill)
                     }
                     else {
-                        this.skill.name = dialogView!!.new_skill_name.text.toString()
+                        this.skill.name = binding.newSkillName.text.toString()
                         viewModel!!.onEditSkill(this.skill)
                         onPositiveButtonClicked?.invoke(this.skill)
                     }
@@ -103,7 +109,7 @@ class AddEditSkillDialogFragment(chosenSkill: Skill? = null) : DialogFragment() 
         // if it's a new skill, focus the text
         if(this.skill == null) {
             builder.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-            dialogView!!.new_skill_name.focus(activity!!.application)
+            binding.newSkillName.focus(requireActivity().application)
         }
         return builder
     }
@@ -112,7 +118,7 @@ class AddEditSkillDialogFragment(chosenSkill: Skill? = null) : DialogFragment() 
    // This is also why we can't use data binding to just set the skill name in the xml
     override fun onResume() {
         super.onResume()
-        if(this.skill != null) dialogView?.new_skill_name?.setText(this.skill.name)
+        if(this.skill != null) binding.newSkillName.setText(this.skill.name)
     }
 
     // private functions

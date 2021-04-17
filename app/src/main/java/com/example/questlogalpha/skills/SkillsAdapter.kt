@@ -9,8 +9,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.questlogalpha.R
 import com.example.questlogalpha.data.Skill
+import com.example.questlogalpha.databinding.DialogFragmentAddEditSkillBinding
 import com.example.questlogalpha.databinding.SkillItemViewBinding
-import kotlinx.android.synthetic.main.skill_item_view.view.*
 
 class SkillItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.ViewHolder(constraintLayout)
 
@@ -25,6 +25,9 @@ class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
 
     private var lastClicked:View? = null
 
+    private var _binding: SkillItemViewBinding? = null
+    private val binding get() = _binding!!
+
     var data = listOf<Skill>()
         set(value) {
             field = value
@@ -37,16 +40,16 @@ class SkillsAdapter: RecyclerView.Adapter<SkillItemViewHolder>() {
 
     // this happens after onCreate
     override fun onBindViewHolder(holder: SkillItemViewHolder, position: Int) {
-        val binding = DataBindingUtil.getBinding <SkillItemViewBinding>(holder.itemView)
-        binding?.position = position
-        binding?.skill = data[position]
-        onViewAttached?.invoke(binding!!.root)
+        _binding = DataBindingUtil.getBinding <SkillItemViewBinding>(holder.itemView)
+        binding.position = position
+        binding.skill = data[position]
+        onViewAttached?.invoke(binding.root)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillItemViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding: SkillItemViewBinding = DataBindingUtil.inflate(layoutInflater, R.layout.skill_item_view, parent, false)
-        val holder = SkillItemViewHolder(binding.root.skill_item_view_layout)
+        val holder = SkillItemViewHolder(binding.skillItemViewLayout)
 
         binding.root.setOnClickListener {
             Log.d(TAG,"item ${holder.adapterPosition} tapped")

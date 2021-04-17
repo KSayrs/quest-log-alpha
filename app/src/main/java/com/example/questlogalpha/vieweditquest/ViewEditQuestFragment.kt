@@ -15,7 +15,6 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
 import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -32,7 +31,6 @@ import com.example.questlogalpha.notifications.NotificationReceiver
 import com.example.questlogalpha.notifications.NotificationUtil
 import com.example.questlogalpha.quests.AddRewardDialogFragment
 import com.example.questlogalpha.quests.Difficulty
-import kotlinx.android.synthetic.main.quest_objective_view.view.*
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlin.collections.HashMap
@@ -46,7 +44,8 @@ class ViewEditQuestFragment : Fragment() {
     private var viewModel: ViewEditQuestViewModel? = null
 
     private var questId: String = ""
-    private var bind: FragmentViewEditQuestBinding? = null
+    private var _binding: FragmentViewEditQuestBinding? = null
+    private val binding get() = _binding!!
     private var nAdapter: NotificationsAdapter? = null
     private var rAdapter: RewardsAdapter? = null
 
@@ -57,7 +56,7 @@ class ViewEditQuestFragment : Fragment() {
     ): View? {
 
         val binding: FragmentViewEditQuestBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_view_edit_quest, container, false)
-        bind = binding
+        _binding = binding
         val application = requireNotNull(this.activity).application
         val dataSource = QuestLogDatabase.getInstance(application).questLogDatabaseDao
         val globalVariables = QuestLogDatabase.getInstance(application).globalVariableDatabaseDao
@@ -148,24 +147,24 @@ class ViewEditQuestFragment : Fragment() {
                 objectiveBinding.viewModel = viewEditQuestViewModel
                 binding.objectives.addView(objView)
 
-                objView.delete_objective_icon.setOnClickListener {
+                objectiveBinding.deleteObjectiveIcon.setOnClickListener {
                     viewEditQuestViewModel.onObjectiveDeleted(objective)
                     binding.objectives.removeView(objView)
                 }
 
-                objView.edit_objective_icon.setOnClickListener {
-                    objView.quest_objective_edit_text.focus(application)
+                objectiveBinding.editObjectiveIcon.setOnClickListener {
+                    objectiveBinding.questObjectiveEditText.focus(application)
                 }
 
-                objView.quest_objective_edit_text.setOnEditorActionListener { _, actionId, _ ->
+                objectiveBinding.questObjectiveEditText.setOnEditorActionListener { _, actionId, _ ->
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         try {
                             viewEditQuestViewModel.onObjectiveEdit(
                                 objective,
-                                objView.quest_objective_edit_text.text.toString()
+                                objectiveBinding.questObjectiveEditText.text.toString()
                             )
-                            objView.quest_objective_edit_text.isFocusableInTouchMode = false
-                            objView.quest_objective_edit_text.isCursorVisible = false
+                            objectiveBinding.questObjectiveEditText.isFocusableInTouchMode = false
+                            objectiveBinding.questObjectiveEditText.isCursorVisible = false
                             objView.clearFocus()
 
                             val imm = application.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
@@ -182,7 +181,7 @@ class ViewEditQuestFragment : Fragment() {
 
                 // if this is a new objective we just added, focus it
                 if(viewEditQuestViewModel.isNewObjective && viewEditQuestViewModel.modifiedObjective != null) {
-                    objView.quest_objective_edit_text.focus(application)
+                    objectiveBinding.questObjectiveEditText.focus(application)
                 }
             }
         })
@@ -228,7 +227,7 @@ class ViewEditQuestFragment : Fragment() {
         // add notification button
         binding.addFamiliarNotificationButton.setOnClickListener {
             if(viewModel!!.date.value == null) {
-                Util.showShortToast(context!!, "Set a due date first!")
+                Util.showShortToast(requireContext(), "Set a due date first!")
                 return@setOnClickListener
             }
 
@@ -239,7 +238,7 @@ class ViewEditQuestFragment : Fragment() {
             notificationDialogFragment.show(childFragmentManager, "notificationDialogFragment")
             notificationDialogFragment.onPositiveButtonClicked = onPositiveButtonClicked@{ chosenTime ->
                 if (System.currentTimeMillis() > chosenTime) {
-                    Util.showShortToast(context!!, "Can't set an alarm for the past!")
+                    Util.showShortToast(requireContext(), "Can't set an alarm for the past!")
                     return@onPositiveButtonClicked
                 }
 
@@ -257,8 +256,8 @@ class ViewEditQuestFragment : Fragment() {
 
                 actionList.add(StoredAction(R.drawable.ic_scroll_quill, getString(R.string.dismiss), storedDismissPendingIntent))
 
-                textStoredNotification.contentText = bind!!.viewEditQuestDescriptionEditText.text.toString()
-                textStoredNotification.contentTitle = bind!!.viewEditQuestTitleEditText.text.toString()
+                textStoredNotification.contentText = this.binding.viewEditQuestDescriptionEditText.text.toString()
+                textStoredNotification.contentTitle = this.binding.viewEditQuestTitleEditText.text.toString()
                 textStoredNotification.autoCancel = false
                 textStoredNotification.icon = R.drawable.ic_scroll_quill
                 textStoredNotification.bigIcon = if (viewEditQuestViewModel.currentFamiliar.value != null) viewEditQuestViewModel.currentFamiliar.value!!.value else R.drawable.ic_scroll_quill
@@ -317,7 +316,7 @@ class ViewEditQuestFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        activity!!.menuInflater.inflate(R.menu.menu_actionbar, menu)
+        requireActivity().menuInflater.inflate(R.menu.menu_actionbar, menu)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -405,7 +404,7 @@ class ViewEditQuestFragment : Fragment() {
                 alarms.add(AlarmData(pendingIntent, notification.notificationTime))
             }
 
-            viewModel!!.onSaveQuest(context!!.getSystemService(ALARM_SERVICE) as AlarmManager?, alarms)
+            viewModel!!.onSaveQuest(requireContext().getSystemService(ALARM_SERVICE) as AlarmManager?, alarms)
         }
         else {
             viewModel!!.onSaveQuest()
@@ -481,7 +480,7 @@ class ViewEditQuestFragment : Fragment() {
             Log.d(TAG, "minutesDifference: + $minutesDifference")
 
             val text = buildCountdownText(0, 0, weeksDifference, daysDifference, hoursDifference, minutesDifference)
-            bind!!.viewEditQuestBookmarkText.text = text
+            binding!!.viewEditQuestBookmarkText.text = text
         }
         else {
             Log.e(TAG, "viewModel!!.date.value is null -- cannot set due date flag")

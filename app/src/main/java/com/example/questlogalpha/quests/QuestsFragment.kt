@@ -131,12 +131,12 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
                     adapter.data = viewModel!!.quests.value!!
                 }
                 else -> {
-                    "Something went wrong".toast(context!!)
+                    "Something went wrong".toast(requireContext())
                     Log.e(TAG, "onCreateDialog: Some nonexistent action menu item was clicked!")
                 }
             }
 
-            activity!!.invalidateOptionsMenu()
+            requireActivity().invalidateOptionsMenu()
 
             true
         }
@@ -150,7 +150,7 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
             Log.d(TAG, "loaded: it: $it")
             if (it) {
                 val familiarAdapter = FamiliarSpinnerAdapter(
-                    context!!,
+                    requireContext(),
                     (questsViewModel.familiarImages.value!!).toTypedArray()
                 )
 
@@ -193,7 +193,7 @@ class QuestsFragment(private val toolbar: androidx.appcompat.widget.Toolbar) : F
                 Log.d(TAG, "updating appWidget")
                 val appWidgetManager = AppWidgetManager.getInstance(context)
                 val appWidgetIds = appWidgetManager.getAppWidgetIds(
-                    ComponentName(context!!, QuestLogWidgetProvider::class.java)
+                    ComponentName(requireContext(), QuestLogWidgetProvider::class.java)
                 )
                 appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.quest_list_widget)
             }
