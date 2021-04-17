@@ -19,18 +19,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
 
+        <androidx.appcompat.widget.Toolbar
+                android:id="@+id/add_reward_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary"
+                android:elevation="4dp"
+                android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
+                app:layout_constraintTop_toTopOf="parent"
+                app:titleTextColor="@color/colorWhite"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/skills_list"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="82dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toTopOf="@id/add_new_reward_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_default="wrap"
                 app:layout_constraintHeight_percent="0.9"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent " />
+                app:layout_constraintTop_toBottomOf="@+id/add_reward_toolbar" />
 
         <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/add_new_reward_button"

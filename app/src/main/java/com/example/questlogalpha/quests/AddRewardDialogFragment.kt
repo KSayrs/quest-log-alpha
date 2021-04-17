@@ -47,6 +47,10 @@ class AddRewardDialogFragment : DialogFragment() {
 
         adapter = SkillsAdapter()
 
+        // set up toolbar
+        val toolbar = binding.addRewardToolbar
+        toolbar.title = "Skills"
+
         // set up recyclerview
         val mRecyclerView = binding.skillsList
         mRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -88,7 +92,6 @@ class AddRewardDialogFragment : DialogFragment() {
         }
 
         return AlertDialog.Builder(activity)
-            .setTitle("Skills")
             .setView(binding.root)
             .setPositiveButton(android.R.string.ok,
               DialogInterface.OnClickListener { dialog, whichButton ->
