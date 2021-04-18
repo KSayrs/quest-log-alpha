@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.AdapterView
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.*
+import com.example.questlogalpha.R
 import com.example.questlogalpha.data.*
 import com.example.questlogalpha.notifications.AlarmData
 import com.example.questlogalpha.notifications.NotificationUtil
@@ -68,10 +69,17 @@ class QuestsViewModel(application: Application,
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val familiarIcon =  async { globalVariables.getVariableWithName("CurrentFamiliar")!! }
+                // this loads before the database does apparently
+                val allvars  = async { (globalVariables.getAllVariables()) }.await()
+                if(!allvars.value.isNullOrEmpty()) {
+                    val familiarIcon = async { globalVariables.getVariableWithName("CurrentFamiliar")!! }
 
-                val loadedFamiliar = familiarIcon.await()
-                async { currentFamiliar.postValue(loadedFamiliar) }
+                    val loadedFamiliar = familiarIcon.await()
+                    async { currentFamiliar.postValue(loadedFamiliar) }
+                }
+                else {
+                    currentFamiliar.postValue(GlobalVariable("CurrentFamiliar", R.drawable.ic_familiar_cat))
+                }
             }
         }
 
