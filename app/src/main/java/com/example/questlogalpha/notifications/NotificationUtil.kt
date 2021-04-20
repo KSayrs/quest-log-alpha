@@ -225,6 +225,7 @@ object NotificationUtil {
         builder.setLargeIcon(Util.drawableToBitmap(context.resources.getDrawable(notification.bigIcon, context.theme)))
         builder.priority = notification.channelPriority
         builder.setAutoCancel(notification.autoCancel)
+        builder.setWhen(notification.notificationTime)
 
         // make the delete intent
         val deleteIntent = makeGenericIntent(notification.deleteIntent, questId, context)
