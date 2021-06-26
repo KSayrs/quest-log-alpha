@@ -11,10 +11,11 @@
                 type="String" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/select_icon_constraint_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:orientation="vertical"
+            android:layout_height="180dp">
 
         <androidx.appcompat.widget.Toolbar
                 android:id="@+id/title_toolbar"
@@ -23,22 +24,18 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/colorPrimary"
                 android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
-                app:layout_constraintTop_toTopOf="parent"
                 app:titleTextColor="@color/colorWhite"
                 app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
                 android:id="@+id/select_icon_content_constraint_layout"
-                app:layout_constraintTop_toBottomOf="@id/title_toolbar"
                 android:layout_width="match_parent"
+                android:orientation="vertical"
                 android:padding="4dp"
                 android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.SearchView
                     android:id="@+id/icon_search_view"
-                    app:layout_constraintBottom_toTopOf="@+id/icon_grid"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:queryHint="Search"/>
@@ -46,14 +43,10 @@
             <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/icon_grid"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="4dp"
-                    app:layout_constrainedHeight="true"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/icon_search_view" />
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>
