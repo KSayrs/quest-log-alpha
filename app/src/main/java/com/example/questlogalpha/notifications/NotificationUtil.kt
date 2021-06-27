@@ -160,19 +160,6 @@ object NotificationUtil {
         if(text == "") { text = "At date/time" }
         else text += " before"
 
-        //  if(text.length > 8) {
-        //      val substrings = text.split(" ")
-        //      var currentLength = 0
-        //      for(substring in substrings) {
-        //          if(substring.length + currentLength + 1 <= 8) {  // +1 for the space at the end that's removed for delimiting
-        //              currentLength += substring.length + 1;
-        //          } else {
-        //              return text.substring(0, currentLength)
-        //          }
-        //      }
-        //      return text
-        //  }
-
         return text
     }
 
