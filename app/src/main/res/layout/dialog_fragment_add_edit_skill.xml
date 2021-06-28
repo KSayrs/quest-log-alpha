@@ -42,7 +42,7 @@
                 android:background="@null"
                 android:hint="@string/skill_name_hint"
                 android:imeOptions="actionDone"
-                android:inputType="text"
+                android:inputType="textCapSentences"
                 android:saveEnabled="false"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 app:layout_constraintBottom_toBottomOf="@+id/skill_icon"
