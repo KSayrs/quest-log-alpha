@@ -14,17 +14,21 @@
             android:layout_height="wrap_content"
             android:text="@string/loading_title"
             android:textAlignment="viewStart"
+            android:layout_centerVertical="true"
             android:layout_marginBottom="4dp"
-            android:textSize="24sp" />
+            android:textSize="14sp" />
+
     <ImageButton
+            android:padding="2dp"
             android:id="@+id/quest_widget_item_edit_icon"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:contentDescription="@string/edit"
-            android:src="@android:drawable/ic_menu_edit"
-            android:layout_marginEnd="16dp"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
             android:backgroundTint="#00FFFFFF"
-            android:tint="@color/colorPrimary"
-            android:layout_centerVertical="true" />
+            android:contentDescription="@string/edit"
+            android:scaleType="fitXY"
+            android:src="@android:drawable/ic_menu_edit"
+            android:tint="@color/colorPrimary" />
 </RelativeLayout>
