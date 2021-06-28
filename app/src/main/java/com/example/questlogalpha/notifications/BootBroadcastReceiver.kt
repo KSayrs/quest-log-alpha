@@ -63,10 +63,6 @@ private class NotifyAsyncTask : AsyncTask<Context?, Void?, Void?>() {
         return null
     }
 
-    override fun onPostExecute(result: Void?) {
-
-    }
-
     // -------------------------- log tag ------------------------------ //
     companion object {
         var TAG: String = "KSLOG: NotifyAsyncTask"
