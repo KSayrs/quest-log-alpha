@@ -18,6 +18,8 @@
                 style="@style/quest_element_header_text"
                 android:text="@string/quests"
                 android:layout_marginTop="0dp"
+                android:textAlignment="center"
+                android:gravity="center"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
     </RelativeLayout>
