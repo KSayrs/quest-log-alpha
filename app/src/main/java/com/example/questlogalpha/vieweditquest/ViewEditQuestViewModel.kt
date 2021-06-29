@@ -231,9 +231,6 @@ class ViewEditQuestViewModel (private val questId: String, val database: QuestsD
     // ---------------- spinner handlers ---------------- //
     override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
         difficulty.value = parent.getItemAtPosition(pos) as Difficulty?
-
-        toast.setText(parent.getItemAtPosition(pos).toString() + " selected")
-        toast.show()
     }
 
     override fun onNothingSelected(parent: AdapterView<*>) {
