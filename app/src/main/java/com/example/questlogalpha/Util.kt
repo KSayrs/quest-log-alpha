@@ -6,9 +6,16 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.os.CountDownTimer
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.StrikethroughSpan
 import android.util.Log
 import android.util.TypedValue
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.pow
@@ -116,14 +123,12 @@ class Util {
 
         /**  Converts a [drawable] to a bitmap */
         fun drawableToBitmap(drawable: Drawable): Bitmap? {
-            var bitmap: Bitmap? = null
             if (drawable is BitmapDrawable) {
-                val bitmapDrawable = drawable
-                if (bitmapDrawable.bitmap != null) {
-                    return bitmapDrawable.bitmap
+                if (drawable.bitmap != null) {
+                    return drawable.bitmap
                 }
             }
-            bitmap = if (drawable.intrinsicWidth <= 0 || drawable.intrinsicHeight <= 0) {
+            val bitmap = if (drawable.intrinsicWidth <= 0 || drawable.intrinsicHeight <= 0) {
                 Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888) // Single color bitmap will be created of 1x1 pixel
             }
             else {
@@ -133,6 +138,33 @@ class Util {
             drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight())
             drawable.draw(canvas)
             return bitmap
+        }
+
+        /** animate a strikethough on a text [view]. */
+        fun styleComplete(view: TextView){
+            animateStrikeThrough1(view)
+            // view.paintFlags = (view.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG)
+            view.setTextColor(ContextCompat.getColor(view.context, R.color.colorTertiary))
+        }
+
+        private fun animateStrikeThrough1(tv: TextView) {
+            val ANIM_DURATION:Long = 250 //duration of animation in millis
+            val length = tv.text.length
+            object: CountDownTimer(ANIM_DURATION, ANIM_DURATION/length) {
+
+                val span: Spannable = SpannableString(tv.text)
+                val strikethroughSpan: StrikethroughSpan = StrikethroughSpan()
+
+                override fun onTick(millisUntilFinished:Long){
+                    //calculate end position of strikethrough in textview
+                    var endPosition:Int = (((millisUntilFinished-ANIM_DURATION)*-1)/(ANIM_DURATION/length)).toInt() + 1
+                    if(endPosition > length) endPosition = length
+                    span.setSpan(strikethroughSpan, 0, endPosition, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    tv.text = span
+                }
+
+                override fun onFinish(){}
+            }.start()
         }
 
         // -------------------------- log tag ------------------------------ //

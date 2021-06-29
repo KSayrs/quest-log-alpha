@@ -11,7 +11,7 @@ import com.example.questlogalpha.skills.SkillsFragment
 private val TAB_TITLES = arrayOf(
     R.string.timeline,
     R.string.quests,
-    R.string.skills
+    R.string.personnage
 )
 
 /** ************************************************************************************************

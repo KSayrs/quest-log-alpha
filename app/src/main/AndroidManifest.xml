@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        tools:remove="android:appComponentFactory"
         package="com.example.questlogalpha">
 
     <application
@@ -31,6 +32,19 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <receiver android:name=".widget.QuestLogWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                    android:resource="@xml/quest_log_appwidget_provider" />
+        </receiver>
+        <service
+                android:name=".widget.QuestLogWidgetService"
+                android:exported="false"
+                android:permission="android.permission.BIND_REMOTEVIEWS" />
+
         <service
                 android:name=".notifications.NotificationIntentService"
                 android:exported="false"

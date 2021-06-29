@@ -10,7 +10,6 @@ import com.example.questlogalpha.notifications.NotificationUtil
 import com.example.questlogalpha.R
 import com.example.questlogalpha.data.StoredNotification
 import com.example.questlogalpha.databinding.QuestFamiliarNotificationViewBinding
-import kotlinx.android.synthetic.main.quest_familiar_notification_view.view.*
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -36,6 +35,9 @@ class NotificationsAdapter: RecyclerView.Adapter<NotificationItemViewHolder>() {
     var onItemRemoved: ((StoredNotification) -> Unit)? = null
     var questDueDate: ZonedDateTime? = null
 
+    private var _binding: QuestFamiliarNotificationViewBinding? = null
+    private val binding get() = _binding!!
+
     // override
     // ---------------------------------------------------------------------------------------------
 
@@ -47,14 +49,14 @@ class NotificationsAdapter: RecyclerView.Adapter<NotificationItemViewHolder>() {
         else {
             Log.d(TAG, "Instant. ofEpochMilli(item.notificationTime): ${Instant.ofEpochMilli(item.notificationTime).atZone(ZoneId.systemDefault())}")
             val millisToZoned = ZonedDateTime.ofInstant(Instant.ofEpochMilli(item.notificationTime), ZoneId.systemDefault())
-            holder.constraintLayout.alert_time_text.text = NotificationUtil.formatNotificationText(questDueDate!!, millisToZoned, false)
+            binding.alertTimeText.text = NotificationUtil.formatNotificationText(questDueDate!!, millisToZoned, false)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationItemViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding: QuestFamiliarNotificationViewBinding = DataBindingUtil.inflate(layoutInflater, R.layout.quest_familiar_notification_view, parent, false)
-        val holder = NotificationItemViewHolder(binding.root.familiar_notification_in_quest)
+        _binding = DataBindingUtil.inflate(layoutInflater, R.layout.quest_familiar_notification_view, parent, false)
+        val holder = NotificationItemViewHolder(binding.familiarNotificationInQuest)
 
         binding.deleteAlertIcon.setOnClickListener {
             val pos = holder.adapterPosition

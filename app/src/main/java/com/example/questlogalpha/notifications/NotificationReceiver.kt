@@ -27,10 +27,10 @@ class NotificationReceiver : BroadcastReceiver() {
         Log.d(TAG, "intent URI" + intent.toUri(0))
 
         when (intent.action) {
-            ACTION_DISMISS -> {
+            NotificationIntentService.ACTION_DISMISS -> {
                 Log.d(TAG, "onReceive: ACTION_DISMISS")
             }
-            ACTION_SNOOZE -> {
+            NotificationIntentService.ACTION_SNOOZE -> {
                 Log.d(TAG, "onReceive: ACTION_SNOOZE")
             }
             else -> {
@@ -47,10 +47,6 @@ class NotificationReceiver : BroadcastReceiver() {
         const val NotificationId = 888
         var NOTIFICATION_ID = "notification-id"
         var NOTIFICATION = "notification"
-
-        // todo should these be deleted
-        const val ACTION_DISMISS = "com.example.questlogalpha.handlers.action.DISMISS"
-        const val ACTION_SNOOZE = "com.example.questlogalpha.handlers.action.SNOOZE"
 
         // -------------------------- log tag ------------------------------ //
         private const val TAG: String = "KSLOG: NotificationReceiver"

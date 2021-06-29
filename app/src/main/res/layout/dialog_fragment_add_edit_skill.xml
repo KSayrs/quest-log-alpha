@@ -28,10 +28,10 @@
                 android:id="@+id/skill_icon"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:tint="@color/colorAccent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dialog_toolbar"
-                app:srcCompat="?attr/actionModeSelectAllDrawable" />
+                app:srcCompat="?attr/actionModeSelectAllDrawable"
+                app:tint="@color/colorAccent" />
 
         <EditText
                 android:id="@+id/new_skill_name"
@@ -42,7 +42,7 @@
                 android:background="@null"
                 android:hint="@string/skill_name_hint"
                 android:imeOptions="actionDone"
-                android:inputType="text"
+                android:inputType="textCapSentences"
                 android:saveEnabled="false"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 app:layout_constraintBottom_toBottomOf="@+id/skill_icon"

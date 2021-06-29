@@ -3,6 +3,8 @@ package com.example.questlogalpha.quests
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
+import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,10 +20,10 @@ import com.example.questlogalpha.R
 import com.example.questlogalpha.Util
 import com.example.questlogalpha.ViewModelFactory
 import com.example.questlogalpha.data.Icon
+import com.example.questlogalpha.data.Quest
 import com.example.questlogalpha.data.QuestLogDatabase
 import com.example.questlogalpha.databinding.DialogFragmentSelectIconBinding
 import com.example.questlogalpha.databinding.IconItemViewBinding
-import kotlinx.android.synthetic.main.icon_item_view.view.*
 
 /** ************************************************************************************************
  * [DialogFragment] to display when choosing an icon for a quest, item, or skill.
@@ -33,11 +35,11 @@ class ChooseIconDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val binding: DialogFragmentSelectIconBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_fragment_select_icon, null, false)
         binding.lifecycleOwner = this
-        val dataSource = QuestLogDatabase.getInstance(activity!!.application).iconsDatabaseDao
-        val questsDataSource = QuestLogDatabase.getInstance(activity!!.application).questLogDatabaseDao
-        val globalVariables = QuestLogDatabase.getInstance(activity!!.application).globalVariableDatabaseDao
-        val familiarsDataSource = QuestLogDatabase.getInstance(activity!!.application).familiarsDatabaseDao
-        val viewModelFactory = ViewModelFactory("", questsDataSource, globalVariableDataSource = globalVariables, iconsDataSource = dataSource, familiarsDataSource = familiarsDataSource, application = activity!!.application)
+        val dataSource = QuestLogDatabase.getInstance(requireActivity().application).iconsDatabaseDao
+        val questsDataSource = QuestLogDatabase.getInstance(requireActivity().application).questLogDatabaseDao
+        val globalVariables = QuestLogDatabase.getInstance(requireActivity().application).globalVariableDatabaseDao
+        val familiarsDataSource = QuestLogDatabase.getInstance(requireActivity().application).familiarsDatabaseDao
+        val viewModelFactory = ViewModelFactory("", questsDataSource, globalVariableDataSource = globalVariables, iconsDataSource = dataSource, familiarsDataSource = familiarsDataSource, application = requireActivity().application)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(QuestsViewModel::class.java)
 
         // set up recyclerview
@@ -50,7 +52,7 @@ class ChooseIconDialogFragment : DialogFragment() {
         viewModel.icons.observe(this, Observer {
             it?.let {
                 adapter.data = it
-                Log.d(AddRewardDialogFragment.TAG, "it: $it")
+                Log.d(TAG, "it: $it")
             }
         })
 
@@ -92,7 +94,7 @@ class ChooseIconDialogFragment : DialogFragment() {
             .setNegativeButton(
                 getString(R.string.cancel),
                 DialogInterface.OnClickListener { _, _ ->
-                    Util.showShortToast(context!!, "negative")
+                    Util.showShortToast(requireContext(), "negative")
                 })
             .create()
     }
@@ -103,7 +105,13 @@ class ChooseIconDialogFragment : DialogFragment() {
     }
 }
 
-class IconItemViewHolder(val constraintLayout: ConstraintLayout): RecyclerView.ViewHolder(constraintLayout)
+// ---------------------------- Adapter & View Holder ------------------------------ //
+
+class IconItemViewHolder(val constraintLayout: ConstraintLayout, private val binding: IconItemViewBinding): RecyclerView.ViewHolder(constraintLayout) {
+    fun bind(icon: Icon) {
+        binding.iconSquare.setImageResource(icon.drawableResource)
+    }
+}
 
 /** ************************************************************************************************
  * A [RecyclerView.Adapter] to show all skills in the database.
@@ -123,17 +131,20 @@ class IconsAdapter: RecyclerView.Adapter<IconItemViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IconItemViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding: IconItemViewBinding = DataBindingUtil.inflate(layoutInflater, R.layout.icon_item_view, parent, false)
+        val holder = IconItemViewHolder(binding.iconContainer, binding)
 
-        return IconItemViewHolder(binding.root.icon_container)
+        binding.iconSquare.setOnClickListener {
+            val pos = holder.absoluteAdapterPosition
+            onIconTapped?.invoke(data[pos].drawableResource)
+        }
+
+        return holder
     }
 
     override fun onBindViewHolder(holder: IconItemViewHolder, position: Int) {
-        val binding = DataBindingUtil.getBinding<IconItemViewBinding>(holder.itemView)
         val icon = data[position]
 
-        binding!!.iconSquare.setImageResource(icon.drawableResource)
-
-        binding.iconSquare.setOnClickListener { onIconTapped?.invoke(icon.drawableResource) }
+        holder.bind(icon)
     }
 
     // -------------------------- log tag ------------------------------ //

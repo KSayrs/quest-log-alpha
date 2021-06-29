@@ -160,19 +160,6 @@ object NotificationUtil {
         if(text == "") { text = "At date/time" }
         else text += " before"
 
-        //  if(text.length > 8) {
-        //      val substrings = text.split(" ")
-        //      var currentLength = 0
-        //      for(substring in substrings) {
-        //          if(substring.length + currentLength + 1 <= 8) {  // +1 for the space at the end that's removed for delimiting
-        //              currentLength += substring.length + 1;
-        //          } else {
-        //              return text.substring(0, currentLength)
-        //          }
-        //      }
-        //      return text
-        //  }
-
         return text
     }
 
@@ -208,7 +195,7 @@ object NotificationUtil {
         // builder.addExtras(NOTIFICATION_ID, number)
         // and then get it in the receiver.
 
-        val builder = NotificationCompat.Builder(context!!, notificationChannelId!!)
+        val builder = NotificationCompat.Builder(context, notificationChannelId!!)
 
         // iterate through actions and build them
         for (action in notification.actions) {
@@ -225,6 +212,7 @@ object NotificationUtil {
         builder.setLargeIcon(Util.drawableToBitmap(context.resources.getDrawable(notification.bigIcon, context.theme)))
         builder.priority = notification.channelPriority
         builder.setAutoCancel(notification.autoCancel)
+        builder.setWhen(notification.notificationTime)
 
         // make the delete intent
         val deleteIntent = makeGenericIntent(notification.deleteIntent, questId, context)

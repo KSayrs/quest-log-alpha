@@ -58,12 +58,12 @@ class PickNotificationTimeDialogFragment : DialogFragment(), AdapterView.OnItemS
 
         // set up spinner
         val intervalSpinner: Spinner = binding.intervalSpinner
-        intervalSpinner.adapter = ArrayAdapter<TimeType>(context!!, android.R.layout.simple_spinner_item, TimeType.values())
+        intervalSpinner.adapter = ArrayAdapter<TimeType>(requireContext(), android.R.layout.simple_spinner_item, TimeType.values())
         intervalSpinner.onItemSelectedListener = this
 
         // todo replace the values for this spinner depending on which interval is selected
         val incrementSpinner: Spinner = binding.incrementSpinner
-        incrementSpinner.adapter = ArrayAdapter.createFromResource(context!!, R.array.minutes_array, android.R.layout.simple_spinner_item)
+        incrementSpinner.adapter = ArrayAdapter.createFromResource(requireContext(), R.array.minutes_array, android.R.layout.simple_spinner_item)
         incrementSpinner.onItemSelectedListener = this
 
         binding.toggleGroup.setOnClickListener {
@@ -98,7 +98,7 @@ class PickNotificationTimeDialogFragment : DialogFragment(), AdapterView.OnItemS
                             onPositiveButtonClicked?.invoke(chosenTime)
                         }
                         PickNotificationTimeDialogFragment.Group.None -> {
-                            Util.showShortToast(context!!, "No option selected")
+                            Util.showShortToast(requireContext(), "No option selected")
                             // do nothing
                         }
                     }
@@ -106,7 +106,7 @@ class PickNotificationTimeDialogFragment : DialogFragment(), AdapterView.OnItemS
             .setNegativeButton(
                 getString(R.string.cancel),
                 DialogInterface.OnClickListener { _, _ ->
-                    Util.showShortToast(context!!, "negative")
+                    Util.showShortToast(requireContext(), "negative")
                 })
             .create()
     }
@@ -121,7 +121,7 @@ class PickNotificationTimeDialogFragment : DialogFragment(), AdapterView.OnItemS
         when(parent.id) {
             bind!!.incrementSpinner.id -> { number = parent.getItemAtPosition(position).toString().toInt() }
             bind!!.intervalSpinner.id -> { type = parent.getItemAtPosition(position) as TimeType }
-            else -> { Util.showShortToast(context!!, "other spinner must have been tapped") }
+            else -> { Util.showShortToast(requireContext(), "other spinner must have been tapped") }
         }
 
         if(questDueDate != null) {
@@ -139,11 +139,10 @@ class PickNotificationTimeDialogFragment : DialogFragment(), AdapterView.OnItemS
                TimeType.Years   -> { notificationDueDate = notificationDueDate.minusYears(number.toLong())   }
             }
 
-            notificationDueDate = notificationDueDate.plusMonths(1) // handling conversion offset
             chosenTime = notificationDueDate.toInstant().toEpochMilli()
-            Util.showShortToast(context!!, "chosen Time: $chosenTime | current: ${System.currentTimeMillis()}")
+            Util.showShortToast(requireContext(), "chosen Time: $chosenTime | current: ${System.currentTimeMillis()}")
         }
-        else { Util.showShortToast(context!!, "questDueDate is null!!") }
+        else { Util.showShortToast(requireContext(), "questDueDate is null!!") }
         Log.d(TAG, "chosen time: $chosenTime | System: ${System.currentTimeMillis()} | Quest: ${questDueDate!!.toInstant().toEpochMilli()} | System 2: ${ZonedDateTime.now().toInstant().toEpochMilli()}")
         Log.d(TAG, "Number: $number | TimeType: $type")
         changeBackgroundColor(bind!!.spinnerGroup)

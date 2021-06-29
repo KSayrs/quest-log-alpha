@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
-import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
@@ -23,7 +22,6 @@ import com.example.questlogalpha.databinding.DialogFragmentAddRewardBinding
 import com.example.questlogalpha.skills.AddEditSkillDialogFragment
 import com.example.questlogalpha.skills.SkillsAdapter
 import com.example.questlogalpha.skills.SkillsViewModel
-import kotlinx.android.synthetic.main.dialog_fragment_add_reward.view.*
 
 /** ************************************************************************************************
  * [DialogFragment] to display when adding a reward to a quest.
@@ -31,25 +29,30 @@ import kotlinx.android.synthetic.main.dialog_fragment_add_reward.view.*
 class AddRewardDialogFragment : DialogFragment() {
     var viewModel : SkillsViewModel? = null
     var adapter : SkillsAdapter? = null
-    var dialogView : View? = null
 
     var onPositiveButtonClicked: ((dictionary: Map<String, Any>) -> Unit)? = null
+
+    private var _binding: DialogFragmentAddRewardBinding? = null
+    private val binding get() = _binding!!
 
     private var listUpdated = false
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_fragment_add_reward, null, false)
-        val binding : DialogFragmentAddRewardBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_fragment_add_reward, null, false)
+        _binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_fragment_add_reward, null, false)
         binding.lifecycleOwner = this
 
-        val dataSource = QuestLogDatabase.getInstance(activity!!.application).skillsDatabaseDao
-        val viewModelFactory = ViewModelFactory("", null, dataSource, null, application = activity!!.application)
+        val dataSource = QuestLogDatabase.getInstance(requireActivity().application).skillsDatabaseDao
+        val viewModelFactory = ViewModelFactory("", null, dataSource, null, application = requireActivity().application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(SkillsViewModel::class.java)
 
         adapter = SkillsAdapter()
 
+        // set up toolbar
+        val toolbar = binding.addRewardToolbar
+        toolbar.title = getString(R.string.skills)
+
         // set up recyclerview
-        val mRecyclerView = dialogView!!.skills_list
+        val mRecyclerView = binding.skillsList
         mRecyclerView.layoutManager = LinearLayoutManager(context)
         mRecyclerView.adapter = adapter
 
@@ -77,7 +80,7 @@ class AddRewardDialogFragment : DialogFragment() {
         })
 
         // set up "add new" button
-        dialogView!!.add_new_reward_button.setOnClickListener {
+       binding.addNewRewardButton.setOnClickListener {
             val addSkillDialog = AddEditSkillDialogFragment()
 
             addSkillDialog.onPositiveButtonClicked = { skill ->
@@ -89,14 +92,13 @@ class AddRewardDialogFragment : DialogFragment() {
         }
 
         return AlertDialog.Builder(activity)
-            .setTitle("Skills")
-            .setView(dialogView)
+            .setView(binding.root)
             .setPositiveButton(android.R.string.ok,
               DialogInterface.OnClickListener { dialog, whichButton ->
-                  if(adapter?.chosenSkill != null && dialogView!!.skill_amount.text.toString() != "") {
+                  if(adapter?.chosenSkill != null && binding.skillAmount.text.toString() != "") {
 
                       binding.chosenSkill = adapter?.chosenSkill
-                      binding.amount = dialogView!!.skill_amount.text.toString().toDouble()
+                      binding.amount = binding.skillAmount.text.toString().toDouble()
 
                       onPositiveButtonClicked?.invoke(mapOf("skill" to binding.chosenSkill!!, "amount" to binding.amount!!))
                       Toast.makeText(context, "Skill ${binding.chosenSkill?.name} tapped for ${binding.amount}", Toast.LENGTH_SHORT).show()

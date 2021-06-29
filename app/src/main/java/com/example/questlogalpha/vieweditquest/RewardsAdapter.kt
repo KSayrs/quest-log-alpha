@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.questlogalpha.R
 import com.example.questlogalpha.data.SkillReward
 import com.example.questlogalpha.databinding.SkillInRewardListBinding
-import kotlinx.android.synthetic.main.skill_in_reward_list.view.*
 
 /**
  * ViewHolder that holds a single [ConstraintLayout].
@@ -31,18 +30,21 @@ class RewardsAdapter: RecyclerView.Adapter<RewardItemViewHolder>() {
 
     var onItemRemoved: ((SkillReward) -> Unit)? = null
 
+    private var _binding: SkillInRewardListBinding? = null
+    private val binding get() = _binding!!
+
     override fun getItemCount() = data.size
 
     // this happens after onCreate
     override fun onBindViewHolder(holder: RewardItemViewHolder, position: Int) {
         val item = data[position]
-        holder.constraintLayout.skill_name.text = holder.constraintLayout.context.getString(R.string.skill_reward_amount, String.format("%.0f", item.amount), item.name)
+        binding.skillName.text = holder.constraintLayout.context.getString(R.string.skill_reward_amount, String.format("%.0f", item.amount), item.name)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RewardItemViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding: SkillInRewardListBinding = DataBindingUtil.inflate(layoutInflater, R.layout.skill_in_reward_list, parent, false)
-        val holder = RewardItemViewHolder(binding.root.skill_in_reward_list_layout)
+        _binding = DataBindingUtil.inflate(layoutInflater, R.layout.skill_in_reward_list, parent, false)
+        val holder = RewardItemViewHolder(binding.skillInRewardListLayout)
 
         binding.removeSkillRewardIcon.setOnClickListener {
             val pos = holder.adapterPosition
